@@ -39,8 +39,7 @@ const africanHeritageTheme = {
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  modules: ["vuetify-nuxt-module"],
-
+  modules: ["vuetify-nuxt-module", "@nuxtjs/tailwindcss"],
   vuetify: {
     vuetifyOptions: {
       theme: {
