@@ -1,46 +1,42 @@
 <template>
-  <v-sheet class="h-1/2 overflow-hidden bg-grey-lighten-4 relative">
+  <v-sheet class="h-[85vh] md:h-[80vh] bg-black relative overflow-hidden">
     
-    <!-- CONTROLES -->
+    <!-- Controles droite -->
     <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
-      <v-btn icon="mdi-chevron-up" size="small" @click="prev" />
-      <v-btn icon="mdi-chevron-down" size="small" @click="next" />
+      <v-btn icon="mdi-chevron-up" color="white" variant="text" size="small" @click="prev" />
+      <v-btn icon="mdi-chevron-down" color="white" variant="text" size="small" @click="next" />
     </div>
 
-    <!-- INDICATEUR -->
+    <!-- Indicateur gauche -->
     <div class="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
       <div
         v-for="(_, i) in items"
         :key="i"
-        class="w-2 rounded-full transition-all duration-300"
-        :class="i === activeIndex ? 'h-6 bg-black' : 'h-2 bg-black/30'"
+        class="w-1.5 rounded-full transition-all duration-300"
+        :class="i === activeIndex ? 'h-8 bg-white' : 'h-1.5 bg-white/40'"
       />
     </div>
 
-    <!-- FEED -->
+    <!-- Feed vertical -->
     <div
       ref="feed"
-      class="h-full overflow-y-auto snap-y snap-mandatory scroll-smooth flex flex-col items-center justify-center gap-10 py-20"
+      class="h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide"
       @scroll="handleScroll"
     >
       <div
         v-for="(item, index) in items"
         :key="item.id"
-        class="snap-center transition-all duration-500"
-        :class="index === activeIndex
-          ? 'scale-100 opacity-100'
-          : 'scale-90 opacity-40'"
+        class="h-full w-full snap-center flex items-center justify-center py-4"
+        :class="index === activeIndex ? 'opacity-100' : 'opacity-40'"
       >
-        <div
-          class="relative w-[320px] sm:w-[380px] md:w-[420px] h-[70vh] rounded-3xl overflow-hidden shadow-2xl bg-black"
-        >
+        <div class="relative w-full max-w-md h-full rounded-2xl overflow-hidden shadow-2xl mx-4">
+          <!-- Media -->
           <v-img
             v-if="item.type === 'image'"
             :src="item.src"
             cover
             class="w-full h-full"
           />
-
           <video
             v-else
             :ref="el => registerVideo(el, item.id)"
@@ -51,22 +47,14 @@
             playsinline
           />
 
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+          <!-- Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-          <div class="absolute bottom-0 p-6 text-white">
-            <h3 class="text-xl font-bold mb-2">
-              {{ item.title }}
-            </h3>
-            <p class="text-white/80 mb-4 line-clamp-2">
-              {{ item.description }}
-            </p>
-
-            <v-btn
-              color="white"
-              variant="flat"
-              rounded="pill"
-              append-icon="mdi-arrow-right"
-            >
+          <!-- Contenu -->
+          <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <h3 class="text-2xl font-bold mb-2">{{ item.title }}</h3>
+            <p class="text-white/80 mb-4 line-clamp-2">{{ item.description }}</p>
+            <v-btn color="white" variant="flat" rounded="pill" append-icon="mdi-arrow-right">
               {{ item.action }}
             </v-btn>
           </div>
@@ -93,17 +81,10 @@ function registerVideo(el, id) {
 }
 
 function handleScroll() {
-  const children = feed.value.children
-  const center = feed.value.scrollTop + feed.value.clientHeight / 2
-
-  for (let i = 0; i < children.length; i++) {
-    const el = children[i]
-    const elCenter = el.offsetTop + el.clientHeight / 2
-    if (Math.abs(center - elCenter) < el.clientHeight / 2) {
-      activeIndex.value = i
-      break
-    }
-  }
+  if (!feed.value) return
+  const scrollTop = feed.value.scrollTop
+  const itemHeight = feed.value.clientHeight
+  activeIndex.value = Math.round(scrollTop / itemHeight)
 }
 
 function next() {
@@ -126,9 +107,8 @@ onMounted(() => {
         entry.isIntersecting ? video.play() : video.pause()
       })
     },
-    { threshold: 0.7 }
+    { threshold: 0.6 }
   )
-
   videos.forEach(video => observer.observe(video))
 })
 
@@ -136,3 +116,13 @@ onBeforeUnmount(() => {
   if (observer) observer.disconnect()
 })
 </script>
+
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
