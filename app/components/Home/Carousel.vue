@@ -1,128 +1,104 @@
 <template>
-  <v-sheet class="h-[85vh] md:h-[80vh] bg-black relative overflow-hidden">
-    
-    <!-- Controles droite -->
-    <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-3">
-      <v-btn icon="mdi-chevron-up" color="white" variant="text" size="small" @click="prev" />
-      <v-btn icon="mdi-chevron-down" color="white" variant="text" size="small" @click="next" />
-    </div>
-
-    <!-- Indicateur gauche -->
-    <div class="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
-      <div
-        v-for="(_, i) in items"
-        :key="i"
-        class="w-1.5 rounded-full transition-all duration-300"
-        :class="i === activeIndex ? 'h-8 bg-white' : 'h-1.5 bg-white/40'"
-      />
-    </div>
-
-    <!-- Feed vertical -->
-    <div
-      ref="feed"
-      class="h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-hide"
-      @scroll="handleScroll"
+    <v-sheet
+        class="mx-auto relative overflow-hidden"
+        :width="isMobile ? 415 : 600"
+        :height="isMobile ? 800 : 750"
     >
-      <div
-        v-for="(item, index) in items"
-        :key="item.id"
-        class="h-full w-full snap-center flex items-center justify-center py-4"
-        :class="index === activeIndex ? 'opacity-100' : 'opacity-40'"
-      >
-        <div class="relative w-full max-w-md h-full rounded-2xl overflow-hidden shadow-2xl mx-4">
-          <!-- Media -->
-          <v-img
-            v-if="item.type === 'image'"
-            :src="item.src"
-            cover
-            class="w-full h-full"
-          />
-          <video
-            v-else
-            :ref="el => registerVideo(el, item.id)"
-            :src="item.src"
-            class="w-full h-full object-cover"
-            muted
-            loop
-            playsinline
-          />
+        <v-carousel
+            v-model="currentIndex"
+            direction="vertical"
+            progress="red"
+            vertical-arrows="left"
+            vertical-delimiters="right"
+            hide-delimiter-background
+            :width="isMobile ? 415 : 600"
+            :height="isMobile ? 800 : 750"
+            :cycle="true"
+        >
+            <v-carousel-item
+                v-for="(item, i) in items"
+                :key="i"
+                :src="item.src"
+                cover
+            ></v-carousel-item>
 
-          <!-- Overlay -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-          <!-- Contenu -->
-          <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <h3 class="text-2xl font-bold mb-2">{{ item.title }}</h3>
-            <p class="text-white/80 mb-4 line-clamp-2">{{ item.description }}</p>
-            <v-btn color="white" variant="flat" rounded="pill" append-icon="mdi-arrow-right">
-              {{ item.action }}
-            </v-btn>
-          </div>
-        </div>
-      </div>
-    </div>
-  </v-sheet>
+            <v-overlay
+                :scrim="false"
+                content-class="w-100 h-100 d-flex flex-column align-center justify-space-between pointer-pass-through py-3"
+                contained
+                model-value
+                no-click-animation
+                persistent
+            >
+                <v-scroll-x-transition mode="out-in" appear>
+                    <v-sheet :key="currentIndex" rounded="xl">
+                        <v-list-item
+                            :prepend-avatar="`https://randomuser.me/api/portraits/${currentItem.avatarId}.jpg`"
+                            :subtitle="currentItem.subtitle"
+                            :title="currentItem.authorName"
+                            class="pa-1 pr-6"
+                        ></v-list-item>
+                    </v-sheet>
+                </v-scroll-x-transition>
+                <v-chip
+                    :text="`${currentIndex + 1} / ${items.length}`"
+                    color="#eee"
+                    size="small"
+                    variant="flat"
+                ></v-chip>
+            </v-overlay>
+        </v-carousel>
+    </v-sheet>
 </template>
 
-<script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-
+<script setup lang="ts">
+// Setup all prop(s)
 defineProps({
-  items: Array
-})
+    items: Array,
+});
 
-const feed = ref(null)
-const activeIndex = ref(0)
-const videos = new Map()
-let observer = null
+// Define all reactive variables
+const currentIndex = shallowRef(0);
+const currentItem = toRef(() => items[currentIndex.value]);
 
-function registerVideo(el, id) {
-  if (el) videos.set(id, el)
-}
+// Setup all provided variables
+const isMobile = inject("isMobile");
 
-function handleScroll() {
-  if (!feed.value) return
-  const scrollTop = feed.value.scrollTop
-  const itemHeight = feed.value.clientHeight
-  activeIndex.value = Math.round(scrollTop / itemHeight)
-}
-
-function next() {
-  if (activeIndex.value < feed.value.children.length - 1) {
-    feed.value.children[activeIndex.value + 1].scrollIntoView({ behavior: 'smooth' })
-  }
-}
-
-function prev() {
-  if (activeIndex.value > 0) {
-    feed.value.children[activeIndex.value - 1].scrollIntoView({ behavior: 'smooth' })
-  }
-}
-
-onMounted(() => {
-  observer = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        const video = entry.target
-        entry.isIntersecting ? video.play() : video.pause()
-      })
+// Define data
+const items = [
+    {
+        authorName: "Bettany Nichols",
+        avatarId: "women/31",
+        subtitle: "31k followers",
+        src: "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg",
     },
-    { threshold: 0.6 }
-  )
-  videos.forEach(video => observer.observe(video))
-})
-
-onBeforeUnmount(() => {
-  if (observer) observer.disconnect()
-})
+    {
+        authorName: "Greg Kovalsky",
+        avatarId: "men/61",
+        subtitle: "412 followers",
+        src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg",
+    },
+    {
+        authorName: "Emma Kathleen",
+        avatarId: "women/34",
+        subtitle: "521 followers",
+        src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg",
+    },
+    {
+        authorName: "Anthony McKenzie",
+        avatarId: "men/78",
+        subtitle: "6k followers",
+        src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
+    },
+];
 </script>
 
 <style scoped>
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 .scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 </style>
