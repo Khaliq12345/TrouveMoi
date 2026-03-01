@@ -1,6 +1,6 @@
 <template>
     <v-card
-        class="mt-4 mx-2 mx-sm-auto rounded-xl overflow-hidden"
+        class="mt-4 rounded-xl overflow-hidden"
         elevation="0"
         border
         max-width="850"
@@ -20,7 +20,7 @@
             </div>
 
             <v-container
-                class="pa-4 d-flex flex-column flex-grow-1"
+                class="pa-2 d-flex flex-column flex-grow-1"
                 style="min-width: 0"
             >
                 <div class="w-100">

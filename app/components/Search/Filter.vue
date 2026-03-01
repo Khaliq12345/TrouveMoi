@@ -1,78 +1,45 @@
 <template>
-    <v-container class="d-flex flex-column fill-height pa-3">
-        <!-- Compteur -->
-        <p class="text-caption text-medium-emphasis mb-2">
-            {{ filterCount }} {{ filterCount > 1 ? "filtres" : "filtre" }}
-        </p>
-
-        <v-divider class="my-2" />
-
-        <!-- Catégories -->
-        <p class="text-body-2 font-weight-medium mb-2">Catégories</p>
-        <v-chip-group v-model="selectedFilters" column multiple>
-            <v-chip
-                v-for="i in 4"
-                :key="i"
-                :value="`cat${i}`"
-                variant="outlined"
-                size="small"
-                class="text-caption ma-1"
-                filter
-                color="primary"
-            >
-                Catégorie {{ i }}
-            </v-chip>
-        </v-chip-group>
-
-        <v-divider class="my-2" />
-
-        <!-- Spécificités -->
-        <p class="text-body-2 font-weight-medium mb-2">Spécificités</p>
-        <div class="d-flex flex-wrap ga-2">
-            <v-btn
-                v-for="i in 4"
-                :key="i"
-                v-model="selectedFilters2"
-                :value="`spec${i}`"
-                :variant="
-                    selectedFilters2.includes(`spec${i}`) ? 'flat' : 'outlined'
-                "
-                size="small"
-                class="text-caption text-none"
-                color="primary"
-                rounded="lg"
-                @click="toggleSpec(`spec${i}`)"
-            >
-                Spécificité {{ i }}
-            </v-btn>
+    <div class="d-flex flex-column" style="height: 100%; max-height: 100vh;">
+        
+        <div class="pa-4 flex-shrink-0">
+            <p class="text-caption text-medium-emphasis">
+                {{ filterCount }} {{ filterCount > 1 ? "filtres" : "filtre" }}
+            </p>
+            <v-divider class="mt-2" />
         </div>
 
-        <v-spacer />
+        <div class="flex-grow-1 overflow-y-auto pa-4 pt-0">
+            <p class="text-body-2 font-weight-medium mb-2">Catégories</p>
+            <v-chip-group v-model="selectedFilters" column multiple>
+                <v-chip v-for="i in 10" :key="i" :value="`cat${i}`" variant="outlined" size="small" filter color="primary">
+                    Catégorie {{ i }}
+                </v-chip>
+            </v-chip-group>
 
-        <!-- Actions -->
-        <v-card-actions class="px-0 pt-4">
-            <v-spacer />
-            <v-btn
-                variant="text"
-                size="small"
-                class="text-caption mr-2"
-                @click="clearFilters"
-            >
-                Réinitialiser
-            </v-btn>
-            <v-btn
-                variant="flat"
-                color="primary"
-                size="small"
-                class="text-caption"
-                :disabled="filterCount === 0"
-            >
-                Appliquer
-            </v-btn>
-        </v-card-actions>
-    </v-container>
+            <v-divider class="my-4" />
+
+            <p class="text-body-2 font-weight-medium mb-2">Spécificités</p>
+            <div class="d-flex flex-wrap ga-2">
+                <v-btn v-for="i in 15" :key="i" @click="toggleSpec(`spec${i}`)"
+                    :variant="selectedFilters2.includes(`spec${i}`) ? 'flat' : 'outlined'"
+                    size="small" class="text-none" color="primary" rounded="lg">
+                    Spécificité {{ i }}
+                </v-btn>
+            </div>
+        </div>
+
+        <v-sheet border="t" class="pa-4 flex-shrink-0 bg-surface">
+            <div class="d-flex ga-2">
+                <v-btn variant="text" class="flex-grow-1 text-none" @click="clearFilters">
+                    Réinitialiser
+                </v-btn>
+                <v-btn variant="flat" color="primary" class="flex-grow-1 text-none" :disabled="filterCount === 0">
+                    Appliquer
+                </v-btn>
+            </div>
+        </v-sheet>
+    </div>
 </template>
-
 <script setup lang="ts">
 const selectedFilters = ref<string[]>([]);
 const selectedFilters2 = ref<string[]>([]);
