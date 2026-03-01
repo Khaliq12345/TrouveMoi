@@ -5,69 +5,98 @@
         <v-main>
             <v-container fluid class="pa-0 fill-height">
                 <v-row no-gutters class="fill-height">
-                    <v-col cols="6" class="d-none d-md-flex pa-0">
+                    <v-col cols="12" md="6" class="pa-0 fill-height">
                         <v-row no-gutters class="fill-height">
                             <v-col
                                 cols="4"
-                                class="bg-purple-500 d-none d-lag-flex"
+                                class="bg-purple-500 d-none d-lg-flex border-e"
                             >
                                 <SearchFilter />
                             </v-col>
 
-                            <v-col cols="8" md="12" lg="8" class="bg-blue-500">
-                                <h1>Liste des résultats</h1>
-                                <div class="d-none d-md-flex d-lg-none">
-                                    <SearchMiniFilter
-                                        @show-drawer="drawer = true"
-                                    />
+                            <v-col
+                                cols="12"
+                                lg="8"
+                                class="d-flex flex-column fill-height"
+                                style="overflow-hidden"
+                            >
+                                <div class="px-1">
+                                    <div class="d-flex flex-column">
+                                        <h1 class="text-h5 font-weight-bold">
+                                            Liste des résultats
+                                        </h1>
+
+                                        <div class="d-lg-none">
+                                            <SearchMiniFilter
+                                                @show-drawer="drawer = true"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <v-infinite-scroll
-                                    :items="results"
-                                    :onLoad="loadMore"
-                                    @load="onLoad"
-                                    ref="infiniteScrollRef"
-                                >
-                                    <template
-                                        v-for="(item, index) in results"
-                                        :key="item.id"
+                                <div class="flex-grow-1 overflow-y-auto pa-2">
+                                    <v-infinite-scroll
+                                        :items="results"
+                                        :onLoad="loadMore"
+                                        @load="onLoad"
+                                        ref="infiniteScrollRef"
+                                        class="w-100"
                                     >
-                                        <SearchResult :item="item" />
-                                    </template>
-
-                                    <template v-slot:loading>
-                                        <v-progress-circular
-                                            indeterminate
-                                            color="primary"
-                                        />
-                                    </template>
-
-                                    <template v-slot:empty>
-                                        <v-alert type="info"
-                                            >Plus de résultats
-                                            disponibles</v-alert
+                                        <template
+                                            v-for="item in results"
+                                            :key="item.id"
                                         >
-                                    </template>
-                                </v-infinite-scroll>
+                                            <SearchResult
+                                                :item="item"
+                                                class="w-100 mb-2"
+                                            />
+                                        </template>
+
+                                        <template v-slot:loading>
+                                            <div
+                                                class="d-flex justify-center pa-4"
+                                            >
+                                                <v-progress-circular
+                                                    indeterminate
+                                                    color="primary"
+                                                />
+                                            </div>
+                                        </template>
+
+                                        <template v-slot:empty>
+                                            <v-alert
+                                                type="info"
+                                                variant="tonal"
+                                                class="ma-2"
+                                            >
+                                                Plus de résultats disponibles
+                                            </v-alert>
+                                        </template>
+                                    </v-infinite-scroll>
+                                </div>
                             </v-col>
                         </v-row>
                     </v-col>
 
-                    <v-col cols="6" class="d-none d-md-flex bg-red-500">
+                    <v-col
+                        cols="6"
+                        class="d-none d-md-flex bg-red-500 border-s"
+                    >
                     </v-col>
 
                     <v-col
                         cols="12"
-                        class="bg-amber-500 d-flex d-md-none"
-                        style="height: 100px"
+                        class="bg-amber-500 d-flex d-md-none align-center justify-center"
+                        style="height: 60px"
                     >
-                        <p>Vue Mobile (Amber)</p>
+                        <p class="text-caption">Vue Mobile active</p>
                     </v-col>
                 </v-row>
             </v-container>
         </v-main>
     </v-layout>
-    <v-navigation-drawer v-model="drawer" temporary>
+
+    <v-navigation-drawer v-model="drawer" temporary width="320">
         <SearchFilter />
     </v-navigation-drawer>
 </template>

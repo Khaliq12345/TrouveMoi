@@ -1,78 +1,71 @@
 <template>
-    <v-sheet class="py-2 px-4 d-flex align-center" color="transparent">
-        <v-slide-group show-arrows class="flex-grow-1">
-            <!-- Bouton Plus compact -->
+    <v-sheet class="py-2" color="transparent">
+        <v-slide-group show-arrows class="align-center">
+            <!-- Bouton Plus - même hauteur que le v-menu -->
             <v-slide-group-item>
                 <v-btn
                     @click="emit('showDrawer')"
-                    variant="text"
-                    density="comfortable"
+                    variant="outlined"
+                    rounded="pill"
                     size="small"
-                    class="text-caption mr-2"
+                    class="text-none mx-1 border-sm px-3"
+                    style="height: 32px"
                     prepend-icon="mdi-filter-variant"
+                    color="primary"
                 >
                     Plus
                 </v-btn>
             </v-slide-group-item>
 
-            <!-- Select compact -->
-            <v-slide-group-item>
-                <v-select
-                    v-model="select"
-                    :items="[
-                        'California',
-                        'Colorado',
-                        'Florida',
-                        'Georgia',
-                        'Texas',
-                        'Wyoming',
-                    ]"
-                    placeholder="Région"
-                    variant="plain"
-                    density="compact"
-                    hide-details
-                    class="text-caption mr-4"
-                    style="min-width: 120px; max-width: 140px"
-                    clearable
-                />
+            <v-slide-group-item class="flex-shrink-0">
+                <v-menu>
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            v-bind="props"
+                            variant="outlined"
+                            rounded="pill"
+                            size="small"
+                            class="text-none mx-1 px-3"
+                            color=""
+                            append-icon="mdi-chevron-down"
+                        >
+                            <span class="text-caption font-weight-bold">{{
+                                select || "Région"
+                            }}</span>
+                        </v-btn>
+                    </template>
+                    <v-list density="compact">
+                        <v-list-item
+                            v-for="item in [
+                                'California',
+                                'Colorado',
+                                'Florida',
+                                'Georgia',
+                                'Texas',
+                                'Wyoming',
+                            ]"
+                            :key="item"
+                            :title="item"
+                            @click="select = item"
+                        />
+                    </v-list>
+                </v-menu>
             </v-slide-group-item>
 
-            <!-- Toggle buttons sobres -->
-            <v-slide-group-item>
-                <v-btn-toggle
-                    v-model="selectedFilters2"
-                    color="primary"
-                    variant="text"
-                    density="compact"
-                    class="mr-4"
-                    multiple
-                >
-                    <v-btn value="left" size="small" class="text-caption px-3">
-                        Left
-                    </v-btn>
-                    <v-btn
-                        value="center"
-                        size="small"
-                        class="text-caption px-3"
-                    >
-                        Center
-                    </v-btn>
-                </v-btn-toggle>
-            </v-slide-group-item>
-
-            <!-- Chips compacts -->
+            <!-- Chips simples -->
             <v-slide-group-item>
                 <v-chip-group
                     v-model="selectedFilters"
-                    color="primary"
                     variant="outlined"
-                    class="gap-1"
+                    class="mx-1"
+                    selected-class="bg-primary text-white"
                 >
                     <v-chip
                         v-for="i in 4"
                         :key="i"
                         :value="`Filter ${i}`"
                         size="small"
+                        rounded="pill"
                         class="text-caption"
                         filter
                     >
@@ -80,61 +73,44 @@
                     </v-chip>
                 </v-chip-group>
             </v-slide-group-item>
-        </v-slide-group>
 
-        <!-- Compteur de filtres actifs -->
-        <v-chip
-            v-if="filterCount > 0"
-            color="primary"
-            size="x-small"
-            class="ml-2"
-            closable
-            @click:close="clearFilters"
-        >
-            {{ filterCount }}
-        </v-chip>
+            <!-- Chips groupés -->
+            <v-slide-group-item>
+                <v-chip-group
+                    v-model="selectedFiltersGrouped"
+                    variant="tonal"
+                    class="mx-1"
+                    multiple
+                    selected-class="bg-primary text-white"
+                >
+                    <v-chip
+                        v-for="i in 4"
+                        :key="i"
+                        :value="`Filter grouped ${i}`"
+                        size="small"
+                        rounded="pill"
+                        class="text-caption"
+                        filter
+                    >
+                        Grouped {{ i }}
+                    </v-chip>
+                </v-chip-group>
+            </v-slide-group-item>
+        </v-slide-group>
     </v-sheet>
 </template>
 
 <script setup lang="ts">
 const emit = defineEmits(["showDrawer"]);
 
-const selectedFilters = ref<string[]>([]);
-const selectedFilters2 = ref<string[]>([]);
-const select = ref("");
-
-const filterCount = computed(
-    () =>
-        selectedFilters.value.length +
-        selectedFilters2.value.length +
-        (select.value ? 1 : 0),
-);
-
-function clearFilters() {
-    selectedFilters.value = [];
-    selectedFilters2.value = [];
-    select.value = "";
-}
+const selectedFilters = ref([]);
+const selectedFiltersGrouped = ref([]);
+const select = ref("Texas");
 </script>
 
 <style scoped>
+/* Uniquement pour forcer l'alignement vertical du slide group */
 :deep(.v-slide-group__content) {
-    gap: 4px;
     align-items: center;
-}
-
-:deep(.v-field__input) {
-    min-height: 32px !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-:deep(.v-chip--selected) {
-    background-color: rgb(var(--v-theme-primary));
-    color: white;
-}
-
-.gap-1 {
-    gap: 4px;
 }
 </style>
