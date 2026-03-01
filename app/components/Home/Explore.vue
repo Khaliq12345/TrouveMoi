@@ -21,6 +21,7 @@
                     :subtitle="zone.location"
                     :description="zone.description"
                     :image="zone.image"
+                    :link="'example.com'"
                 />
             </v-carousel-item>
         </v-carousel>
