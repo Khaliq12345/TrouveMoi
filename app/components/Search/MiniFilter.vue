@@ -17,7 +17,7 @@
                 </v-btn>
             </v-slide-group-item>
 
-            <v-slide-group-item class="flex-shrink-0">
+            <v-slide-group-item>
                 <v-menu>
                     <template v-slot:activator="{ props }">
                         <v-btn
