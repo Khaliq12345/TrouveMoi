@@ -9,7 +9,7 @@
                         <v-row no-gutters class="fill-height">
                             <v-col
                                 cols="4"
-                                class="bg-purple-500 d-none d-lg-flex"
+                                class="bg-purple-500 d-none d-lag-flex"
                             >
                                 <SearchFilter />
                             </v-col>
