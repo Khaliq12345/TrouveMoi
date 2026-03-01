@@ -22,12 +22,16 @@
                                 style="height: 100vh; overflow: hidden"
                             >
                                 <div class="px-1 flex-shrink-0">
-                                    <h1 class="text-h5 font-weight-bold">
+                                    <h1
+                                        class="text-h5 font-weight-bold mb-2 mb-lg-0"
+                                    >
                                         Liste des résultats
                                     </h1>
-                                    <SearchMiniFilter
-                                        @show-drawer="drawer = true"
-                                    />
+                                    <div class="d-block d-lg-none">
+                                        <SearchMiniFilter
+                                            @show-drawer="drawer = true"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div
@@ -154,18 +158,28 @@
     <!-- Mobile bottom sheet avec résultats -->
     <v-bottom-sheet v-model="resultsSheet" inset scrollable>
         <v-card height="70vh">
-            <v-card-title class="d-flex align-center pa-4">
-                <span class="text-h6">Résultats</span>
-                <v-spacer />
-                <v-btn
-                    icon="mdi-close"
-                    variant="text"
-                    @click="resultsSheet = false"
-                />
+            <!-- Header -->
+            <v-card-title class="d-flex flex-column align-start pa-2">
+                <!-- Ligne titre + fermeture -->
+                <div class="d-flex align-center w-100">
+                    <span class="text-h6">Résultats</span>
+                    <v-spacer />
+                    <v-btn
+                        icon="mdi-close"
+                        variant="text"
+                        @click="resultsSheet = false"
+                    />
+                </div>
+
+                <!-- Filtres sous le titre -->
+                <div class="w-100 pa-0">
+                    <SearchMiniFilter />
+                </div>
             </v-card-title>
 
             <v-divider />
 
+            <!-- Liste des résultats -->
             <v-card-text class="pa-0">
                 <v-infinite-scroll
                     :items="results"
