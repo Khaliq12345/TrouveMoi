@@ -1,23 +1,39 @@
 <template>
-    <v-layout class="flex-column">
+    <v-layout class="flex-column fill-height">
         <HomeAppBar />
 
+        <SearchMobileView
+            v-if="isMobile"
+            v-model:viewMode="viewMode"
+            @open-results="resultsSheet = true"
+        />
         <SearchDesktopView
+            v-if="!isMobile"
             :results="results"
             @load="onLoad"
             @open-drawer="drawer = true"
         />
+        <ClientOnly>
+            <v-navigation-drawer
+                v-if="!isMobile"
+                v-model="drawer"
+                temporary
+                width="320"
+                location="left"
+                class="fill-height"
+                style="top: 0; height: 100vh; position: fixed"
+            >
+                <SearchFilter />
+            </v-navigation-drawer>
+        </ClientOnly>
 
-        <SearchMobileView
-            v-model:viewMode="viewMode"
-            @open-results="resultsSheet = true"
-        />
+        <v-dialog v-if="isMobile" v-model="mobileFilter" width="auto">
+            <v-card max-width="400">
+                <SearchFilter @applyFilter="mobileFilter = false" />
+            </v-card>
+        </v-dialog>
 
-        <v-navigation-drawer v-model="drawer" temporary width="320">
-            <SearchFilter />
-        </v-navigation-drawer>
-
-        <v-bottom-sheet v-model="resultsSheet" inset scrollable>
+        <v-bottom-sheet v-if="isMobile" v-model="resultsSheet" inset scrollable>
             <v-card height="70vh">
                 <v-card-title class="d-flex flex-column align-start pa-2">
                     <div class="d-flex align-center w-100">
@@ -29,7 +45,7 @@
                             @click="resultsSheet = false"
                         />
                     </div>
-                    <SearchMiniFilter />
+                    <SearchMiniFilter @show-drawer="mobileFilter = true" />
                 </v-card-title>
                 <v-divider />
                 <v-card-text class="pa-0">
@@ -45,10 +61,13 @@ const drawer = ref(false);
 const resultsSheet = ref(false);
 const viewMode = ref("carte"); // 'carte' ou 'video'
 
+const mobileFilter = ref(false);
 const results = ref([]);
 const page = ref(1);
 const isEmpty = ref(false);
 const isLoading = ref(false);
+
+const isMobile = inject("isMobile");
 
 function generateFakeItems(count, startId) {
     return Array.from({ length: count }, (_, i) => ({

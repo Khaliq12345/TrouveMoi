@@ -1,5 +1,5 @@
 <template>
-    <v-main class="d-none d-md-flex fill-height">
+    <v-main class="desktopView d-none d-md-flex fill-height">
         <v-container fluid class="pa-0 fill-height">
             <v-row no-gutters class="fill-height">
                 <v-col cols="12" md="8" class="pa-0 fill-height">

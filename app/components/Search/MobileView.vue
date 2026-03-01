@@ -1,5 +1,5 @@
 <template>
-    <v-main class="d-md-none fill-height bg-amber-500">
+    <v-main class="mobileView d-md-none fill-height">
         <v-sheet class="fill-height d-flex flex-column bg-transparent">
             <v-sheet
                 color="transparent"
