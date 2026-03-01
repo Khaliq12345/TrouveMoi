@@ -1,103 +1,72 @@
 <template>
-    <v-container class="d-flex flex-column fill-height">
-        <p class="selectedFilters-subtitle-1 mb-2">
-            {{ filterCount }}
-            {{ filterCount > 1 ? "filtres appliqués" : "filtre appliqué" }}
+    <v-container class="d-flex flex-column fill-height pa-3">
+        <!-- Compteur -->
+        <p class="text-caption text-medium-emphasis mb-2">
+            {{ filterCount }} {{ filterCount > 1 ? "filtres" : "filtre" }}
         </p>
 
-        <v-checkbox
-            v-model="selectedFilters"
-            label="CheckboxFilters 1"
-            value="CheckboxFilters 1"
-            hide-details
-            density="compact"
-        ></v-checkbox>
-        <v-checkbox
-            v-model="selectedFilters"
-            label="CheckboxFilters 2"
-            value="CheckboxFilters 2"
-            hide-details
-            density="compact"
-        ></v-checkbox>
-        <v-checkbox
-            v-model="selectedFilters"
-            label="CheckboxFilters 3"
-            value="CheckboxFilters 3"
-            hide-details
-            density="compact"
-        ></v-checkbox>
-        <v-checkbox
-            v-model="selectedFilters"
-            label="CheckboxFilters 4"
-            value="CheckboxFilters 4"
-            hide-details
-            density="compact"
-        ></v-checkbox>
+        <v-divider class="my-2" />
 
-        <v-divider class="my-2"></v-divider>
-
+        <!-- Catégories -->
+        <p class="text-body-2 font-weight-medium mb-2">Catégories</p>
         <v-chip-group v-model="selectedFilters" column multiple>
             <v-chip
-                selectedFilters="ChipsFilters 1"
-                value="ChipsFilters 1"
+                v-for="i in 4"
+                :key="i"
+                :value="`cat${i}`"
                 variant="outlined"
+                size="small"
+                class="text-caption ma-1"
                 filter
+                color="primary"
             >
-                ChipsFilters 1
-            </v-chip>
-            <v-chip
-                selectedFilters="ChipsFilters 2"
-                value="ChipsFilters 2"
-                variant="outlined"
-                filter
-            >
-                ChipsFilters 2
-            </v-chip>
-            <v-chip
-                selectedFilters="ChipsFilters 3"
-                value="ChipsFilters 3"
-                variant="outlined"
-                filter
-            >
-                ChipsFilters 3
-            </v-chip>
-            <v-chip
-                selectedFilters="ChipsFilters 4"
-                value="ChipsFilters 4"
-                variant="outlined"
-                filter
-            >
-                ChipsFilters 4
+                Catégorie {{ i }}
             </v-chip>
         </v-chip-group>
-        <v-btn-toggle
-            v-model="selectedFilters2"
-            color="deep-purple-accent-3"
-            rounded="0"
-            group
-            multiple
-        >
-            <v-btn value="left"> Left </v-btn>
 
-            <v-btn value="center"> Center </v-btn>
+        <v-divider class="my-2" />
 
-            <v-btn value="right"> Right </v-btn>
-
-            <v-btn value="justify"> Justify </v-btn>
-        </v-btn-toggle>
-
-        <v-card-actions class="px-0 mt-auto">
-            <v-spacer></v-spacer>
-
+        <!-- Spécificités -->
+        <p class="text-body-2 font-weight-medium mb-2">Spécificités</p>
+        <div class="d-flex flex-wrap ga-2">
             <v-btn
-                variant="selectedFilters"
-                color="error"
+                v-for="i in 4"
+                :key="i"
+                v-model="selectedFilters2"
+                :value="`spec${i}`"
+                :variant="
+                    selectedFilters2.includes(`spec${i}`) ? 'flat' : 'outlined'
+                "
+                size="small"
+                class="text-caption text-none"
+                color="primary"
+                rounded="lg"
+                @click="toggleSpec(`spec${i}`)"
+            >
+                Spécificité {{ i }}
+            </v-btn>
+        </div>
+
+        <v-spacer />
+
+        <!-- Actions -->
+        <v-card-actions class="px-0 pt-4">
+            <v-spacer />
+            <v-btn
+                variant="text"
+                size="small"
+                class="text-caption mr-2"
                 @click="clearFilters"
             >
-                Annuler
+                Réinitialiser
             </v-btn>
-
-            <v-btn variant="flat" color="primary" :disabled="filterCount === 0">
+            <v-btn
+                variant="flat"
+                color="primary"
+                size="small"
+                class="text-caption"
+                :disabled="filterCount === 0"
+            >
                 Appliquer
             </v-btn>
         </v-card-actions>
@@ -105,18 +74,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-
-// REACTIVE STATE: Array of strings to store selected filter values
 const selectedFilters = ref<string[]>([]);
-
 const selectedFilters2 = ref<string[]>([]);
 
-// COMPUTED PROPERTY: Keeps track of the number of selected items
-const filterCount = computed(() => selectedFilters.value.length);
+const filterCount = computed(
+    () => selectedFilters.value.length + selectedFilters2.value.length,
+);
 
-// HELPER FUNCTION: Resets the selection array to empty
+function toggleSpec(value: string) {
+    const index = selectedFilters2.value.indexOf(value);
+    if (index > -1) {
+        selectedFilters2.value.splice(index, 1);
+    } else {
+        selectedFilters2.value.push(value);
+    }
+}
+
 function clearFilters() {
     selectedFilters.value = [];
+    selectedFilters2.value = [];
 }
 </script>
