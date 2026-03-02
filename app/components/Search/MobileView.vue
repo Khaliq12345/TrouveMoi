@@ -1,7 +1,7 @@
 <!-- Mobile view with map/video toggle and results button -->
 <template>
     <!-- Main container (mobile only) -->
-    <v-main class="mobileView d-md-none fill-height">
+    <v-main class="d-md-none fill-height">
         <v-sheet class="fill-height d-flex flex-column bg-transparent">
             <!-- Top controls bar -->
             <v-sheet
