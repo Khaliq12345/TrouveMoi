@@ -11,14 +11,15 @@
         >
           <!-- Responsive flex container -->
           <div
-            class="d-flex flex-column flex-sm-row w-100 overflow-hidden"
+            class="d-flex w-100 overflow-hidden"
+             :class="isMobile ? 'flex-column' : 'flex-sm-row'"
             :color="isHovering ? 'primary' : undefined"
           >
             <!-- Image section (responsive: mobile/desktop) -->
             <div class="flex-shrink-0 w-100 w-sm-auto">
               <!-- Mobile image gallery -->
               <MobileImageView
-                v-if="$vuetify.display.xs"
+                v-if="isMobile"
                 :images="item.images"
                 :discount="item.discount"
               />
@@ -32,7 +33,7 @@
 
             <!-- Content section -->
             <v-container
-              class="pa-2 d-flex flex-column flex-grow-1"
+              class="pa-5 d-flex flex-column flex-grow-1"
               style="min-width: 0"
             >
               <!-- Title and rating section -->
@@ -152,4 +153,7 @@ const item = ref({
   ],
   images: [10, 11, 12, 13],
 });
+
+// Inject mobile state from parent
+const isMobile = inject("isMobile");
 </script>

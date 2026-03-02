@@ -16,7 +16,7 @@
             <v-col
               lg="9"
               class="d-flex flex-column w-full"
-              style="height: 100vh; overflow: hidden"
+              style="overflow: hidden"
             >
               <!-- Header with title and mini filter -->
               <div class="px-1 flex-shrink-0 mt-3">
@@ -43,8 +43,7 @@
         </v-col>
 
         <!-- Right column (map placeholder) -->
-        <v-col cols="4" lg="3" class="d-none d-md-flex border-s bg-red-500">
-        </v-col>
+        <v-col cols="4" lg="3" class="border-s bg-red-500"> </v-col>
       </v-row>
     </v-container>
   </v-main>

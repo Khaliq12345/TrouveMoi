@@ -1,7 +1,7 @@
 <!-- Mobile horizontal scrollable image gallery with discount badge -->
 <template>
     <!-- Full-width container with background -->
-    <div class="position-relative w-100 overflow-hidden bg-grey-lighten-4">
+    <div class="position-relative w-100 overflow-hidden">
         <!-- Horizontal scrolling image group -->
         <v-slide-group class="pa-2" center-active>
             <v-slide-group-item v-for="(imgId, i) in images" :key="i">
