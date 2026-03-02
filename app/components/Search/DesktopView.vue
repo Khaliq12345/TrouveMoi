@@ -43,7 +43,7 @@
         </v-col>
 
         <!-- Right column (map placeholder) -->
-        <v-col md="4" lg="3" class="d-none d-md-flex border-s bg-red-500">
+        <v-col cols="4" lg="3" class="d-none d-md-flex border-s bg-red-500">
         </v-col>
       </v-row>
     </v-container>
