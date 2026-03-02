@@ -1,5 +1,7 @@
+<!-- Card component displaying location with image, title, subtitle, description, and action button -->
 <template>
     <v-card class="mx-auto overflow-hidden rounded-xl" variant="flat" border>
+        <!-- Hero image with gradient overlay and title -->
         <v-img
             :src="image"
             height="320"
@@ -7,18 +9,21 @@
             class="align-end text-white"
             :alt="title"
         >
+            <!-- Loading placeholder -->
             <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
                     <v-progress-circular indeterminate color="grey-lighten-5" />
                 </v-row>
             </template>
 
+            <!-- Title overlay on image -->
             <v-toolbar color="transparent" flat density="compact">
                 <v-card-title class="text-h5 font-weight-bold pb-4 px-4">
                     {{ title }}
                 </v-card-title>
             </v-toolbar>
 
+            <!-- Gradient overlay for text readability -->
             <div
                 class="fill-height"
                 style="
@@ -31,6 +36,7 @@
             />
         </v-img>
 
+        <!-- Location subtitle with icon -->
         <v-card-item class="pb-0">
             <v-card-subtitle
                 class="text-primary font-weight-bold text-uppercase"
@@ -41,12 +47,14 @@
             </v-card-subtitle>
         </v-card-item>
 
+        <!-- Description text -->
         <v-card-text class="text-body-1 text-grey-darken-2 py-3">
             {{ description }}
         </v-card-text>
 
         <v-divider class="mx-4" />
 
+        <!-- Action button -->
         <v-card-actions class="pa-4">
             <v-btn
                 color="primary"
@@ -63,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-// No need to assign props to a variable if they are only used in the template
+// Component props for card content
 defineProps<{
     title: string;
     subtitle: string;

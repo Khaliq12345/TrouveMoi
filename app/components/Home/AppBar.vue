@@ -1,16 +1,19 @@
+<!-- Top navigation bar with background image, search field, and action buttons -->
 <template>
+    <!-- Background container with responsive height -->
     <div
         class="w-full bg-cover bg-center bg-no-repeat"
         :class="isMobile ? 'min-h-[200px] pb-6' : 'min-h-[120px]'"
         style="background-image: url(&quot;/homebg.jpg&quot;)"
     >
+        <!-- Transparent app bar overlay -->
         <v-app-bar
             flat
             color="transparent"
             :density="isMobile ? 'default' : 'comfortable'"
             class="!bg-transparent !shadow-none"
         >
-            <!-- Titre desktop -->
+            <!-- Desktop title (hidden on mobile) -->
             <v-app-bar-title
                 class="hidden md:flex text-white font-weight-bold text-h5 drop-shadow-md"
             >
@@ -19,11 +22,12 @@
 
             <v-spacer class="hidden md:block" />
 
+            <!-- Search component -->
             <Search v-model="search" />
 
             <v-spacer class="hidden md:block" />
 
-            <!-- Boutons desktop -->
+            <!-- Desktop action buttons (settings, notifications, profile) -->
             <div class="backrop-blur-md hidden md:flex gap-2">
                 <v-btn
                     icon="mdi-cog"
@@ -49,8 +53,10 @@
 </template>
 
 <script setup>
+// Search query state
 const search = ref();
 
+// Mobile detection flag
 const isMobile = false;
 </script>
 

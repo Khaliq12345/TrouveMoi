@@ -1,24 +1,32 @@
+<!-- Home page with app bar, carousel, categories, explore section, and footer -->
 <template>
+    <!-- Main layout container -->
     <v-layout class="flex flex-col">
+        <!-- Top navigation bar with search -->
         <HomeAppBar v-model="searchQuery" />
 
-        <!-- Carrousel -->
+        <!-- Hero carousel section -->
         <HomeCarousel :items="carouselItems" />
-        <!-- Catégories -->
+        
+        <!-- Category grid section -->
         <HomeCategories :categories="beninCategories" />
 
+        <!-- Explore zones section -->
         <HomeExplore />
 
+        <!-- Mobile bottom navigation -->
         <HomeBottomNav v-if="isMobile" />
 
+        <!-- Desktop footer -->
         <Footer v-if="!isMobile"></Footer>
     </v-layout>
 </template>
 
 <script setup lang="ts">
+// Inject mobile state from parent
 const isMobile = inject("isMobile");
 
-// Catégories du répertoire du Bénin
+// Benin directory categories with styling and counts
 const beninCategories = [
     {
         id: 1,
@@ -110,7 +118,7 @@ const beninCategories = [
     },
 ];
 
-// 10 éléments mixtes images + vidéos
+// Carousel items with mixed images and videos
 const carouselItems = [
     {
         id: 1,

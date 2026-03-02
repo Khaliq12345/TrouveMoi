@@ -1,3 +1,4 @@
+<!-- Search result card displaying hotel/location with images, rating, price, amenities, and action buttons -->
 <template>
     <v-card
         class="mt-4 rounded-xl overflow-hidden"
@@ -5,13 +6,17 @@
         border
         max-width="850"
     >
+        <!-- Responsive flex container -->
         <div class="d-flex flex-column flex-sm-row w-100 overflow-hidden">
+            <!-- Image section (responsive: mobile/desktop) -->
             <div class="flex-shrink-0 w-100 w-sm-auto">
+                <!-- Mobile image gallery -->
                 <MobileImageView
                     v-if="$vuetify.display.xs"
                     :images="item.images"
                     :discount="item.discount"
                 />
+                <!-- Desktop image carousel -->
                 <DesktopImageView
                     v-else
                     :images="item.images"
@@ -19,10 +24,12 @@
                 />
             </div>
 
+            <!-- Content section -->
             <v-container
                 class="pa-2 d-flex flex-column flex-grow-1"
                 style="min-width: 0"
             >
+                <!-- Title and rating section -->
                 <div class="w-100">
                     <h3
                         class="text-h6 font-weight-bold mb-0 text-truncate"
@@ -30,6 +37,7 @@
                     >
                         {{ item.title }}
                     </h3>
+                    <!-- Rating display with star icon -->
                     <div class="d-flex align-center mt-1">
                         <v-icon
                             color="amber-darken-2"
@@ -48,6 +56,7 @@
                     </div>
                 </div>
 
+                <!-- Price and deal badge -->
                 <div class="d-flex gap-2 align-center">
                     <span class="text-h5 font-weight-bold"
                         >${{ item.pricePerNight }}</span
@@ -63,6 +72,7 @@
                     </v-chip>
                 </div>
 
+                <!-- Amenities list -->
                 <div class="d-flex flex-wrap ga-2 mt-3">
                     <div
                         v-for="amenity in item.amenities"
@@ -78,9 +88,12 @@
                     </div>
                 </div>
 
+                <!-- Spacer for desktop layout -->
                 <v-spacer class="mt-4 d-none d-sm-block"></v-spacer>
 
+                <!-- Action buttons row -->
                 <div class="d-flex align-center pt-4 pt-sm-2">
+                    <!-- Favorite and bookmark buttons -->
                     <div class="d-flex ga-2">
                         <v-btn
                             icon="mdi-heart-outline"
@@ -96,6 +109,7 @@
                         ></v-btn>
                     </div>
                     <v-spacer></v-spacer>
+                    <!-- Details button -->
                     <v-btn
                         color="primary"
                         variant="flat"
@@ -114,6 +128,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+// Sample result item data
 const item = ref({
     title: "Kanazawa Grand Inn Hotel",
     rating: 4.8,

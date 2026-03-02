@@ -1,5 +1,8 @@
+<!-- Filter panel with category chips, specifications, and apply/reset buttons -->
 <template>
+    <!-- Main container with full height flex layout -->
     <div class="d-flex flex-column" style="height: 100%; max-height: 100vh">
+        <!-- Header section showing active filter count -->
         <div class="pa-4 flex-shrink-0">
             <p class="text-caption text-medium-emphasis">
                 {{ filterCount }} {{ filterCount > 1 ? "filtres" : "filtre" }}
@@ -7,8 +10,10 @@
             <v-divider class="mt-2" />
         </div>
 
+        <!-- Scrollable filter options area -->
         <div class="flex-grow-1 overflow-y-auto pa-4 pt-0">
-            <p class="text-body-2 font-weight-medium mb-2">Catégories</p>
+            <!-- Categories section with multi-select chips -->
+            <p class="text-body-2 font-weight-medium mb-2">Categories</p>
             <v-chip-group v-model="selectedFilters" column multiple>
                 <v-chip
                     v-for="i in 10"
@@ -25,6 +30,7 @@
 
             <v-divider class="my-4" />
 
+            <!-- Specifications section with toggle buttons -->
             <p class="text-body-2 font-weight-medium mb-2">Spécificités</p>
             <div class="d-flex flex-wrap ga-2">
                 <v-btn
@@ -41,13 +47,15 @@
                     color="primary"
                     rounded="lg"
                 >
-                    Spécificité {{ i }}
+                    Specification {{ i }}
                 </v-btn>
             </div>
         </div>
 
+        <!-- Fixed bottom action buttons -->
         <v-sheet border="t" class="pa-4 flex-shrink-0 bg-surface">
             <div class="d-flex ga-2">
+                <!-- Reset all filters button -->
                 <v-btn
                     variant="text"
                     class="flex-grow-1 text-none"
@@ -55,6 +63,7 @@
                 >
                     Réinitialiser
                 </v-btn>
+                <!-- Apply filters button (disabled when no filters selected) -->
                 <v-btn
                     variant="flat"
                     color="primary"
@@ -69,16 +78,23 @@
     </div>
 </template>
 <script setup lang="ts">
+// Inject mobile state from parent
 const isMobile = inject("isMobile");
 
+// Define component events
 const emit = defineEmits(["applyFilter", "cancel"]);
+
+// State for category filters
 const selectedFilters = ref<string[]>([]);
+// State for specification filters
 const selectedFilters2 = ref<string[]>([]);
 
+// Computed total count of active filters
 const filterCount = computed(
     () => selectedFilters.value.length + selectedFilters2.value.length,
 );
 
+// Toggle specification filter on/off
 function toggleSpec(value: string) {
     const index = selectedFilters2.value.indexOf(value);
     if (index > -1) {
@@ -88,6 +104,7 @@ function toggleSpec(value: string) {
     }
 }
 
+// Clear all selected filters
 function clearFilters() {
     selectedFilters.value = [];
     selectedFilters2.value = [];

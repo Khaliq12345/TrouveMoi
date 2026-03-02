@@ -1,11 +1,15 @@
+<!-- Horizontal scrollable filter bar with region selector and filter chips -->
 <template>
   <v-sheet color="transparent" class="d-flex align-center">
+    <!-- Horizontal scrolling container -->
     <v-slide-group
       show-arrows
       class="align-center"
     >
+      <!-- First group: More filters button and region selector -->
       <v-slide-group-item>
         <div class="d-flex align-center">
+          <!-- Button to open full filter drawer -->
           <v-btn
             @click="emit('showDrawer')"
             rounded="pill"
@@ -18,6 +22,7 @@
             Plus
           </v-btn>
 
+          <!-- Region dropdown menu -->
           <v-menu>
             <template v-slot:activator="{ props }">
               <v-btn
@@ -30,10 +35,11 @@
                 append-icon="mdi-chevron-down"
               >
                 <span class="text-caption font-weight-bold">
-                  {{ select || "Région" }}
+                  {{ select || "Region" }}
                 </span>
               </v-btn>
             </template>
+            <!-- Region list items -->
             <v-list density="compact">
               <v-list-item
                 v-for="item in regions"
@@ -48,6 +54,7 @@
 
       <v-divider vertical class="my-auto" style="height: 20px"></v-divider>
 
+      <!-- Second group: Single-select filter chips -->
       <v-slide-group-item>
         <v-chip-group
           v-model="singleFilter"
@@ -71,6 +78,7 @@
 
       <v-divider vertical class="my-auto" style="height: 20px"></v-divider>
 
+      <!-- Third group: Multi-select filter chips -->
       <v-slide-group-item>
         <v-chip-group
           v-model="multiFilters"
@@ -98,23 +106,25 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+// Component events
 const emit = defineEmits(["showDrawer"]);
 
+// Available regions for dropdown
 const regions = ['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming'];
 const select = ref("Texas");
 
-// Un état pour chaque logique de sélection
-const singleFilter = ref(1);        // Choix unique
-const multiFilters = ref([]);       // Choix multiple
+// Filter states
+const singleFilter = ref(1);        // Single choice filter
+const multiFilters = ref([]);       // Multiple choice filters
 </script>
 
 <style scoped>
-/* Force l'alignement horizontal parfait au pixel près */
+/* Ensure perfect horizontal alignment */
 :deep(.v-slide-group__content) {
   align-items: center !important;
 }
 
-/* Supprime les marges par défaut des chip-groups pour un alignement propre */
+/* Remove default padding for clean alignment */
 :deep(.v-chip-group .v-slide-group__content) {
   padding: 0 !important;
 }

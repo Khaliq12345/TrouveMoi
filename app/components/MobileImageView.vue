@@ -1,7 +1,11 @@
+<!-- Mobile horizontal scrollable image gallery with discount badge -->
 <template>
+    <!-- Full-width container with background -->
     <div class="position-relative w-100 overflow-hidden bg-grey-lighten-4">
+        <!-- Horizontal scrolling image group -->
         <v-slide-group class="pa-2" center-active>
             <v-slide-group-item v-for="(imgId, i) in images" :key="i">
+                <!-- Individual image card -->
                 <v-card
                     width="150"
                     height="110"
@@ -17,6 +21,7 @@
             </v-slide-group-item>
         </v-slide-group>
 
+        <!-- Discount badge overlay (top-left) -->
         <v-chip
             v-if="discount"
             color="success"
@@ -31,5 +36,6 @@
 </template>
 
 <script setup lang="ts">
+// Component props for images and optional discount
 defineProps<{ images: number[]; discount?: string }>();
 </script>

@@ -1,5 +1,8 @@
+<!-- Grid of category cards with icons, counts, and hover effects for browsing Benin locations -->
 <template>
+    <!-- Container with rounded background -->
     <v-sheet class="py-8 px-4 rounded-3xl bg-grey-lighten-4" flat>
+        <!-- Header section with title and "View all" button -->
         <v-toolbar color="transparent" flat class="mb-4">
             <div>
                 <h2 class="text-h5 font-weight-bold text-grey-darken-3">
@@ -10,6 +13,7 @@
                 </p>
             </div>
             <v-spacer />
+            <!-- Desktop "View all" button -->
             <v-btn
                 variant="text"
                 color="primary"
@@ -20,6 +24,7 @@
             </v-btn>
         </v-toolbar>
 
+        <!-- Responsive grid of category cards -->
         <v-row dense>
             <v-col
                 v-for="(category, index) in categories"
@@ -29,7 +34,9 @@
                 md="3"
                 :class="{ 'd-none d-md-block': index >= 5 }"
             >
+                <!-- Hover effect wrapper -->
                 <v-hover v-slot="{ isHovering, props }">
+                    <!-- Category card with gradient background and animations -->
                     <v-card
                         v-bind="props"
                         :to="category.route"
@@ -41,9 +48,11 @@
                             transform: isHovering ? 'translateY(-8px)' : 'none',
                         }"
                     >
+                        <!-- Count chip and icon avatar -->
                         <div
                             class="d-flex justify-space-between align-start mb-4"
                         >
+                            <!-- Item count badge -->
                             <v-chip
                                 :color="category.color"
                                 size="x-small"
@@ -51,6 +60,7 @@
                             >
                                 {{ category.count }}+
                             </v-chip>
+                            <!-- Category icon with rotation on hover -->
                             <v-avatar
                                 :color="category.color"
                                 size="48"
@@ -65,17 +75,20 @@
                             </v-avatar>
                         </div>
 
+                        <!-- Category name -->
                         <div
                             class="text-h6 font-weight-bold text-grey-darken-3"
                         >
                             {{ category.name }}
                         </div>
+                        <!-- Category tagline -->
                         <div
                             class="text-caption text-grey-darken-1 text-truncate"
                         >
                             {{ category.tagline }}
                         </div>
 
+                        <!-- Arrow icon with slide animation on hover -->
                         <v-icon
                             icon="mdi-arrow-right"
                             :color="category.color"
@@ -87,6 +100,7 @@
             </v-col>
         </v-row>
 
+        <!-- Mobile "View all" button -->
         <v-btn
             block
             color="primary"
@@ -101,12 +115,14 @@
 </template>
 
 <script setup>
+// Component props for category data
 defineProps({
     categories: { type: Array, default: () => [] },
 });
 </script>
 
 <style scoped>
+/* Smooth transition for hover effects */
 .transition-swing {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) !important;
 }

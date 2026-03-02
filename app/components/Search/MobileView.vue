@@ -1,10 +1,14 @@
+<!-- Mobile view with map/video toggle and results button -->
 <template>
+    <!-- Main container (mobile only) -->
     <v-main class="mobileView d-md-none fill-height">
         <v-sheet class="fill-height d-flex flex-column bg-transparent">
+            <!-- Top controls bar -->
             <v-sheet
                 color="transparent"
                 class="d-flex justify-end align-center pa-4 ga-2"
             >
+                <!-- Map/Video toggle buttons -->
                 <v-btn-toggle
                     v-model="internalMode"
                     color="primary"
@@ -21,6 +25,7 @@
                     >
                 </v-btn-toggle>
 
+                <!-- Button to open results bottom sheet -->
                 <v-btn
                     rounded="pill"
                     size="small"
@@ -31,6 +36,7 @@
                 </v-btn>
             </v-sheet>
 
+            <!-- Main content area (map or video view) -->
             <v-sheet
                 color="transparent"
                 class="flex-grow-1 d-flex align-center justify-center"
@@ -42,10 +48,11 @@
 </template>
 
 <script setup>
+// Component props and events
 const props = defineProps(["viewMode"]);
 const emit = defineEmits(["update:viewMode", "open-results"]);
 
-// Utilisation d'une computed ou d'un watch pour synchroniser le v-model
+// Two-way binding for view mode
 const internalMode = computed({
     get: () => props.viewMode,
     set: (val) => emit("update:viewMode", val),
