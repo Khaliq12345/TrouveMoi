@@ -8,7 +8,7 @@
     >
         <!-- Result items loop -->
         <template v-for="item in results" :key="item.id">
-            <SearchResult :item="item" class="mb-2" />
+            <SearchResult class="mb-2 w-100"/>
         </template>
 
         <!-- Loading indicator -->

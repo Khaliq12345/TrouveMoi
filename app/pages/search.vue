@@ -7,14 +7,14 @@
 
     <!-- Mobile view (map/video toggle) -->
     <SearchMobileView
-      v-if="isMobile"
+      v-show="isMobile"
       v-model:viewMode="viewMode"
       @open-results="resultsSheet = true"
     />
 
     <!-- Desktop view (filters + results + map) -->
     <SearchDesktopView
-      v-if="!isMobile"
+      v-show="!isMobile"
       :results="results"
       @load="onLoad"
       @open-drawer="drawer = true"
@@ -43,7 +43,12 @@
     </v-dialog>
 
     <!-- Mobile results bottom sheet -->
-    <v-bottom-sheet v-if="isMobile" v-model="resultsSheet" inset scrollable>
+    <v-bottom-sheet
+      v-if="isMobile"
+      v-model="resultsSheet"
+      scrollable
+      class="w-100"
+    >
       <v-card height="70vh" class="d-flex flex-column">
         <!-- Header fixe (non scrollable) -->
         <v-card-title class="d-flex flex-column align-start pa-2 flex-shrink-0">
@@ -57,7 +62,10 @@
             />
           </div>
           <!-- Mini filter bar - reste visible en haut -->
-          <SearchMiniFilter @show-drawer="mobileFilter = true" class="overflow-auto w-100"/>
+          <SearchMiniFilter
+            @show-drawer="mobileFilter = true"
+            class="overflow-auto w-100"
+          />
         </v-card-title>
 
         <v-divider class="flex-shrink-0" />

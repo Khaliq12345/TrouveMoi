@@ -7,7 +7,7 @@
     >
         <!-- Image carousel with hover arrows -->
         <v-carousel
-            height="220"
+            height="250"
             hide-delimiters
             show-arrows="hover"
             class="rounded-s-xl bg-grey-lighten-4"

@@ -11,7 +11,7 @@ const { width, height } = useWindowSize();
 const searchQuery = ref("");
 
 const isMobile = computed(() => {
-    return width.value < 768;
+    return width.value < 960;
 });
 
 // Inject variables
