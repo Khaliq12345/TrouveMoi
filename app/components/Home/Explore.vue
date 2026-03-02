@@ -1,6 +1,7 @@
+<!-- Carousel showcasing 30 zones to explore in Benin with images and descriptions -->
 <template>
     <v-container fluid class="py-12">
-        <!-- Header -->
+        <!-- Header section with title and description -->
         <div class="text-center mb-10">
             <v-chip color="primary" class="mb-4" variant="flat">
                 Exploration
@@ -13,7 +14,7 @@
             </p>
         </div>
 
-        <!-- This is the section where we display all the places to explore -->
+        <!-- Horizontal carousel of zone cards -->
         <v-carousel hide-delimiters show-arrows="hover" height="600">
             <v-carousel-item v-for="(zone, index) in zones" :key="index">
                 <gradient-card-with-image
@@ -31,6 +32,7 @@
 <script setup>
 import GradientCardWithImage from "./GradientCardWithImage.vue";
 
+// Array of 30 tourist zones in Benin with location and description
 const zones = [
     {
         id: 1,

@@ -1,3 +1,4 @@
+<!-- Top navigation bar with background image, search field, and action buttons -->
 <template>
     <v-app-bar
         flat
@@ -75,19 +76,6 @@ const isMobile = inject("isMobile");
 </script>
 
 <style scoped>
-/* Real Glassmorphism effect */
-.glass-search :deep(.v-field) {
-    background: rgba(255, 255, 255, 0.15) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white !important;
-}
-
-.glass-search :deep(input::placeholder) {
-    color: rgba(255, 255, 255, 0.8) !important;
-}
-
 .search-container {
     width: 100%;
     max-width: 500px;

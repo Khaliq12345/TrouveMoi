@@ -1,9 +1,12 @@
+<!-- Vertical carousel displaying images with author information and navigation controls -->
 <template>
+    <!-- Responsive container for carousel -->
     <v-sheet
         class="mx-auto relative overflow-hidden"
         :width="isMobile ? 415 : 600"
         :height="isMobile ? 800 : 799"
     >
+        <!-- Vertical scrolling carousel with auto-cycle -->
         <v-carousel
             v-model="currentIndex"
             direction="vertical"
@@ -15,6 +18,7 @@
             :cycle="true"
             :height="isMobile ? 800 : 799"
         >
+            <!-- Carousel items with cover images -->
             <v-carousel-item
                 v-for="(item, i) in AuthorItems"
                 :key="i"
@@ -22,6 +26,7 @@
                 cover
             ></v-carousel-item>
 
+            <!-- Overlay for author info and counter -->
             <v-overlay
                 :scrim="false"
                 content-class="w-100 h-100 d-flex flex-column align-center justify-end pointer-pass-through py-3"
@@ -30,6 +35,7 @@
                 no-click-animation
                 persistent
             >
+                <!-- Author card with transition effect -->
                 <v-scroll-x-transition mode="out-in" appear>
                     <v-sheet :key="currentIndex" rounded="xl">
                         <v-list-item
@@ -49,11 +55,11 @@
 // Setup all prop(s)
 const backgroundImage = defineModel();
 
-// Define all reactive variables
+// Current slide index
 const currentIndex = shallowRef(0);
 const currentItem = toRef(() => AuthorItems[currentIndex.value]);
 
-// Setup all provided variables
+// Inject mobile state from parent
 const isMobile = inject("isMobile");
 
 // Define data
@@ -175,9 +181,11 @@ watch(currentIndex, (newValue) => {
 </script>
 
 <style scoped>
+/* Hide scrollbar for webkit browsers */
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
+/* Hide scrollbar for other browsers */
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
