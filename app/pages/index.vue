@@ -21,13 +21,4 @@
 <script setup lang="ts">
 // Inject mobile state from parent
 const isMobile = inject("isMobile");
-
-const { width, height } = useWindowSize();
-
-const isMobile = computed(() => {
-    return width.value < 768;
-});
-
-// Inject variables
-provide("isMobile", isMobile);
 </script>

@@ -51,32 +51,9 @@
                 </v-btn>
             </div>
         </div>
-
-        <!-- Fixed bottom action buttons -->
-        <v-sheet border="t" class="pa-4 flex-shrink-0 bg-surface">
-            <div class="d-flex ga-2">
-                <!-- Reset all filters button -->
-                <v-btn
-                    variant="text"
-                    class="flex-grow-1 text-none"
-                    @click="clearFilters"
-                >
-                    Réinitialiser
-                </v-btn>
-                <!-- Apply filters button (disabled when no filters selected) -->
-                <v-btn
-                    variant="flat"
-                    color="primary"
-                    class="flex-grow-1 text-none"
-                    :disabled="filterCount === 0"
-                    @click="emit('applyFilter')"
-                >
-                    Appliquer
-                </v-btn>
-            </div>
-        </v-sheet>
     </div>
 </template>
+
 <script setup lang="ts">
 // Inject mobile state from parent
 const isMobile = inject("isMobile");

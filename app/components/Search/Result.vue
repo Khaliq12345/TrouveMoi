@@ -2,7 +2,7 @@
 <template>
     <v-card
         class="mt-4 rounded-xl overflow-hidden"
-        elevation="0"
+        elevation="5"
         border
         max-width="850"
     >

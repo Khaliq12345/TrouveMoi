@@ -3,23 +3,20 @@
     <!-- Main container (desktop only) -->
     <v-main class="desktopView d-none d-md-flex fill-height">
         <v-container fluid class="pa-0 fill-height">
-            <v-row no-gutters class="fill-height">
+            <v-row no-gutters class="fill-height" size="12">
                 <!-- Left and center columns (filters + results) -->
-                <v-col cols="12" md="8" class="pa-0 fill-height">
-                    <v-row no-gutters class="fill-height">
+                <v-col lg="9" md="8" class="pa-0 fill-height">
+                    <v-row no-gutters class="fill-height" size="12">
                         <!-- Filter sidebar (large screens only) -->
-                        <v-col
-                            cols="4"
-                            class="d-none d-lg-flex border-e fill-height"
-                        >
+                        <v-col lg="3" class="d-none d-lg-flex fill-height">
                             <SearchFilter />
                         </v-col>
 
                         <!-- Results list column -->
                         <v-col
-                            cols="12"
-                            lg="8"
-                            class="d-flex flex-column"
+                            lg="9"
+                            sm="8"
+                            class="d-flex flex-column w-full"
                             style="height: 100vh; overflow: hidden"
                         >
                             <!-- Header with title and mini filter -->
@@ -47,16 +44,15 @@
                 </v-col>
 
                 <!-- Right column (map placeholder) -->
-                <v-col
-                    cols="4"
-                    class="d-none d-md-flex bg-red-500 border-s"
-                ></v-col>
+                <v-col md="4" lg="3" class="d-none d-md-flex border-s"> </v-col>
             </v-row>
         </v-container>
     </v-main>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// ✅ After
+
 // Component props and events
 defineProps(["results"]);
 defineEmits(["load", "open-drawer"]);
