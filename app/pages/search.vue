@@ -7,14 +7,14 @@
 
     <!-- Mobile view (map/video toggle) -->
     <SearchMobileView
-      v-if="isMobile"
+      v-show="isMobile"
       v-model:viewMode="viewMode"
       @open-results="resultsSheet = true"
     />
 
     <!-- Desktop view (filters + results + map) -->
     <SearchDesktopView
-      v-if="!isMobile"
+      v-show="!isMobile"
       :results="results"
       @load="onLoad"
       @open-drawer="drawer = true"
