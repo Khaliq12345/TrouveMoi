@@ -4,7 +4,6 @@
   <v-layout class="flex-column fill-height">
     <!-- Top navigation bar -->
     <HomeAppBar />
-
     <!-- Mobile view (map/video toggle) -->
     <SearchMobileView
       v-show="isMobile"
@@ -19,21 +18,6 @@
       @load="onLoad"
       @open-drawer="drawer = true"
     />
-
-    <!-- Desktop filter drawer (temporary sidebar) -->
-    <ClientOnly>
-      <v-navigation-drawer
-        v-if="!isMobile"
-        v-model="drawer"
-        temporary
-        width="320"
-        location="left"
-        class="fill-height"
-        style="top: 0; height: 100vh; position: fixed"
-      >
-        <SearchFilter />
-      </v-navigation-drawer>
-    </ClientOnly>
 
     <!-- Mobile filter dialog -->
     <v-dialog v-if="isMobile" v-model="mobileFilter" width="auto">
@@ -77,6 +61,21 @@
       </v-card>
     </v-bottom-sheet>
   </v-layout>
+  <!-- Desktop filter drawer (temporary sidebar) -->
+  <ClientOnly>
+    <v-navigation-drawer
+      v-if="!isMobile"
+      v-model="drawer"
+      temporary
+      width="320"
+      location="left"
+      class="fill-height z-50"
+      elevation="10"
+      style="top: 0; height: 100vh; position: fixed"
+    >
+      <SearchFilter />
+    </v-navigation-drawer>
+  </ClientOnly>
 </template>
 
 <script setup>

@@ -1,7 +1,7 @@
 <!-- Desktop layout with filter sidebar, results list, and map view in three-column layout -->
 <template>
   <!-- Main container (desktop only) -->
-  <v-main class="fill-height">
+  <v-main class="fill-height border-t-xl border-t-md border-black">
     <v-container fluid class="pa-0 fill-height">
       <v-row no-gutters class="fill-height" size="12">
         <!-- Left and center columns (filters + results) -->
@@ -20,10 +20,10 @@
             >
               <!-- Header with title and mini filter -->
               <div class="px-1 flex-shrink-0 mt-3">
+                <SearchMenu />
                 <h1 class="text-h5 font-weight-bold mb-2">
                   Liste des résultats
                 </h1>
-                <SearchMenu />
                 <!-- Mini filter (shown when sidebar is hidden) -->
                 <div class="d-block d-lg-none">
                   <SearchMiniFilter @show-drawer="$emit('open-drawer')" />
