@@ -4,14 +4,14 @@
         :height="isMobile ? 76 : 84"
         flat
         :order="1"
-        v-if="!actionButtonsIsVisible"
+        v-show="!actionButtonsIsVisible"
         class="glass-bar position-fixed"
     >
-        <DetailActions></DetailActions>
+        <DetailActions v-model="activeTab"></DetailActions>
     </v-app-bar>
 
     <div class="d-flex justify-center w-100 mb-md-6" ref="actionButtons">
-        <DetailActions></DetailActions>
+        <DetailActions v-model="activeTab"></DetailActions>
     </div>
 </template>
 
@@ -20,6 +20,7 @@ import { useElementVisibility } from "@vueuse/core";
 
 // 1. Inject the responsiveness provided by your Parent/Plugin
 const isMobile = inject("isMobile", false); // Added default value
+const activeTab = ref("services");
 
 // 2. Setup the Template Ref
 const actionButtons = useTemplateRef("actionButtons");

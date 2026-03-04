@@ -2,9 +2,10 @@
     <v-app-bar
         class="position-fixed"
         color="primary"
-        v-if="!headerWithImageIsVisible"
+        v-show="!headerWithImageIsVisible"
         flat
         border
+        :order="1"
     >
         <template v-slot:prepend>
             <v-app-bar-nav-icon></v-app-bar-nav-icon>

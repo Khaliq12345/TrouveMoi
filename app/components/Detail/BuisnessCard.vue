@@ -14,7 +14,14 @@
             cover
         />
 
-        <div class="carousel-overlay">
+        <v-overlay
+            :scrim="false"
+            content-class="w-100 h-100 d-flex flex-column align-center justify-end pointer-pass-through py-3"
+            contained
+            model-value
+            no-click-animation
+            persistent
+        >
             <div class="text-center text-white carousel-content">
                 <div class="d-flex align-center justify-center mb-2">
                     <v-rating
@@ -48,7 +55,7 @@
                 <div class="d-flex justify-center gap-3">
                     <v-btn
                         variant="flat"
-                        color="teal-darken-2"
+                        color="primary"
                         class="px-6 font-weight-bold"
                     >
                         Book Table
@@ -58,7 +65,7 @@
                     </v-btn>
                 </div>
             </div>
-        </div>
+        </v-overlay>
     </v-carousel>
 </template>
 
@@ -97,23 +104,6 @@ const images = [
 <style scoped>
 .carousel-wrapper {
     position: relative;
-}
-
-.carousel-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.75) 0%,
-        rgba(0, 0, 0, 0.2) 55%,
-        transparent 100%
-    );
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    padding-bottom: 40px;
-    pointer-events: none;
 }
 
 .carousel-content {
