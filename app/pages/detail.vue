@@ -1,77 +1,83 @@
 <template>
-  <div class="page-layout">
-    <DetailBusinessHeader />
+  <v-app>
+    <v-main class="bg-white">
+      <div class="page-container">
+        <DetailBusinessHeader />
 
-    <!-- Sticky Navigation -->
-    <div 
-      v-if="isMobile"
-      ref="stickyNav"
-      class="sticky-nav bg-white"
-      :class="{ 'elevation-2': isScrolled }"
-    >
-      <!-- Titre -->
-      <v-expand-transition>
+        <!-- Sticky Navigation - Mobile Only -->
         <div 
-          v-show="isScrolled" 
-          class="px-4 pt-2 pb-1 border-b-thin"
+          v-if="isMobile"
+          ref="stickyNav"
+          class="sticky-nav bg-white"
+          :class="{ 'elevation-2': isScrolled }"
         >
-          <span class="text-subtitle-2 font-weight-bold text-truncate d-block">
-            {{ businessTitle }}
-          </span>
+          <!-- Titre au scroll -->
+          <v-expand-transition>
+            <div 
+              v-show="isScrolled" 
+              class="px-4 pt-2 pb-1 border-b-thin"
+            >
+              <span class="text-subtitle-2 font-weight-bold text-truncate d-block">
+                {{ businessTitle }}
+              </span>
+            </div>
+          </v-expand-transition>
+
+          <!-- Tabs -->
+          <div class="d-flex overflow-x-auto border-b-thin hide-scrollbar">
+            <button 
+              v-for="tab in tabs" 
+              :key="tab.id"
+              class="tab-button flex-grow-1 py-3 px-4 text-body-2 font-weight-medium text-medium-emphasis text-no-wrap"
+              :class="{ 'text-primary font-weight-bold tab-active': activeTab === tab.id }"
+              @click="scrollToSection(tab.id)"
+            >
+              {{ tab.label }}
+            </button>
+          </div>
         </div>
-      </v-expand-transition>
 
-      <!-- Tabs -->
-      <div class="d-flex overflow-x-auto border-b-thin">
-        <button 
-          v-for="tab in tabs" 
-          :key="tab.id"
-          class="tab-button flex-grow-1 py-3 px-4 text-body-2 font-weight-medium text-medium-emphasis"
-          :class="{ 'text-primary font-weight-bold tab-active': activeTab === tab.id }"
-          @click="scrollToSection(tab.id)"
-        >
-          {{ tab.label }}
-        </button>
+        <!-- Contenu -->
+        <div class="content-wrapper pb-16">
+          <DetailMiniInfo v-if="isMobile" />
+          <DetailActionsButtons v-else />
+
+          <section id="services" class="scroll-section"><DetailServiceSlide /></section>
+          <section id="amenities" class="scroll-section"><DetailAmenities /></section>
+          <section id="location" class="scroll-section"><DetailLocationHours /></section>
+          <section id="vibes" class="scroll-section"><DetailVibes /></section>
+          <section id="reviews" class="scroll-section">
+            <ClientOnly><DetailReviews /></ClientOnly>
+          </section>
+
+          <DetailFooter />
+        </div>
       </div>
-    </div>
 
-    <main class="pb-16">
-      <DetailMiniInfo v-if="isMobile" />
-      <DetailActionsButtons v-else />
-
-      <section id="services" class="scroll-section"><DetailServiceSlide /></section>
-      <section id="amenities" class="scroll-section"><DetailAmenities /></section>
-      <section id="location" class="scroll-section"><DetailLocationHours /></section>
-      <section id="vibes" class="scroll-section"><DetailVibes /></section>
-      <section id="reviews" class="scroll-section">
-        <ClientOnly><DetailReviews /></ClientOnly>
-      </section>
-
-      <DetailFooter />
-    </main>
-
-    <!-- Bottom Navigation -->
-    <v-bottom-navigation
-      v-if="isMobile"
-      grow
-      elevation="10"
-      height="60"
-      fixed
-    >
-      <v-btn value="call">
-        <v-icon>mdi-phone</v-icon>
-        <span>Appeler</span>
-      </v-btn>
-      <v-btn value="reserve" class="bg-primary text-white mx-2 rounded-lg">
-        <v-icon>mdi-calendar-check</v-icon>
-        <span>Réserver</span>
-      </v-btn>
-      <v-btn value="map">
-        <v-icon>mdi-map-marker</v-icon>
-        <span>Y aller</span>
-      </v-btn>
-    </v-bottom-navigation>
-  </div>
+      <!-- Bottom Navigation - Mobile Only -->
+      <v-bottom-navigation
+        v-if="isMobile"
+        v-model="bottomNav"
+        grow
+        elevation="10"
+        height="60"
+        class="bottom-nav-safe"
+      >
+        <v-btn value="call">
+          <v-icon>mdi-phone</v-icon>
+          <span>Appeler</span>
+        </v-btn>
+        <v-btn value="reserve" class="bg-primary text-white mx-2 rounded-lg">
+          <v-icon>mdi-calendar-check</v-icon>
+          <span>Réserver</span>
+        </v-btn>
+        <v-btn value="map">
+          <v-icon>mdi-map-marker</v-icon>
+          <span>Y aller</span>
+        </v-btn>
+      </v-bottom-navigation>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
@@ -81,6 +87,7 @@ const isMobile = inject("isMobile");
 const activeTab = ref(null);
 const isScrolled = ref(false);
 const stickyNav = ref(null);
+const bottomNav = ref(null);
 const businessTitle = ref("Nom du Business");
 
 const tabs = [
@@ -139,26 +146,36 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.page-layout {
-  min-height: 100vh;
+/* Container principal sans overflow pour sticky */
+.page-container {
+  min-height: 100%;
 }
 
+/* Sticky Navigation - Solution: sticky avec will-change */
 .sticky-nav {
+  position: -webkit-sticky; /* Safari */
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 100;
+  will-change: transform; /* Force hardware acceleration */
+  transform: translateZ(0); /* Fix Safari */
+  backface-visibility: hidden; /* Fix Safari */
 }
 
-/* Hide scrollbar */
-.overflow-x-auto::-webkit-scrollbar {
-  display: none;
-}
-.overflow-x-auto {
+/* Cache scrollbar */
+.hide-scrollbar {
+  -ms-overflow-style: none;
   scrollbar-width: none;
 }
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 
-/* Tab active indicator */
-.tab-active {
+/* Tab active */
+.tab-button {
+  background: none;
+  border: none;
+  cursor: pointer;
   position: relative;
 }
 .tab-active::after {
@@ -171,7 +188,24 @@ onUnmounted(() => {
   background: currentColor;
 }
 
+/* Sections */
 .scroll-section {
-  scroll-margin-top: 120px;
+  scroll-margin-top: 140px;
+}
+
+/* Bottom nav fixe - Solution: fixed avec env(safe-area-inset-bottom) */
+.bottom-nav-safe {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+  transform: translateZ(0) !important;
+  z-index: 1000 !important;
+}
+
+/* Padding pour éviter que le contenu soit caché derrière la nav */
+.content-wrapper {
+  padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
 }
 </style>
