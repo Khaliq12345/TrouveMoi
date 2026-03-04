@@ -11,7 +11,7 @@
         <HomeExplore />
 
         <!-- Mobile bottom navigation -->
-        <HomeBottomNav v-if="isMobile" />
+        <BottomNav v-if="isMobile" />
 
         <!-- Desktop footer -->
         <Footer v-if="!isMobile"></Footer>
