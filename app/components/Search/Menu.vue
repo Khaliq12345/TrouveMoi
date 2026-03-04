@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex ga-2 pa-1">
+  <div class="d-flex ga-x-2">
     <v-menu
       v-for="n in 4"
       :key="n"
