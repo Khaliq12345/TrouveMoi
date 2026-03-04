@@ -12,7 +12,7 @@
       </v-btn>
     </div>
 
-    <v-slide-group class="pa-0" show-arrows="hover">
+    <v-slide-group class="pa-0">
       <v-slide-group-item v-for="(dish, n) in dishes" :key="n">
         <v-card
           class="ma-3 rounded-xl custom-card"
