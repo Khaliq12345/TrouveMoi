@@ -4,15 +4,15 @@
         :height="isMobile ? 76 : 84"
         flat
         :order="1"
-        v-if="!actionButtonsIsVisible"
+        v-if="!actionButtonsIsVisible && isMobile"
         class="glass-bar position-fixed"
     >
         <DetailActions></DetailActions>
     </v-app-bar>
 
-    <div class="d-flex justify-center w-100 mb-md-6" ref="actionButtons">
+    <v-container class="w-100 mb-md-6 " ref="actionButtons">
         <DetailActions></DetailActions>
-    </div>
+    </v-container>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,5 @@
 <template>
-    <v-slide-group class="w-100 glass-bar" center-active show-arrows="desktop">
+    <v-slide-group class="w-100" center-active show-arrows="desktop">
         <v-slide-group-item>
             <div class="d-flex align-center ga-3 px-4 fill-height">
                 <v-btn

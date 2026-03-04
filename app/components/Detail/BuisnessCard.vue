@@ -16,6 +16,9 @@
 
         <div class="carousel-overlay">
             <div class="text-center text-white carousel-content">
+              <h1 class="text-h3 font-weight-black mb-1 title-text">
+                  {{ restaurantTitle }}
+              </h1>
                 <div class="d-flex align-center justify-center mb-2">
                     <v-rating
                         :model-value="4.5"
@@ -32,9 +35,7 @@
                     </span>
                 </div>
 
-                <h1 class="text-h3 font-weight-black mb-1 title-text">
-                    {{ restaurantTitle }}
-                </h1>
+
 
                 <p class="text-body-2 font-weight-bold mb-2 subtitle-text">
                     $$$ • Italian • 11:30 AM - 10:00 PM

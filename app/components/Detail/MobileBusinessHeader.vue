@@ -2,7 +2,7 @@
     <v-app-bar
         class="position-fixed"
         color="primary"
-        v-if="!headerWithImageIsVisible"
+        v-if="!headerWithImageIsVisible && isMobile"
         flat
         border
     >
