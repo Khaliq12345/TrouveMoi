@@ -1,7 +1,5 @@
 <template>
   <v-container class="pa-0 py-8 px-4">
-    <v-row>
-      <v-col cols="12" md="6">
         <v-card flat class="rounded-xl overflow-hidden border mb-4">
           <v-img 
             src="https://maps.googleapis.com/maps/api/staticmap?center=37.7564,-122.4213&zoom=15&size=600x300&markers=color:red%7C37.7564,-122.4213&key=VOTRE_CLE_API"
@@ -22,9 +20,7 @@
             </v-btn>
           </v-card-text>
         </v-card>
-      </v-col>
 
-      <v-col cols="12" md="6">
         <v-table density="compact" class="hours-table">
           <tbody>
             <tr v-for="(schedule, i) in businessHours" :key="i">
@@ -38,8 +34,7 @@
             </tr>
           </tbody>
         </v-table>
-      </v-col>
-    </v-row>
+ 
   </v-container>
 </template>
 
