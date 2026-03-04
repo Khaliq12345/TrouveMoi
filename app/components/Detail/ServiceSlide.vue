@@ -1,7 +1,10 @@
+<!-- Horizontal scrollable popular dishes carousel with images and ratings -->
 <template>
   <v-container class="pa-0 py-6">
+    <!-- Section header -->
     <div class="d-flex align-center justify-space-between mb-6 px-4">
       <h2 class="text-h5 font-weight-bold">Popular Dishes</h2>
+      <!-- View full menu link -->
       <v-btn
         variant="text"
         color="primary"
@@ -12,15 +15,19 @@
       </v-btn>
     </div>
 
+    <!-- Scrollable dishes carousel -->
     <v-slide-group class="pa-0">
       <v-slide-group-item v-for="(dish, n) in dishes" :key="n">
+        <!-- Dish card -->
         <v-card
           class="ma-3 rounded-xl custom-card"
           width="280"
           height="320"
           flat
         >
+          <!-- Dish image with overlay info -->
           <v-img :src="dish.image" height="100%" cover class="d-flex align-end">
+            <!-- Popular badge -->
             <div class="position-absolute w-100" style="top: 0">
               <v-chip
                 v-if="dish.isPopular"
@@ -33,7 +40,9 @@
               </v-chip>
             </div>
 
+            <!-- Dish info overlay with blur effect -->
             <div class="blur-content ma-1 pa-2 rounded-xl">
+              <!-- Name and price -->
               <div class="d-flex justify-space-between align-center mb-1">
                 <span class="text-subtitle-1 font-weight-bold text-white">
                   {{ dish.name }}
@@ -43,13 +52,12 @@
                 </span>
               </div>
 
+              <!-- Rating and reviews -->
               <div
                 class="d-flex align-center text-caption text-white"
                 style="opacity: 0.9"
               >
-                <v-icon size="14" color="amber-darken-2" class="mr-1"
-                  >mdi-star</v-icon
-                >
+                <v-icon size="14" color="amber-darken-2" class="mr-1">mdi-star</v-icon>
                 <span class="font-weight-bold">{{ dish.rating }}</span>
                 <span class="mx-1">•</span>
                 <span>{{ dish.reviews }} reviews</span>
@@ -63,6 +71,7 @@
 </template>
 
 <script setup>
+// Popular dishes data
 const dishes = [
   {
     name: "Mushroom Ravioli",
@@ -148,6 +157,7 @@ const dishes = [
 </script>
 
 <style scoped>
+/* Card hover animation */
 .custom-card {
   transition: all 0.3s ease;
 }
@@ -156,7 +166,7 @@ const dishes = [
   transform: translateY(-8px);
 }
 
-/* On change un peu la couleur du texte pour qu'il ressorte sur le flou */
+/* White text with shadow for readability */
 .text-white {
   color: white !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);

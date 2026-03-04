@@ -1,9 +1,10 @@
-<!-- components/Detail/DetailSidebar.vue -->
+<!-- Sidebar with contact info, about, community questions, and similar businesses -->
 <template>
   <div>
-    <!-- Contact Card -->
+    <!-- Contact information card -->
     <v-card class="mb-4 border" flat>
       <v-list>
+        <!-- Website link -->
         <v-list-item>
           <template v-slot:prepend>
             <v-icon color="red">mdi-web</v-icon>
@@ -12,12 +13,14 @@
             <a href="#" class="text-decoration-none text-primary">bottegasf.com</a>
           </v-list-item-title>
         </v-list-item>
+        <!-- Phone number -->
         <v-list-item>
           <template v-slot:prepend>
             <v-icon color="red">mdi-phone</v-icon>
           </template>
           <v-list-item-title class="text-body-2">(415) 555-0123</v-list-item-title>
         </v-list-item>
+        <!-- Address with directions link -->
         <v-list-item>
           <template v-slot:prepend>
             <v-icon color="red">mdi-map-marker</v-icon>
@@ -29,18 +32,20 @@
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
+      <!-- Order online button -->
       <v-card-actions class="pa-4">
         <v-btn block color="red" variant="flat" class="text-none font-weight-bold" style="background-color: #ff1a1a;">
           Order Online
         </v-btn>
       </v-card-actions>
       <v-divider></v-divider>
+      <!-- Reservation button -->
       <v-card-actions class="pa-4">
         <v-btn block variant="outlined" class="text-none">Make a Reservation</v-btn>
       </v-card-actions>
     </v-card>
 
-    <!-- About -->
+    <!-- About section -->
     <v-card class="mb-4 pa-4 border" flat>
       <div class="text-subtitle-1 font-weight-bold mb-3">About the Business</div>
       <p class="text-body-2 mb-3">
@@ -49,9 +54,10 @@
       <v-btn variant="text" color="primary" class="text-none pa-0" size="small">Read more</v-btn>
     </v-card>
 
-    <!-- Community -->
+    <!-- Community questions section -->
     <v-card class="mb-4 pa-4 border" flat>
       <div class="text-subtitle-1 font-weight-bold mb-3">Ask the Community</div>
+      <!-- Questions list -->
       <v-list density="compact" class="pa-0 bg-transparent">
         <v-list-item v-for="question in communityQuestions" :key="question.id" class="px-0 py-2">
           <div class="text-body-2 font-weight-medium mb-1">{{ question.text }}</div>
@@ -61,9 +67,10 @@
       <v-btn variant="text" color="primary" class="text-none mt-2" size="small">Ask a question</v-btn>
     </v-card>
 
-    <!-- Similar -->
+    <!-- Similar businesses section -->
     <v-card class="mb-4 pa-4 border" flat>
       <div class="text-subtitle-1 font-weight-bold mb-3">You Might Also Consider</div>
+      <!-- Similar businesses list -->
       <div v-for="business in similarBusinesses" :key="business.name" class="d-flex gap-3 mb-4">
         <v-img :src="business.image" width="80" height="80" cover class="rounded flex-shrink-0"></v-img>
         <div>
@@ -82,12 +89,14 @@
 </template>
 
 <script setup>
+// Community questions data
 const communityQuestions = [
   { id: 1, text: 'Is there outdoor seating available?', answers: 3 },
   { id: 2, text: 'Do they take reservations for large groups?', answers: 2 },
   { id: 3, text: 'What\'s the best dish here?', answers: 8 }
 ]
 
+// Similar businesses data
 const similarBusinesses = [
   { name: 'Flour + Water', image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200', rating: 4.5, reviewCount: 892, category: 'Italian' },
   { name: 'Delfina', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200', rating: 4, reviewCount: 567, category: 'Italian' }

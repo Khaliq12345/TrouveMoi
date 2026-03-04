@@ -1,7 +1,11 @@
+<!-- Horizontal scrollable action buttons with glassmorphism effects -->
 <template>
-    <v-slide-group class="w-100 glass-bar" center-active show-arrows="desktop">
+    <!-- Slide group container with arrows on desktop -->
+    <v-slide-group class="w-100" center-active show-arrows="desktop">
         <v-slide-group-item>
+            <!-- Button container with spacing -->
             <div class="d-flex align-center ga-3 px-4 fill-height">
+                <!-- Primary action: Write review button -->
                 <v-btn
                     size="large"
                     flat
@@ -10,6 +14,8 @@
                     <v-icon start size="20">mdi-star-outline</v-icon>
                     Write a Review
                 </v-btn>
+                
+                <!-- Secondary action buttons loop -->
                 <v-btn
                     v-for="(btn, i) in secondaryButtons"
                     :key="i"
@@ -21,6 +27,7 @@
                     <v-icon :start="!btn.iconOnly" size="20" color="primary">
                         {{ btn.icon }}
                     </v-icon>
+                    <!-- Button text (hidden for icon-only buttons) -->
                     <template v-if="!btn.iconOnly">
                         <span class="text-primary">{{ btn.text }}</span>
                     </template>
@@ -31,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+// Secondary action buttons configuration
 const secondaryButtons = [
     { text: "Add photo", icon: "mdi-camera-plus-outline" },
     { text: "Share", icon: "mdi-share-variant-outline" },
@@ -40,6 +48,7 @@ const secondaryButtons = [
 </script>
 
 <style scoped>
+/* Glassmorphism bar background */
 .glass-bar {
     background: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(20px) saturate(180%);
@@ -51,6 +60,7 @@ const secondaryButtons = [
         inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
 }
 
+/* Primary button with glassmorphism */
 .glass-btn-primary {
     background: rgb(var(--v-theme-primary), 0.75) !important;
     backdrop-filter: blur(12px);
@@ -62,6 +72,7 @@ const secondaryButtons = [
     color: white !important;
 }
 
+/* Primary button hover effect */
 .glass-btn-primary:hover {
     background: rgb(var(--v-theme-primary), 0.9) !important;
     box-shadow:
@@ -69,6 +80,7 @@ const secondaryButtons = [
         inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
+/* Secondary button with glassmorphism */
 .glass-btn-secondary {
     background: rgb(var(--v-theme-primary), 0.08) !important;
     backdrop-filter: blur(12px);
@@ -79,16 +91,19 @@ const secondaryButtons = [
         inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
+/* Secondary button hover effect */
 .glass-btn-secondary:hover {
     background: rgb(var(--v-theme-primary), 0.15) !important;
     border-color: rgb(var(--v-theme-primary), 0.35) !important;
 }
 
+/* Center align slide group content */
 :deep(.v-slide-group__content) {
     display: flex;
     align-items: center;
 }
 
+/* Navigation arrows styling */
 :deep(.v-slide-group__prev),
 :deep(.v-slide-group__next) {
     background: rgb(var(--v-theme-primary), 0.1) !important;
@@ -98,6 +113,7 @@ const secondaryButtons = [
     color: rgb(var(--v-theme-primary)) !important;
 }
 
+/* Gap utility class */
 .ga-3 {
     gap: 12px;
 }

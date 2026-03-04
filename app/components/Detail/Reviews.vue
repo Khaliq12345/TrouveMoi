@@ -1,12 +1,18 @@
+<!-- Detailed reviews section with user info, ratings, photos, and reactions -->
 <template>
   <v-container class="pa-0 py-8 px-4">
+    <!-- Section title -->
     <h2 class="text-h5 font-weight-bold mb-6">Recommended Reviews</h2>
 
+    <!-- Reviews loop -->
     <div v-for="(review, i) in reviews" :key="i" class="mb-10">
+      <!-- User info header -->
       <div class="d-flex align-center mb-4">
+        <!-- User avatar -->
         <v-avatar size="64" class="mr-4">
           <v-img :src="review.userAvatar"></v-img>
         </v-avatar>
+        <!-- User details -->
         <div>
           <div class="text-subtitle-1 font-weight-bold">
             {{ review.userName }}
@@ -14,25 +20,22 @@
           <div class="text-caption text-grey-darken-1">
             {{ review.userLocation }}
           </div>
+          <!-- User stats (friends, reviews, photos) -->
           <div class="d-flex align-center mt-1">
-            <v-icon size="14" color="grey" class="mr-1"
-              >mdi-account-group</v-icon
-            >
+            <v-icon size="14" color="grey" class="mr-1">mdi-account-group</v-icon>
             <span class="text-caption mr-3">{{ review.friends }}</span>
-            <v-icon size="14" color="grey" class="mr-1"
-              >mdi-star-outline</v-icon
-            >
+            <v-icon size="14" color="grey" class="mr-1">mdi-star-outline</v-icon>
             <span class="text-caption mr-3">{{ review.reviewCount }}</span>
-            <v-icon size="14" color="grey" class="mr-1"
-              >mdi-camera-outline</v-icon
-            >
+            <v-icon size="14" color="grey" class="mr-1">mdi-camera-outline</v-icon>
             <span class="text-caption">{{ review.photoCount }}</span>
           </div>
         </div>
         <v-spacer></v-spacer>
+        <!-- More options button -->
         <v-btn icon="mdi-dots-horizontal" variant="text" color="grey"></v-btn>
       </div>
 
+      <!-- Rating and date -->
       <div class="d-flex align-center mb-3">
         <v-rating
           :model-value="review.rating"
@@ -41,16 +44,17 @@
           readonly
           size="small"
         ></v-rating>
-        <span class="text-caption text-grey-darken-1 ml-3">{{
-          review.date
-        }}</span>
+        <span class="text-caption text-grey-darken-1 ml-3">{{ review.date }}</span>
       </div>
 
+      <!-- Review text -->
       <p class="text-body-1 text-grey-darken-4 mb-4 lh-relaxed">
         {{ review.comment }}
       </p>
 
+      <!-- Review images (if any) -->
       <div v-if="review.images && review.images.length > 0" class="mb-4">
+        <!-- Single image -->
         <v-img
           v-if="review.images.length === 1"
           :src="review.images[0]"
@@ -59,13 +63,12 @@
           cover
           class="rounded-lg shadow-sm"
         >
-          <div
-            class="position-absolute bottom-0 left-0 pa-2 text-white text-caption bg-black-alpha-blur w-100"
-          >
+          <div class="position-absolute bottom-0 left-0 pa-2 text-white text-caption bg-black-alpha-blur w-100">
             good
           </div>
         </v-img>
 
+        <!-- Multiple images -->
         <div v-else class="d-flex flex-wrap gap-3">
           <v-img
             v-for="(img, idx) in review.images"
@@ -79,6 +82,7 @@
         </div>
       </div>
 
+      <!-- Reaction buttons -->
       <div class="d-flex flex-wrap align-center gap-4 mt-4">
         <v-btn
           variant="outlined"
@@ -127,6 +131,7 @@
 </template>
 
 <script setup>
+// Sample reviews data
 const reviews = [
   {
     userName: "Emily B.",
@@ -137,8 +142,7 @@ const reviews = [
     photoCount: 1,
     rating: 5,
     date: "Jan 20, 2026",
-    comment:
-      "Really cute Italian place. I only stopped in for drinks this time, but I'm definitely coming back for a proper dinner. The pasta dishes looked amazing. The espresso martini was solid, and the staff was genuinely super friendly.",
+    comment: "Really cute Italian place. I only stopped in for drinks this time, but I'm definitely coming back for a proper dinner. The pasta dishes looked amazing. The espresso martini was solid, and the staff was genuinely super friendly.",
     images: ["https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500"],
     reactions: { helpful: 1, thanks: 0, love: 0, ohno: 0 },
   },
@@ -151,8 +155,7 @@ const reviews = [
     photoCount: 10,
     rating: 5,
     date: "Feb 12, 2026",
-    comment:
-      "I recently visited Bottega in SF with a few friends, and there were quite a few standout dishes. The vodka pink pasta with chicken was creamy, flavorful, and perfectly cooked. The waiter recommended the coda alla vaccinara to us. Great spot for classic Italian dishes!",
+    comment: "I recently visited Bottega in SF with a few friends, and there were quite a few standout dishes. The vodka pink pasta with chicken was creamy, flavorful, and perfectly cooked. The waiter recommended the coda alla vaccinara to us. Great spot for classic Italian dishes!",
     images: [
       "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=400",
       "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400",
@@ -164,10 +167,12 @@ const reviews = [
 </script>
 
 <style scoped>
+/* Relaxed line height for readability */
 .lh-relaxed {
   line-height: 1.6;
 }
 
+/* Gap utilities */
 .gap-3 {
   gap: 12px;
 }
@@ -175,15 +180,18 @@ const reviews = [
   gap: 16px;
 }
 
+/* Button border styling */
 .grey-border {
   border: 1px solid rgba(0, 0, 0, 0.12) !important;
 }
 
+/* Image overlay background */
 .bg-black-alpha-blur {
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(2px);
 }
 
+/* Image shadow */
 .shadow-sm {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

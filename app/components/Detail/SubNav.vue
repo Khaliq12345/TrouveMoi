@@ -1,7 +1,9 @@
-<!-- components/Detail/DetailSubNav.vue -->
+<!-- Secondary navigation bar with category links -->
 <template>
+  <!-- Sub navigation app bar -->
   <v-app-bar flat height="48" color="white" class="border-b">
     <v-container class="py-0">
+      <!-- Navigation items -->
       <div class="d-flex gap-4">
         <v-btn
           v-for="item in navItems"
@@ -18,5 +20,6 @@
 </template>
 
 <script setup>
+// Navigation items array
 const navItems = ['Restaurants', 'Home Services', 'Auto Services', 'More', 'Collections', 'Talk', 'Events', 'Support']
 </script>

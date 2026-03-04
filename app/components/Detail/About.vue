@@ -1,8 +1,12 @@
+<!-- About the business section with description and read more button -->
 <template>
   <v-container class="pa-0 py-8 px-4">
+    <!-- Section title -->
     <h2 class="text-h5 font-weight-bold mb-4">About the Business</h2>
 
+    <!-- Content wrapper -->
     <div class="about-content">
+      <!-- Business description with line clamp -->
       <p class="text-body-1 text-grey-darken-3 mb-4 description-text">
         We are a group of young Italians, born and raised in different parts of Italy, 
         who came to San Francisco sharing the same passion, cooking and eating delicious food. 
@@ -10,6 +14,7 @@
         Our mission is to reinvent our most authentic grandma...
       </p>
 
+      <!-- Read more button -->
       <v-btn
         variant="outlined"
         color="grey-darken-3"
@@ -24,20 +29,21 @@
 </template>
 
 <style scoped>
+/* Truncate text to 3 lines with ellipsis */
 .description-text {
   line-height: 1.6;
-  /* Optionnel : force la coupure propre du texte si tu veux automatiser le "..." */
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;  
   overflow: hidden;
 }
 
-/* Style du bouton pour correspondre exactement à l'UI Yelp */
+/* Outlined button border styling */
 .v-btn--variant-outlined {
   border: 1px solid rgba(0, 0, 0, 0.2) !important;
 }
 
+/* Button hover effect */
 .v-btn:hover {
   background-color: rgba(0, 0, 0, 0.02) !important;
 }
