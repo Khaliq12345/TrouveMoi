@@ -1,14 +1,19 @@
+<!-- Compact business info with status and description -->
 <template>
   <v-container class="px-4 py-4">
     <v-row no-gutters>
       <v-col cols="12">
+        <!-- Business name -->
         <div class="text-h6 font-weight-bold mb-1 text-grey-darken-4">
           Cuisine du Szechuan
         </div>
         
+        <!-- Status and hours link -->
         <div class="d-flex align-center text-body-2 mb-1">
-          <span class="text-error font-weight-bold">Fermé</span>
+          <!-- Closed status -->
+          <span class="text-error font-weight-bold">Closed</span>
           <span class="text-grey-lighten-1 mx-2">•</span>
+          <!-- See hours button -->
           <v-btn 
             variant="text" 
             color="cyan-darken-2" 
@@ -19,10 +24,12 @@
           </v-btn>
         </div>
 
+        <!-- Last updated timestamp -->
         <div class="text-caption text-grey mb-4">
           Updated over 3 months ago
         </div>
 
+        <!-- Business description -->
         <p class="text-body-2 text-grey-darken-3">
           Casual takeout spot focusing on spicy Szechuan dishes with popular crab rangoon.
         </p>

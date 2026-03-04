@@ -1,10 +1,13 @@
+<!-- Business highlights grid with icons showing key features -->
 <template>
   <v-container class="pa-0 py-8">
+    <!-- Section header with info icon -->
     <div class="d-flex align-center mb-6 px-4">
       <h2 class="text-h5 font-weight-bold mr-2">Highlights from the Business</h2>
       <v-icon size="small" color="grey-lighten-1">mdi-information-outline</v-icon>
     </div>
 
+    <!-- Highlights grid -->
     <v-row no-gutters class="px-2">
       <v-col 
         v-for="(highlight, i) in highlights" 
@@ -13,10 +16,12 @@
         sm="2" 
         class="d-flex flex-column align-center text-center pa-2 mb-4"
       >
+        <!-- Icon avatar with background -->
         <v-avatar size="56" color="grey-lighten-4" class="mb-3 rounded-xl">
           <v-icon :color="highlight.color" size="28">{{ highlight.icon }}</v-icon>
         </v-avatar>
 
+        <!-- Highlight text -->
         <span class="text-caption font-weight-medium text-grey-darken-3 leading-tight" style="line-height: 1.2;">
           {{ highlight.text }}
         </span>
@@ -26,6 +31,7 @@
 </template>
 
 <script setup>
+// Business highlights with icons and colors
 const highlights = [
   { text: 'Outdoor seating', icon: 'mdi-umbrella-beach', color: 'teal-darken-1' },
   { text: 'Locally owned & operated', icon: 'mdi-store-check', color: 'orange-darken-2' },
@@ -37,12 +43,13 @@ const highlights = [
 </script>
 
 <style scoped>
+/* Force text wrapping */
 .leading-tight {
   display: block;
-  max-width: 90px; /* Force le texte à passer à la ligne proprement */
+  max-width: 90px;
 }
 
-/* Animation douce au survol */
+/* Smooth hover animation */
 .v-avatar {
   transition: all 0.3s ease;
   cursor: pointer;

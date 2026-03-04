@@ -1,5 +1,7 @@
+<!-- Photo galleries section showing different atmosphere categories -->
 <template>
   <v-container class="pa-0 py-8">
+    <!-- Section header -->
     <div class="d-flex align-center justify-space-between mb-6 px-4">
       <div>
         <h2 class="text-h4 font-weight-bold mb-1">What's the vibe?</h2>
@@ -7,8 +9,10 @@
       </div>
     </div>
 
+    <!-- Vibe categories grid -->
     <v-row class="px-2">
       <v-col v-for="(vibe, i) in vibes" :key="i" cols="12" sm="4">
+        <!-- Vibe card with image -->
         <v-card 
           class="rounded-xl overflow-hidden vibe-card" 
           flat 
@@ -20,6 +24,7 @@
             cover
             class="d-flex align-end"
           >
+            <!-- Gradient overlay with text -->
             <div class="vibe-overlay pa-6 w-100">
               <h3 class="text-h5 font-weight-bold text-white mb-1">{{ vibe.title }}</h3>
               <p class="text-body-2 text-white-70">{{ vibe.count }} photos</p>
@@ -32,6 +37,7 @@
 </template>
 
 <script setup>
+// Vibe categories with photo counts
 const vibes = [
   { 
     title: 'Inside', 
@@ -52,6 +58,7 @@ const vibes = [
 </script>
 
 <style scoped>
+/* Card hover animation */
 .vibe-card {
   cursor: pointer;
   transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -61,16 +68,17 @@ const vibes = [
   transform: scale(1.02);
 }
 
-/* Dégradé noir en bas pour faire ressortir le texte blanc */
+/* Gradient overlay for text readability */
 .vibe-overlay {
   background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
 }
 
+/* Semi-transparent white text */
 .text-white-70 {
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Animation au survol de l'image */
+/* Image zoom on hover */
 .vibe-card :deep(.v-img__img) {
   transition: transform 0.6s ease;
 }

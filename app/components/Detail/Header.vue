@@ -1,14 +1,17 @@
-<!-- components/Detail/DetailHeader.vue -->
+<!-- Main navigation header with search and user actions -->
 <template>
-  <!-- Navigation principale -->
+  <!-- Top navigation bar -->
   <v-app-bar flat color="white" height="64" class="border-b">
     <v-container class="d-flex align-center">
+      <!-- Logo/Brand -->
       <v-btn variant="text" class="text-h5 font-weight-bold mr-4" style="color: #ff1a1a;">
         Yelp
       </v-btn>
 
+      <!-- Search bar container -->
       <v-card class="flex-grow-1 mr-4" flat>
         <v-row no-gutters>
+          <!-- Search query input -->
           <v-col cols="5">
             <v-text-field
               v-model="searchQuery"
@@ -24,6 +27,7 @@
               </template>
             </v-text-field>
           </v-col>
+          <!-- Location input -->
           <v-col cols="5">
             <v-text-field
               v-model="locationQuery"
@@ -39,6 +43,7 @@
               </template>
             </v-text-field>
           </v-col>
+          <!-- Search button -->
           <v-col cols="2">
             <v-btn color="red" height="40" class="rounded-0 rounded-e w-100" style="background-color: #ff1a1a;">
               <v-icon>mdi-magnify</v-icon>
@@ -47,6 +52,7 @@
         </v-row>
       </v-card>
 
+      <!-- Navigation links and auth buttons -->
       <div class="d-flex align-center gap-2">
         <v-btn variant="text" class="text-none font-weight-medium">For Businesses</v-btn>
         <v-btn variant="text" class="text-none font-weight-medium">Write a Review</v-btn>
@@ -61,6 +67,7 @@
 </template>
 
 <script setup>
+// Search state
 const searchQuery = ref('Restaurants')
 const locationQuery = ref('San Francisco, CA')
 </script>

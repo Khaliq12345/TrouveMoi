@@ -1,4 +1,6 @@
+<!-- Action buttons with sticky bottom bar on mobile when scrolled -->
 <template>
+    <!-- Fixed bottom app bar (mobile only, shown when main buttons scroll out of view) -->
     <v-app-bar
         location="bottom"
         :height="isMobile ? 76 : 84"
@@ -10,7 +12,8 @@
         <DetailActions></DetailActions>
     </v-app-bar>
 
-    <v-container class="w-100 mb-md-6 " ref="actionButtons">
+    <!-- Main action buttons container (always visible in flow) -->
+    <v-container class="w-100 mb-md-6" ref="actionButtons">
         <DetailActions></DetailActions>
     </v-container>
 </template>
@@ -18,12 +21,12 @@
 <script setup lang="ts">
 import { useElementVisibility } from "@vueuse/core";
 
-// 1. Inject the responsiveness provided by your Parent/Plugin
-const isMobile = inject("isMobile", false); // Added default value
+// Inject mobile state from parent
+const isMobile = inject("isMobile", false);
 
-// 2. Setup the Template Ref
+// Template ref for visibility tracking
 const actionButtons = useTemplateRef("actionButtons");
 
-// 3. Track visibility
+// Track if action buttons are visible in viewport
 const actionButtonsIsVisible = useElementVisibility(actionButtons);
 </script>
