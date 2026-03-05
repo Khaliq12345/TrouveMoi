@@ -5,17 +5,18 @@
         location="bottom"
         :height="isMobile ? 76 : 84"
         flat
+        color="transparent"
         :order="1"
         v-if="!actionButtonsIsVisible && isMobile"
-        class="glass-bar position-fixed"
+        class="position-fixed blur-content"
     >
         <DetailActions></DetailActions>
     </v-app-bar>
 
     <!-- Main action buttons container (always visible in flow) -->
-    <v-container class="w-100 mb-md-6" ref="actionButtons">
+    <div class="w-100 mb-md-6" ref="actionButtons">
         <DetailActions></DetailActions>
-    </v-container>
+    </div>
 </template>
 
 <script setup lang="ts">
