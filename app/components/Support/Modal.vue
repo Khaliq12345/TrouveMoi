@@ -1,4 +1,5 @@
 <template>
+  <!-- Modal dialog for reporting issues -->
   <v-dialog
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
@@ -6,10 +7,12 @@
     persistent
   >
     <v-card rounded="md">
+      <!-- Dialog title -->
       <v-card-title class="pa-4 pb-2">
         <span class="text-h6 font-weight-bold">Signaler un problème</span>
       </v-card-title>
 
+      <!-- Form content -->
       <v-card-text class="pa-4 pt-2">
         <v-form ref="form" v-model="valid">
           <!-- Titre -->
@@ -54,11 +57,14 @@
         </v-form>
       </v-card-text>
 
+      <!-- Action buttons -->
       <v-card-actions class="pa-4 pt-0">
         <v-spacer />
+        <!-- Cancel button -->
         <v-btn variant="text" color="grey" class="text-none" @click="close">
           Annuler
         </v-btn>
+        <!-- Submit button -->
         <v-btn
           color="primary"
           variant="flat"
@@ -75,7 +81,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive } from "vue";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -92,23 +98,15 @@ const issue = reactive({
   photo: null,
 });
 
-// Reset quand la modale s'ouvre
-watch(
-  () => props.modelValue,
-  (open) => {
-    if (open) reset();
-  },
-);
-
-const reset = () => {
-  issue.title = "";
-  issue.description = "";
-  issue.photo = null;
-  form.value?.resetValidation();
-};
-
 const close = () => {
   emit("update:modelValue", false);
+  // Reset après fermeture
+  setTimeout(() => {
+    issue.title = "";
+    issue.description = "";
+    issue.photo = null;
+    form.value?.resetValidation();
+  }, 300); // Attendre la fin de l'animation
 };
 
 const submit = () => {
