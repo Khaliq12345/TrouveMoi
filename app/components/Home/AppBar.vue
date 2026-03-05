@@ -1,96 +1,56 @@
 <!-- Top navigation bar with background image, search field, and action buttons -->
 <template>
-    <v-app-bar
-        flat
-        color="transparent"
-        :density="isMobile ? 'default' : 'comfortable'"
-        class="!shadow-none"
-        :class="
-            isMobile
-                ? 'w-full bg-cover bg-center bg-no-repeat relative min-h-[30px]'
-                : 'w-full bg-cover bg-center bg-no-repeat relative before:absolute before:inset-0 before:bg-black/50 min-h-[60px]'
-        "
-        style="
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0.6),
-                transparent
-            ) !important;
-            backdrop-filter: blur(4px);
-        "
+  <v-app-bar
+    flat
+    color="transparent"
+    height="70"
+    extension-height="50"
+    style="backdrop-filter: blur(4px)"
+    :class="`px-4 blue-content text-${color}`"
+  >
+    <h1 class="font-weight-bold text-h5 flex-grow-0" v-if="!isMobile">
+      Trouve-moi
+    </h1>
+
+    <v-spacer />
+
+    <div style="width: 100%; max-width: 500px"
     >
-        <!-- Titre desktop -->
-        <v-app-bar-title
-            class="hidden md:flex text-white font-weight-bold text-h5 drop-shadow-md"
-        >
-            Trouve-moi
-        </v-app-bar-title>
+      <v-text-field
+        v-model="searchQuery"
+        placeholder="Rechercher un lieu, une ville..."
+        variant="solo"
+        hide-details
+        density="compact"
+        rounded="lg"
+        prepend-inner-icon="mdi-magnify"
+        append-inner-icon="mdi-arrow-right"
+      />
+    </div>
 
-        <v-spacer class="hidden md:block" />
+    <v-spacer />
 
-        <!-- Barre de recherche avec glassmorphism -->
-        <div class="search-container absolute left-1/2 -translate-x-1/2 p-2">
-            <v-text-field
-                v-model="searchQuery"
-                placeholder="Rechercher un lieu, une ville..."
-                variant="solo"
-                hide-details
-                density="comfortable"
-                rounded="lg"
-                prepend-inner-icon="mdi-magnify"
-                append-inner-icon="mdi-arrow-right"
-                class="glass-search"
-            />
-        </div>
+    <div class="d-flex ga-2" v-if="!isMobile">
+      <v-btn icon="mdi-cog" variant="text" />
+      <v-btn icon="mdi-bell" variant="text" />
+      <v-btn icon="mdi-account" variant="text" />
+    </div>
 
-        <v-spacer class="hidden md:block" />
-
-        <!-- Boutons desktop -->
-        <div class="backrop-blur-md hidden md:flex gap-2">
-            <v-btn
-                icon="mdi-cog"
-                color="white"
-                variant="text"
-                class="drop-shadow-md"
-            />
-            <v-btn
-                icon="mdi-bell"
-                color="white"
-                variant="text"
-                class="drop-shadow-md"
-            />
-            <v-btn
-                icon="mdi-account"
-                color="white"
-                variant="text"
-                class="drop-shadow-md"
-            />
-        </div>
-    </v-app-bar>
+    <template v-slot:extension>
+      <div class="w-100 d-flex justify-center pb-2">
+        <SearchMenu />
+      </div>
+    </template>
+  </v-app-bar>
 </template>
 
 <script setup lang="ts">
+const props = defineProps({
+  color: {
+    type: String,
+    default: "dark",
+  },
+});
 const searchQuery = ref("");
-
 const isMobile = inject("isMobile");
 </script>
-
-<style scoped>
-.search-container {
-    width: 100%;
-    max-width: 500px;
-}
-
-.text-shadow {
-    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.bg-black-30 {
-    background: rgba(0, 0, 0, 0.3);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-</style>
