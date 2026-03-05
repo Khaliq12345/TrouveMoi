@@ -1,4 +1,6 @@
+<!-- User's personal collections grid displaying saved favorites -->
 <template>
+  <!-- Responsive grid layout -->
   <v-row>
     <v-col v-for="col in collections" :key="col.id" cols="12" sm="6" md="4">
       <CollectionCard :collection="col" />
@@ -7,6 +9,7 @@
 </template>
 
 <script setup>
+// Mock data: user's personal saved collections
 const collections = [
   {
     id: 2,
@@ -126,4 +129,4 @@ const collections = [
     authorAvatar: "https://i.pravatar.cc/150?u=luxury",
   }
 ];
-</script>é
+</script>
