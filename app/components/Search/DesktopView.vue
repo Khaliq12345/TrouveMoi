@@ -31,7 +31,7 @@
               </div>
 
               <!-- Scrollable results area -->
-              <div class="flex-grow-1 overflow-y-auto pa-2">
+              <div class="flex-grow-1 overflow-y-auto pa-2" style="height: 0;">
                 <SearchResultList
                   :results="results"
                   @load="$emit('load', $event)"
