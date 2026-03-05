@@ -9,19 +9,6 @@
 <script setup>
 const collections = [
   {
-    id: 1,
-    title: "Get boba in SF",
-    description: "Need more boba in your life? Check out all the places in San Francisco where you can find bubble tea.",
-    images: [
-      "https://images.unsplash.com/photo-1558855410-3112e253d704?w=400",
-      "https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=200",
-      "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=200",
-    ],
-    itemCount: 32,
-    author: "Yelp",
-    authorAvatar: "https://i.pravatar.cc/150?u=yelp",
-  },
-  {
     id: 2,
     title: "SF's Sought-after Seats",
     description: "Here's the breakdown of some of San Francisco's most reserved restaurants this week.",
