@@ -1,21 +1,21 @@
 <!-- Home page with app bar, carousel, categories, explore section, and footer -->
 <template>
-    <!-- Main layout container -->
-    <v-layout class="flex flex-col">
-        <HomeDesktopHero v-if="!isMobile"></HomeDesktopHero>
-        <HomeMobileHero v-else></HomeMobileHero>
+  <!-- Main layout container -->
+  <v-layout class="flex flex-col">
+    <HomeDesktopHero v-if="!isMobile"></HomeDesktopHero>
+    <HomeMobileHero v-else></HomeMobileHero>
+    <v-container>
+      <HomeCategories />
 
-        <HomeCategories />
+      <!-- Explore zones section -->
+      <HomeExplore />
+    </v-container>
+    <!-- Mobile bottom navigation -->
+    <BottomNav v-if="isMobile" />
 
-        <!-- Explore zones section -->
-        <HomeExplore />
-
-        <!-- Mobile bottom navigation -->
-        <BottomNav v-if="isMobile" />
-
-        <!-- Desktop footer -->
-        <Footer v-if="!isMobile"></Footer>
-    </v-layout>
+    <!-- Desktop footer -->
+    <Footer v-if="!isMobile"></Footer>
+  </v-layout>
 </template>
 
 <script setup lang="ts">

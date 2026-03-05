@@ -24,14 +24,14 @@
 
       <!-- Specifications section with toggle buttons -->
       <p class="text-body-2 font-weight-medium mb-2">Spécificités</p>
-      <div class="d-flex flex-wrap ga-2">
+      <div class="d-flex flex-column ga-2">
         <v-btn
           v-for="i in 15"
           :key="i"
           @click="toggleSpec(`spec${i}`)"
           :variant="selectedFilters2.includes(`spec${i}`) ? 'flat' : 'outlined'"
           size="small"
-          class="text-none"
+          class="text-none justify-start"
           color="primary"
           rounded="lg"
         >
