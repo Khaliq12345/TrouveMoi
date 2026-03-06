@@ -1,8 +1,8 @@
 <!-- Carousel showcasing 30 zones to explore in Benin with images and descriptions -->
 <template>
-    <v-container fluid class="py-12">
+    <v-container>
         <!-- Header section with title and description -->
-        <div class="text-center mb-10">
+        <div class="text-center mb-4">
             <v-chip color="primary" class="mb-4" variant="flat">
                 Exploration
             </v-chip>
