@@ -4,7 +4,8 @@
     <v-app-bar
         class="position-fixed"
         color="primary"
-        v-if="!headerWithImageIsVisible && isMobile"
+        v-show="!headerWithImageIsVisible"
+        v-if="isMobile"
         flat
         border
     >
