@@ -1,51 +1,53 @@
 <!-- pages/events/index.vue -->
 <template>
-  <v-layout>
-    <HomeAppBar />
-    <v-main>
-      <v-container class="pa-0 bg-background">
-        <!-- Stats -->
-        <EventStats
-          :events="events"
-          @filter="activeFilter = $event"
-          class="mb-4"
-        />
+  <ClientOnly>
+    <v-layout>
+      <HomeAppBar />
+      <v-main>
+        <v-container class="pa-0 bg-background">
+          <!-- Stats -->
+          <EventStats
+            :events="events"
+            @filter="activeFilter = $event"
+            class="mb-4"
+          />
 
-        <!-- Recherche -->
-        <v-row class="mb-6" justify="center">
-          <v-col cols="12" md="6" lg="4">
-            <EventLocationSearch v-model="locationQuery" class="mt-2" />
-          </v-col>
-        </v-row>
+          <!-- Recherche -->
+          <v-row class="mb-6" justify="center">
+            <v-col cols="12" md="6" lg="4">
+              <EventLocationSearch v-model="locationQuery" class="mt-2" />
+            </v-col>
+          </v-row>
 
-        <!-- Grid -->
-        <v-row>
-          <v-col
-            v-for="event in filteredEvents"
-            :key="event.id"
-            cols="12"
-            sm="6"
-            lg="4"
-            xl="3"
-          >
-            <EventCard :event="event" />
-          </v-col>
-        </v-row>
+          <!-- Grid -->
+          <v-row>
+            <v-col
+              v-for="event in filteredEvents"
+              :key="event.id"
+              cols="12"
+              sm="6"
+              lg="4"
+              xl="3"
+            >
+              <EventCard :event="event" />
+            </v-col>
+          </v-row>
 
-        <!-- Empty -->
-        <v-empty-state
-          v-if="!filteredEvents.length"
-          icon="mdi-calendar-blank"
-          title="Aucun événement trouvé"
-          text="Essayez de modifier vos critères de recherche"
-          class="py-12"
-        />
+          <!-- Empty -->
+          <v-empty-state
+            v-if="!filteredEvents.length"
+            icon="mdi-calendar-blank"
+            title="Aucun événement trouvé"
+            text="Essayez de modifier vos critères de recherche"
+            class="py-12"
+          />
 
-        <!-- Pagination controls -->
-        <v-pagination :length="5" class="pt-5"></v-pagination>
-      </v-container>
-    </v-main>
-  </v-layout>
+          <!-- Pagination controls -->
+          <v-pagination :length="5" class="pt-5"></v-pagination>
+        </v-container>
+      </v-main>
+    </v-layout>
+  </ClientOnly>
 </template>
 <script setup>
 // State
