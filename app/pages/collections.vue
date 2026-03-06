@@ -6,7 +6,7 @@
       <HomeAppBar />
       
       <v-main>
-        <v-container>
+        <v-container class="mx-auto" style="max-width: 1200px">
           <v-sheet color="transparent">
             <!-- Tab navigation for switching between views -->
             <v-tabs v-model="tab" color="primary">
