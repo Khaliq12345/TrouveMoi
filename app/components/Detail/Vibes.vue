@@ -33,13 +33,14 @@
 
 <script setup lang="ts">
 // Vibe categories with photo counts
-interface NavItem {
-  id: string;
-  label: string;
-  icon: string;
+
+interface Vibe {
+  title: string;
+  count: number | string;
+  image: string;
 }
 
-const navItems: NavItem[] = [
+const vibes: Vibe[] = [
   {
     title: "Inside",
     count: 444,

@@ -55,7 +55,6 @@
 
 <script setup lang="ts">
 // Amenities list with icons and details
-defineEmits
 interface Amenity {
   label: string;
   icon: string;
