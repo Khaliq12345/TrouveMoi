@@ -3,9 +3,6 @@
     <v-container>
         <!-- Header section with title and description -->
         <div class="text-center mb-4">
-            <v-chip color="primary" class="mb-4" variant="flat">
-                Exploration
-            </v-chip>
             <h2 class="text-h5 text-md-h4 font-weight-bold mb-2">
                 30 zones à explorer au Bénin
             </h2>

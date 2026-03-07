@@ -4,12 +4,15 @@
     <v-layout class="flex flex-col">
         <HomeDesktopHero v-if="!isMobile"></HomeDesktopHero>
         <HomeMobileHero v-else></HomeMobileHero>
-        <v-container class="mx-auto" style="max-width: 1200px">
+        <v-container
+            class="mx-auto d-flex flex-column ga-10"
+            style="max-width: 1200px"
+        >
             <HomeCategories />
 
             <!-- Explore zones section -->
             <HomeExplore />
-            
+
             <!-- Cities section -->
             <HomeCities />
         </v-container>
