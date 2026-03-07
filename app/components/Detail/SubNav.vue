@@ -19,7 +19,7 @@
   </v-app-bar>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Navigation items array
-const navItems = ['Restaurants', 'Home Services', 'Auto Services', 'More', 'Collections', 'Talk', 'Events', 'Support']
+const navItems: string[] = ['Restaurants', 'Home Services', 'Auto Services', 'More', 'Collections', 'Talk', 'Events', 'Support']
 </script>

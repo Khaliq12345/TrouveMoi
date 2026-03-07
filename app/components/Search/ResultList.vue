@@ -27,7 +27,7 @@
     </v-infinite-scroll>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Component props and events
 defineProps(["results"]);
 defineEmits(["load"]);

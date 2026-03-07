@@ -21,6 +21,6 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Rien de spécial ici
 </script>

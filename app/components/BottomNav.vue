@@ -28,7 +28,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Active tab state (default: settings)
 const value = ref("settings");
 </script>

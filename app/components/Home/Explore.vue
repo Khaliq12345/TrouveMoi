@@ -14,7 +14,7 @@
         <!-- Horizontal carousel of zone cards -->
         <v-carousel hide-delimiters show-arrows="hover" height="600">
             <v-carousel-item v-for="(zone, index) in zones" :key="index">
-                <gradient-card-with-image
+                <HomeGradientCardWithImage
                     :title="zone.name"
                     :subtitle="zone.location"
                     :description="zone.description"
@@ -26,11 +26,18 @@
     </v-container>
 </template>
 
-<script setup>
-import GradientCardWithImage from "./GradientCardWithImage.vue";
+<script setup lang="ts">
+
+interface TouristicZone {
+  id: number;
+  name: string;
+  location: string;
+  description: string;
+  image: string;
+}
 
 // Array of 30 tourist zones in Benin with location and description
-const zones = [
+const zones: TouristicZone[] = [
     {
         id: 1,
         name: "Ouidah",

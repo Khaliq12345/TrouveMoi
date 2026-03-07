@@ -114,7 +114,7 @@
     </v-dialog>
   </v-card>
 </template>
-<script setup>
+<script setup lang="ts">
 const dialog = ref(false);
 
 const props = defineProps({
@@ -134,13 +134,13 @@ const props = defineProps({
 
 const hasImages = computed(() => props.ticket.images?.length > 0);
 
-const formatDate = (date) =>
+const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
-const formatFullDate = (date) =>
+const formatFullDate = (date: string) =>
   new Date(date).toLocaleString("fr-FR", {
     day: "numeric",
     month: "long",

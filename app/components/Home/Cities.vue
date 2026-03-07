@@ -27,12 +27,10 @@
     </v-sheet>
 </template>
 
-<script setup>
-import { ref } from "vue";
-
+<script setup lang="ts">
 const selectedCity = ref("Los Angeles");
 
-const cities = [
+const cities: string[] = [
     "Los Angeles",
     "New York",
     "Chicago",

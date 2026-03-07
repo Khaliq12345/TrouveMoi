@@ -78,7 +78,7 @@
   </ClientOnly>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // UI state management
 const drawer = ref(false); // Desktop filter drawer visibility
 const resultsSheet = ref(false); // Mobile results sheet visibility

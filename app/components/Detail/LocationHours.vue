@@ -49,9 +49,17 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Weekly business hours
-const businessHours = [
+type WeekDay = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
+
+interface BusinessHour {
+  day: WeekDay;
+  hours: string;
+  isClosedNow: boolean;
+}
+
+const businessHours: BusinessHour[] = [
   { day: 'Mon', hours: '11:00 AM - 11:00 PM', isClosedNow: false },
   { day: 'Tue', hours: '11:00 AM - 11:00 PM', isClosedNow: true },
   { day: 'Wed', hours: '11:00 AM - 11:00 PM', isClosedNow: false },

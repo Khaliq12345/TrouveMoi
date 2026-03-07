@@ -130,9 +130,30 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Sample reviews data
-const reviews = [
+interface ReviewReactions {
+  helpful: number;
+  thanks: number;
+  love: number;
+  ohno: number;
+}
+
+interface Review {
+  userName: string;
+  userAvatar: string;
+  userLocation: string;
+  friends: number;
+  reviewCount: number;
+  photoCount: number;
+  rating: number;
+  date: string;
+  comment: string;
+  images: string[];
+  reactions: ReviewReactions;
+}
+
+const reviews: Review[] = [
   {
     userName: "Emily B.",
     userAvatar: "https://randomuser.me/api/portraits/women/44.jpg",

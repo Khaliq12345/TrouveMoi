@@ -25,9 +25,14 @@
   </v-footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Footer columns with links
-const footerColumns = [
+interface FooterColumn {
+  title: string;
+  links: string[];
+}
+
+const footerColumns: FooterColumn[] = [
   {
     title: 'About',
     links: ['About Yelp', 'Careers', 'Press', 'Investor Relations', 'Trust & Safety']
@@ -44,5 +49,5 @@ const footerColumns = [
     title: 'Languages',
     links: ['English', 'Spanish', 'French', 'German', 'Italian']
   }
-]
+];
 </script>

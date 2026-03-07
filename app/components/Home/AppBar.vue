@@ -14,8 +14,7 @@
 
     <v-spacer />
 
-    <div style="width: 100%; max-width: 500px"
-    >
+    <div style="width: 100%; max-width: 500px">
       <v-text-field
         v-model="searchQuery"
         placeholder="Rechercher un lieu, une ville..."
