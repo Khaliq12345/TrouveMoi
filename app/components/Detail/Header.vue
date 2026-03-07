@@ -66,7 +66,7 @@
   </v-app-bar>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Search state
 const searchQuery = ref('Restaurants')
 const locationQuery = ref('San Francisco, CA')

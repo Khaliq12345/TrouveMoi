@@ -12,7 +12,7 @@
           <!-- Responsive flex container -->
           <div
             class="d-flex w-100 overflow-hidden"
-             :class="isMobile ? 'flex-column' : 'flex-sm-row'"
+            :class="isMobile ? 'flex-column' : 'flex-sm-row'"
             :color="isHovering ? 'primary' : undefined"
           >
             <!-- Image section (responsive: mobile/desktop) -->
@@ -132,12 +132,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+interface HotelAmenity {
+  text: string;
+  icon: string;
+}
+
+interface HotelItem {
+  title: string;
+  rating: number;
+  reviews: string;
+  tag: string;
+  pricePerNight: number;
+  discount: `${number}%`;
+  isDeal: boolean;
+  amenities: HotelAmenity[];
+  images: number[];
+}
+
 defineOptions({
   inheritAttrs: false,
 });
 // Sample result item data
-const item = ref({
+const item = ref<HotelItem>({
   title: "Kanazawa Grand Inn Hotel",
   rating: 4.8,
   reviews: "1,257",

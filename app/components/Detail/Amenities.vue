@@ -53,9 +53,18 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Amenities list with icons and details
-const amenities = [
+defineEmits
+interface Amenity {
+  label: string;
+  icon: string;
+  status?: string;
+  subtext?: string;
+  isHighlight?: boolean;
+}
+
+const amenities: Amenity[] = [
   { 
     label: 'Health Score', 
     status: 'Pass', 

@@ -22,6 +22,11 @@
 
 <script setup lang="ts">
 import { useElementVisibility } from "@vueuse/core";
+interface NavItem {
+  id: string;
+  label: string;
+  icon: string;
+}
 
 const isMobile = inject("isMobile", false);
 const toggleButtons = useTemplateRef("toggleButtons");
@@ -29,7 +34,8 @@ const toggleButtonsIsVisible = useElementVisibility(toggleButtons);
 
 // The data for your buttons
 const activeTab = ref("services");
-const navItems = [
+
+const navItems: NavItem[] = [
     { id: "services", label: "Services", icon: "mdi-hammer-wrench" },
     { id: "amenities", label: "Infos", icon: "mdi-information-outline" },
     { id: "location", label: "Plan", icon: "mdi-map-marker-outline" },

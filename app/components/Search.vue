@@ -16,7 +16,7 @@
         />
     </div>
 </template>
-<script setup>
+<script setup lang="ts">
 // Two-way binding for search value
 const search = defineModel();
 </script>

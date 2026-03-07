@@ -56,55 +56,21 @@
     <SupportModal v-model="dialog" @submit="addIssue" />
   </v-layout>
 </template>
-<style scoped>
-/* Modern gradient background (unused in current template) */
-/* Dégradé moderne appliqué directement sur le conteneur */
-.gradient-bg {
-  /* Fusion de l'overlay (en premier) et des 4 vagues */
-  background:
-    /* Calque Overlay (anciennement ::after) */
-    radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.1) 100%),
-    /* Vague 1 - primary dense */
-    radial-gradient(
-        ellipse 80% 50% at 20% 40%,
-        rgb(var(--v-theme-primary)) 0%,
-        rgba(var(--v-theme-primary), 0.8) 25%,
-        transparent 50%
-      ),
-    /* Vague 2 - primary plus clair */
-    radial-gradient(
-        ellipse 60% 40% at 60% 60%,
-        rgba(var(--v-theme-primary), 0.9) 0%,
-        rgba(var(--v-theme-primary), 0.5) 30%,
-        transparent 60%
-      ),
-    /* Vague 3 - transition white */
-    radial-gradient(
-        ellipse 70% 60% at 80% 30%,
-        rgba(var(--v-theme-primary), 0.6) 0%,
-        rgba(255, 255, 255, 0.4) 40%,
-        transparent 70%
-      ),
-    /* Vague 4 - white diffuse */
-    radial-gradient(
-        ellipse 50% 50% at 40% 80%,
-        rgba(255, 255, 255, 0.3) 0%,
-        transparent 50%
-      );
 
-  /* Comme on ne peut pas utiliser filter: blur() sans flouter le texte,
-     on utilise backdrop-filter si le fond est transparent ou on joue sur
-     la diffusion des gradients. */
-  background-blend-mode: normal;
-  opacity: 0.75;
+<script setup lang="ts">
+interface SupportTicket {
+  id: number;
+  title: string;
+  description: string;
+  resolved: boolean;
+  date: string; // Format "YYYY-MM-DD"
+  images: string[];
 }
-</style>
-<script setup>
 // Dialog visibility state
 const dialog = ref(false);
 
 // List of support tickets
-const tickets = ref([
+const tickets = ref<SupportTicket[]>([
   {
     id: 1,
     title: "Problème de connexion API",
@@ -273,7 +239,7 @@ const tickets = ref([
 ]);
 
 // Add new issue to the beginning of tickets list
-function addIssue(data) {
+function addIssue(data: { title: string; description: string }) {
   tickets.value.unshift({
     id: Date.now(),
     title: data.title,
@@ -283,3 +249,47 @@ function addIssue(data) {
   });
 }
 </script>
+
+<style scoped>
+/* Modern gradient background (unused in current template) */
+/* Dégradé moderne appliqué directement sur le conteneur */
+.gradient-bg {
+  /* Fusion de l'overlay (en premier) et des 4 vagues */
+  background:
+    /* Calque Overlay (anciennement ::after) */
+    radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.1) 100%),
+    /* Vague 1 - primary dense */
+    radial-gradient(
+        ellipse 80% 50% at 20% 40%,
+        rgb(var(--v-theme-primary)) 0%,
+        rgba(var(--v-theme-primary), 0.8) 25%,
+        transparent 50%
+      ),
+    /* Vague 2 - primary plus clair */
+    radial-gradient(
+        ellipse 60% 40% at 60% 60%,
+        rgba(var(--v-theme-primary), 0.9) 0%,
+        rgba(var(--v-theme-primary), 0.5) 30%,
+        transparent 60%
+      ),
+    /* Vague 3 - transition white */
+    radial-gradient(
+        ellipse 70% 60% at 80% 30%,
+        rgba(var(--v-theme-primary), 0.6) 0%,
+        rgba(255, 255, 255, 0.4) 40%,
+        transparent 70%
+      ),
+    /* Vague 4 - white diffuse */
+    radial-gradient(
+        ellipse 50% 50% at 40% 80%,
+        rgba(255, 255, 255, 0.3) 0%,
+        transparent 50%
+      );
+
+  /* Comme on ne peut pas utiliser filter: blur() sans flouter le texte,
+     on utilise backdrop-filter si le fond est transparent ou on joue sur
+     la diffusion des gradients. */
+  background-blend-mode: normal;
+  opacity: 0.75;
+}
+</style>

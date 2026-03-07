@@ -47,7 +47,7 @@
     </v-main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Component props and events
 const props = defineProps(["viewMode"]);
 const emit = defineEmits(["update:viewMode", "open-results"]);

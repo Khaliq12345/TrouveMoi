@@ -90,9 +90,18 @@
     </v-sheet>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Popular dishes data
-const dishes = [
+interface Dish {
+  name: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  isPopular: boolean;
+  image: string;
+}
+
+const dishes: Dish[] = [
     {
         name: "Mushroom Ravioli",
         price: 18.5,
