@@ -9,6 +9,9 @@
 
             <!-- Explore zones section -->
             <HomeExplore />
+            
+            <!-- Cities section -->
+            <HomeCities />
         </v-container>
         <!-- Mobile bottom navigation -->
         <BottomNav v-if="isMobile" />
