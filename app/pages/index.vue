@@ -29,7 +29,6 @@
 const isMobile = inject("isMobile");
 const { $directus, $readItems } = useNuxtApp();
 
-console.log("I am on the server");
 const { data: tags } = await useAsyncData(
     "tags",
     () => {

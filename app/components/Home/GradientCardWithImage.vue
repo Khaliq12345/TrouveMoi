@@ -3,11 +3,11 @@
   <v-card class="mx-auto overflow-hidden rounded-xl" variant="flat" border>
     <!-- Hero image with gradient overlay and title -->
     <v-img
-      :src="image"
+      :src="imageUrl || 'https://blocks.astratic.com/img/general-img-landscape.png'"
       height="320"
       cover
       class="align-end text-white"
-      :alt="title"
+      :alt="name"
     >
       <!-- Loading placeholder -->
       <template v-slot:placeholder>
@@ -19,7 +19,7 @@
       <!-- Title overlay on image -->
       <v-toolbar color="transparent" flat density="compact">
         <v-card-title class="text-h5 font-weight-bold pb-4 px-4">
-          {{ title }}
+          {{ name }}
         </v-card-title>
       </v-toolbar>
 
@@ -71,12 +71,19 @@
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig()
+
 // Component props for card content
-defineProps<{
-  title: string;
+const props = defineProps<{
+  name: string;
   subtitle: string;
   description: string;
   link: string;
-  image: string;
+  image_id?: string;
 }>();
+
+// build the image url here from ssr
+const imageUrl =
+`${config.public.directusUrl}assets/${props.image_id}?access_token=${config.public.staticTokenPublic}`
+
 </script>

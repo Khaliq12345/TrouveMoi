@@ -53,7 +53,7 @@
               <v-list-item-title class="text-subtitle-1 font-weight-bold">Catégories</v-list-item-title>
             </v-list-item>
           </template>
-        
+
           <div class="px-4 pb-4 bg-transparent">
             <v-text-field
               v-model="categorySearch"
@@ -67,7 +67,7 @@
               class="mb-4"
               prepend-inner-icon="mdi-magnify"
             />
-        
+
             <v-chip-group
               v-model="selectedCategories"
               column
@@ -89,7 +89,7 @@
                 {{ cat.name }}
               </v-chip>
             </v-chip-group>
-        
+
             <v-btn
               v-if="filteredCategories.length > 6"
               variant="text"
@@ -104,7 +104,7 @@
         </v-list-group>
 
         <v-divider />
-        
+
         <v-list-group value="features" class="bg-transparent">
           <template #activator="{ props }">
             <v-list-item v-bind="props" class="px-4 bg-transparent">
@@ -113,7 +113,7 @@
               </v-list-item-title>
             </v-list-item>
           </template>
-        
+
           <div class="px-4 pb-2 bg-transparent">
             <v-checkbox
               v-for="feature in features"
@@ -138,7 +138,7 @@
             </v-checkbox>
           </div>
         </v-list-group>
-        
+
         <v-divider />
 
         <v-list-item class="pa-4 bg-transparent">

@@ -13,12 +13,12 @@
 
         <!-- Horizontal carousel of zone cards -->
         <v-carousel hide-delimiters show-arrows="hover" height="600">
-            <v-carousel-item v-for="(zone, index) in zones" :key="index">
+            <v-carousel-item v-for="(zone, index) in explore_zone" :key="zone.id">
                 <HomeGradientCardWithImage
-                    :title="zone.name"
+                    :name="zone.Name"
                     :subtitle="zone.location"
                     :description="zone.description"
-                    :image="zone.image"
+                    :image_id="zone.image_id"
                     :link="'example.com'"
                 />
             </v-carousel-item>
@@ -35,6 +35,24 @@ interface TouristicZone {
   description: string;
   image: string;
 }
+const { $directus, $readItems } = useNuxtApp();
+const { data: explore_zone } = await useAsyncData(
+    "explore_zone",
+    () => {
+        return $directus.request($readItems("explore_zone"));
+    },
+    {
+        getCachedData: (key) => {
+            return (
+                useNuxtApp().payload.data[key] || useNuxtApp().static.data[key]
+            );
+        },
+    },
+);
+
+onMounted(() => {
+    console.log(explore_zone.value);
+})
 
 // Array of 30 tourist zones in Benin with location and description
 const zones: TouristicZone[] = [
