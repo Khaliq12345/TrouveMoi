@@ -9,9 +9,10 @@
           <v-row no-gutters class="fill-height" size="12">
             <!-- Filter sidebar (large screens only) -->
             <v-col lg="3" class="d-none d-lg-flex fill-height">
-              <SearchFilter />
+              <ClientOnly>
+                <SearchFilter />
+              </ClientOnly>
             </v-col>
-
             <!-- Results list column -->
             <v-col
               lg="9"

@@ -1,9 +1,9 @@
-<!-- Search page with mobile/desktop views, filters, and infinite scroll results -->
 <template>
   <!-- Main layout container -->
   <v-layout class="flex-column fill-height">
     <!-- Top navigation bar -->
     <HomeAppBar />
+
     <!-- Mobile view (map/video toggle) -->
     <SearchMobileView
       v-show="isMobile"
@@ -34,7 +34,6 @@
       class="w-100"
     >
       <v-card height="70vh" class="d-flex flex-column">
-        <!-- Header fixe (non scrollable) -->
         <v-card-title class="d-flex flex-column align-start pa-2 flex-shrink-0">
           <div class="d-flex align-center w-100">
             <span class="text-h6">Results</span>
@@ -45,7 +44,6 @@
               @click="resultsSheet = false"
             />
           </div>
-          <!-- Mini filter bar - reste visible en haut -->
           <SearchMiniFilter
             @show-drawer="mobileFilter = true"
             class="overflow-auto w-100"
@@ -54,28 +52,29 @@
 
         <v-divider class="flex-shrink-0" />
 
-        <!-- Results list - zone scrollable -->
         <v-card-text class="pa-1 flex-grow-1 overflow-y-auto">
           <SearchResultList :results="results" @load="onLoad" />
         </v-card-text>
       </v-card>
     </v-bottom-sheet>
+
+    <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
+    <ClientOnly>
+      <v-navigation-drawer
+        v-if="!isMobile"
+        v-model="drawer"
+        temporary
+        width="320"
+        location="left"
+        class="fill-height z-50"
+        elevation="10"
+        style="top: 0; height: 100vh; position: fixed"
+      >
+        <SearchFilter />
+      </v-navigation-drawer>
+    </ClientOnly>
   </v-layout>
-  <!-- Desktop filter drawer (temporary sidebar) -->
-  <ClientOnly>
-    <v-navigation-drawer
-      v-if="!isMobile"
-      v-model="drawer"
-      temporary
-      width="320"
-      location="left"
-      class="fill-height z-50"
-      elevation="10"
-      style="top: 0; height: 100vh; position: fixed"
-    >
-      <SearchFilter />
-    </v-navigation-drawer>
-  </ClientOnly>
+  <!-- Le v-layout doit fermer APRÈS le drawer -->
 </template>
 
 <script setup lang="ts">
