@@ -26,27 +26,25 @@
                         {{ restaurantTitle }}
                     </h1>
 
-                    <ClientOnly>
-                        <!-- This shows the rating of the buisness -->
-                        <div
-                            class="d-flex align-center justify-center justify-md-start mb-3"
+                    <!-- This shows the rating of the buisness -->
+                    <div
+                        class="d-flex align-center justify-center justify-md-start mb-3"
+                    >
+                        <v-rating
+                            :model-value="4.8"
+                            color="amber-darken-2"
+                            density="compact"
+                            size="small"
+                            half-increments
+                            readonly
+                        />
+                        <!-- The review -->
+                        <span
+                            class="ms-2 text-subtitle-2 font-weight-bold shadow-text"
                         >
-                            <v-rating
-                                :model-value="4.8"
-                                color="amber-darken-2"
-                                density="compact"
-                                size="small"
-                                half-increments
-                                readonly
-                            />
-                            <!-- The review -->
-                            <span
-                                class="ms-2 text-subtitle-2 font-weight-bold shadow-text"
-                            >
-                                4.8 (1,250 Reviews)
-                            </span>
-                        </div>
-                    </ClientOnly>
+                            4.8 (1,250 Reviews)
+                        </span>
+                    </div>
 
                     <!-- This show the business type and open hours -->
                     <p
