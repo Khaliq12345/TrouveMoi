@@ -15,20 +15,20 @@
 <script setup lang="ts">
 const { updateURL, getURLFilter } = useFilterURL();
 
-const isOpenNow = ref(getURLFilter("is_open").includes("is_open"));
+// On initialise la ref : vrai si "opened" est présent dans les filtres
+const isOpenNow = ref(getURLFilter("is_open").includes("opened"));
 
 const toggleOpenNow = () => {
-    const features = getURLFilter("is_open") as string[];
+    // Inversion de l'état local
 
     if (isOpenNow.value) {
-        // Add is_open to features
-        updateURL("is_open", [...features, "is_open"]);
+        // Si on veut filtrer les établissements ouverts
+        // On remplace totalement les anciennes valeurs par ["opened"]
+        updateURL("is_open", ["opened"]);
     } else {
-        // Remove is_open from features
-        updateURL(
-            "is_open",
-            features.filter((f) => f !== "is_open"),
-        );
+        // Si on veut filtrer les établissements fermés (ou simplement retirer le filtre)
+        // On remplace par ["closed"]
+        updateURL("is_open", ["closed"]);
     }
 };
 </script>
