@@ -78,6 +78,8 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute();
+
 // UI state management
 const drawer = ref(false); // Desktop filter drawer visibility
 const resultsSheet = ref(false); // Mobile results sheet visibility
@@ -134,4 +136,13 @@ async function loadMore({ done }) {
         isLoading.value = false;
     }
 }
+
+// React when the page parameter changes
+watch(
+    () => route.query,
+    () => {
+        console.log("RELOADING THE PAGE");
+    },
+    { deep: true },
+);
 </script>
