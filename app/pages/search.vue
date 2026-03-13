@@ -59,19 +59,19 @@
     </v-bottom-sheet>
   </v-layout>
 
-    <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
-    <v-navigation-drawer
-      v-if="!isMobile"
-      v-model="drawer"
-      temporary
-      width="320"
-      location="left"
-      class="fill-height z-50"
-      elevation="10"
-      style="top: 0; height: 100vh; position: fixed"
-    >
-      <SearchFilter />
-    </v-navigation-drawer>
+  <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
+  <v-navigation-drawer
+    v-if="!isMobile"
+    v-model="drawer"
+    temporary
+    width="320"
+    location="left"
+    class="fill-height z-50"
+    elevation="10"
+    style="top: 0; height: 100vh; position: fixed"
+  >
+    <SearchFilter />
+  </v-navigation-drawer>
   <!-- Le v-layout doit fermer APRÈS le drawer -->
 </template>
 
@@ -90,7 +90,7 @@ const page = ref(1);
 const isEmpty = ref(false);
 const isLoading = ref(false);
 
-const { getURLFilter, getAllURLFilters } = useFilterURL();
+const { getAllURLFilters } = useFilterURL();
 
 // Inject mobile state from parent
 const isMobile = inject("isMobile");
@@ -137,63 +137,51 @@ async function loadMore({ done }) {
   }
 }
 
-const { $directus, $readItems } = useNuxtApp();
+async function getBussness() {
+  // On récupère tes filtres d'URL via ton utilitaire
+  const filters = getAllURLFilters();
 
-const { data: businesses } = await useAsyncData(
-  "businesses",
-  async () => {
-    const filters = getAllURLFilters();
-    console.log("Before filter is:", filters);
+  // Construction de l'objet de requête pour Directus
+  const query = {
+    filter: {},
+    search: filters.search || undefined, // Recherche globale
+    limit: 10,
+  };
 
-    // On prépare l'objet de requête final
-    const query: any = {
-      filter: {},
-    };
-
-    for (const [key, value] of Object.entries(filters)) {
-      // Si la clé est 'search', on l'extrait du 'filter' car
-      // Directus traite la recherche globale à la racine de la requête
-      if (key === "search") {
-        query.search = value;
-        continue;
-      }
-
-      // Traitement spécial pour la relation many-to-many featured_slots
-      if (key === "featured_slots" && Array.isArray(value)) {
-        query.filter.featuredslots = {
-          featured_slots_id: {
-            slug: { _in: value }, // ← slug au lieu de _in avec IDs
-          },
-        };
-        continue;
-      }
-
-      // Les autres clés sont traitées comme des filtres de colonnes classiques
+  // On injecte les filtres de colonnes (hors recherche)
+  for (const [key, value] of Object.entries(filters)) {
+    if (key !== "search") {
       query.filter[key] = Array.isArray(value)
         ? { _in: value }
         : { _eq: value };
     }
+  }
 
-    console.log("Final query is: ", query);
+  try {
+    // Appel via le tunnel serveur Nuxt
+    const data = await $fetch(`/api/directus/businesses`, {
+      method: "POST",
+      body: query, // Toujours passer par le body
+    });
 
-    // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
-    return $directus.request($readItems("businesses", query));
-  },
-  {
-    getCachedData: (key) => {
-      const nuxtApp = useNuxtApp();
-      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-    },
-  },
-);
-console.log("Bussnesses: ", businesses.value);
+    businesses.value = data;
+  } catch (e) {
+    console.error("Erreur lors de la récupération :", e);
+  }
+}
+const businesses = ref<any[]>([]);
+onMounted(async () => {
+  await getBussness();
+});
 
 // React when the page parameter changes
 watch(
   () => route.query,
-  () => {
-    window.location.reload();
+  async function () {
+    await getBussness();
   },
-  { deep: true },
+  {
+    deep: true,
+  },
 );
 </script>
