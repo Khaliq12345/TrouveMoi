@@ -14,7 +14,7 @@
     <!-- Desktop view (filters + results + map) -->
     <SearchDesktopView
       v-show="!isMobile"
-      :results="businesses"
+      :results="businesses || []"
       @load="onLoad"
       @open-drawer="drawer = true"
     />
@@ -53,7 +53,7 @@
         <v-divider class="flex-shrink-0" />
 
         <v-card-text class="pa-1 flex-grow-1 overflow-y-auto">
-          <SearchResultList :businesses="businesses" @load="getBussness" />
+          <SearchResultList :businesses="businesses || []" @load="onLoad" />
         </v-card-text>
       </v-card>
     </v-bottom-sheet>
@@ -89,7 +89,6 @@ const results = ref([]);
 const page = ref(1);
 const isEmpty = ref(false);
 const isLoading = ref(false);
-const businesses = ref<any[]>([]);
 
 const { getAllURLFilters } = useFilterURL();
 
@@ -138,70 +137,71 @@ async function loadMore({ done }) {
   }
 }
 
-async function getBussness() {
-  // On récupère tes filtres d'URL via ton utilitaire
-  const filters = getAllURLFilters();
+const { $directus, $readItems } = useNuxtApp();
 
-  // Construction de l'objet de requête pour Directus
-  const query = <any>{
-    filter: {},
-    search: filters.search || undefined, // Recherche globale
-  };
+const { data: businesses } = await useAsyncData(
+  "businesses",
+  async () => {
+    const filters = getAllURLFilters();
 
-  // On injecte les filtres de colonnes (hors recherche)
-  for (const [key, value] of Object.entries(filters)) {
-    if (key === "search") continue;
+    // On prépare l'objet de requête final
+    const query: any = {
+      filter: {},
+    };
 
-    // Cas spécifique pour les sous-catégories (Relation M2M)
-    if (key === "sub_categories") {
-      query.filter[key] = {
-        sub_categories_id: {
-          slug: Array.isArray(value) ? { _in: value } : { _eq: value },
-        },
-      };
-      continue;
-    }
-    // Cas spécifique pour la catégorie parente (Relation O2M/M2O)
-    else if (key === "categories") {
-      // query.filter["categories_new"] = {
-      //   slug: Array.isArray(value) ? { _in: value } : { _eq: value },
-      // };
-      continue;
-    }
-    // Champs classiques (titre, ville, etc.)
-    else {
+    for (const [key, value] of Object.entries(filters)) {
+      // Si la clé est 'search', on l'extrait du 'filter' car
+      // Directus traite la recherche globale à la racine de la requête
+      if (key === "search") {
+        query.search = value;
+        continue;
+      }
+
+      // Traitement spécial pour la relation many-to-many featured_slots
+      if (key === "featured_slots" && Array.isArray(value)) {
+        query.filter.featuredslots = {
+          featured_slots_id: {
+            slug: { _in: value }, // ← slug au lieu de _in avec IDs
+          },
+        };
+        continue;
+      }
+
+      // Cas spécifique pour les sous-catégories (Relation M2M)
+      if (key === "sub_categories") {
+        query.filter[key] = {
+          sub_categories_id: {
+            slug: Array.isArray(value) ? { _in: value } : { _eq: value },
+          },
+        };
+        continue;
+      }
+
+      if (key === "categories") continue;
+
+      // Les autres clés sont traitées comme des filtres de colonnes classiques
       query.filter[key] = Array.isArray(value)
         ? { _in: value }
         : { _eq: value };
     }
-  }
 
-  console.log("final query:", query);
-  try {
-    // Appel via le tunnel serveur Nuxt
-    const data = await $fetch(`/api/directus/businesses`, {
-      method: "POST",
-      body: query, // Toujours passer par le body
-    });
-
-    businesses.value = data;
-  } catch (e) {
-    console.error("Erreur lors de la récupération :", e);
-  }
-  console.log("business: ", businesses.value);
-}
-onMounted(async () => {
-  await getBussness();
-});
+    // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
+    return $directus.request($readItems("businesses", query));
+  },
+  {
+    getCachedData: (key) => {
+      const nuxtApp = useNuxtApp();
+      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+    },
+  },
+);
 
 // React when the page parameter changes
 watch(
   () => route.query,
-  async function () {
-    await getBussness();
+  () => {
+    window.location.reload();
   },
-  {
-    deep: true,
-  },
+  { deep: true },
 );
 </script>
