@@ -142,21 +142,40 @@ async function getBussness() {
   const filters = getAllURLFilters();
 
   // Construction de l'objet de requête pour Directus
-  const query = {
+  const query = <any>{
     filter: {},
     search: filters.search || undefined, // Recherche globale
-    limit: 10,
   };
 
   // On injecte les filtres de colonnes (hors recherche)
   for (const [key, value] of Object.entries(filters)) {
-    if (key !== "search") {
+    if (key === "search") continue;
+
+    // Cas spécifique pour les sous-catégories (Relation M2M)
+    if (key === "sub_categories") {
+      query.filter[key] = {
+        sub_categories_id: {
+          slug: Array.isArray(value) ? { _in: value } : { _eq: value },
+        },
+      };
+      continue;
+    }
+    // Cas spécifique pour la catégorie parente (Relation O2M/M2O)
+    else if (key === "categories") {
+      // query.filter["categories_new"] = {
+      //   slug: Array.isArray(value) ? { _in: value } : { _eq: value },
+      // };
+      continue;
+    }
+    // Champs classiques (titre, ville, etc.)
+    else {
       query.filter[key] = Array.isArray(value)
         ? { _in: value }
         : { _eq: value };
     }
   }
 
+  console.log("final query:", query);
   try {
     // Appel via le tunnel serveur Nuxt
     const data = await $fetch(`/api/directus/businesses`, {
@@ -168,6 +187,7 @@ async function getBussness() {
   } catch (e) {
     console.error("Erreur lors de la récupération :", e);
   }
+  console.log("business: ", businesses.value);
 }
 const businesses = ref<any[]>([]);
 onMounted(async () => {

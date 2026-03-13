@@ -1,6 +1,5 @@
 <template>
   <div class="d-flex ga-2">
-    <!-- Catégories importantes -->
     <v-menu
       v-for="category in importantCategories"
       :key="category.id"
@@ -32,7 +31,6 @@
       </v-list>
     </v-menu>
 
-    <!-- Menu "Plus" -->
     <v-menu
       v-if="otherCategories.length"
       open-on-hover
@@ -71,120 +69,75 @@
     </v-menu>
   </div>
 </template>
-
 <script setup lang="ts">
 const route = useRoute();
 const router = useRouter();
-const { $directus, $readItems } = useNuxtApp();
-const { updateURL, getURLFilter } = useFilterURL();
+const { getURLFilter } = useFilterURL();
 
-// Récupère les valeurs actuelles depuis l'URL
-const currentCategory = computed(() => {
-  const cat = getURLFilter("category");
-  return Array.isArray(cat) ? cat[0] : cat;
-});
+// État et constantes
+const categories = ref<any[]>([]);
+const sub_categories = ref<any[]>([]);
+const CAT_KEY = "categories";
+const SUB_KEY = "sub_categories";
 
-const currentSubCategory = computed(() => {
-  const sub = getURLFilter("sub_category");
-  return Array.isArray(sub) ? sub[0] : sub;
-});
-
-// Récupère les catégories (collection séparée)
-const { data: categories } = await useAsyncData(
-  "categories",
-  () => {
-    return $directus.request(
-      $readItems("categories_new", {
-        fields: ["id", "name", "slug", "important"],
-      }),
-    );
-  },
-  {
-    getCachedData: (key) => {
-      return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    },
-  },
-);
-
-// Récupère les sous-catégories (collection séparée)
-const { data: sub_categories } = await useAsyncData(
-  "sub_categories",
-  () => {
-    return $directus.request($readItems("sub_categories"));
-  },
-  {
-    getCachedData: (key) => {
-      return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    },
-  },
-);
-
-// Récupère les sous-catégories d'une catégorie par son ID
-const getSubsByCategoryId = (categoryId: string) => {
-  if (!sub_categories.value) return [];
-  return sub_categories.value.filter(
-    (sub) => sub.categories_new === categoryId,
-  );
+// Getters simplifiés
+const getVal = (key: string) => {
+  const val = getURLFilter(key);
+  return Array.isArray(val) ? val[0] : val;
 };
 
-// Vérifie si une catégorie est active
-const isActiveCategory = (slug: string): boolean => {
-  return currentCategory.value === slug;
-};
+const currentCategory = computed(() => getVal(CAT_KEY));
+const currentSubCategory = computed(() => getVal(SUB_KEY));
 
-// Vérifie si une sous-catégorie est active
-const isActiveSub = (slug: string): boolean => {
-  return currentSubCategory.value === slug;
-};
+const getSubsByCategoryId = (id: string) =>
+  sub_categories.value.filter((s) => s.categories_new === id);
+const isActiveCategory = (slug: string) => currentCategory.value === slug;
+const isActiveSub = (slug: string) => currentSubCategory.value === slug;
 
-// Sélectionne catégorie + sous-catégorie (remplace les deux)
+// Navigation
 const selectCategoryAndSub = (catSlug: string, subSlug: string) => {
-  // Toggle: si déjà sélectionnée, on désélectionne
+  const query = { ...route.query };
+
   if (isActiveSub(subSlug) && isActiveCategory(catSlug)) {
-    updateURL("category", []);
-    updateURL("sub_category", []);
-    return;
+    delete query[CAT_KEY];
+    delete query[SUB_KEY];
+  } else {
+    Object.assign(query, { [CAT_KEY]: catSlug, [SUB_KEY]: subSlug });
   }
-
-  // Mise à jour combinée
-  const newQuery: Record<string, string[]> = {
-    category: [catSlug],
-    sub_category: [subSlug],
-  };
-
-  // Merge avec les autres query existantes
-  const mergedQuery = {
-    ...route.query,
-    ...Object.fromEntries(
-      Object.entries(newQuery).map(([k, v]) => [k, v.join(",")]),
-    ),
-  };
-
-  router.push({ query: mergedQuery });
+  router.push({ query });
 };
 
-// Catégories importantes
-const importantCategories = computed(() => {
-  if (!categories.value) return [];
-  return categories.value.filter((c) => c.important === true);
-});
+// Computed filtrés
+const importantCategories = computed(() =>
+  categories.value.filter((c) => c.important),
+);
+const otherCategories = computed(() =>
+  categories.value.filter((c) => !c.important),
+);
 
-// Autres catégories
-const otherCategories = computed(() => {
-  if (!categories.value) return [];
-  return categories.value.filter((c) => c.important !== true);
-});
+const isActiveFromPlus = computed(() =>
+  otherCategories.value.some((cat) =>
+    getSubsByCategoryId(cat.id).some((s) => isActiveSub(s.slug)),
+  ),
+);
 
-// Vérifie si une sous-catégorie du menu "Plus" est active
-const isActiveFromPlus = computed(() => {
-  if (!otherCategories.value.length || !sub_categories.value) return false;
-
-  for (const cat of otherCategories.value) {
-    const subs = getSubsByCategoryId(cat.id);
-    if (subs.some((sub) => isActiveSub(sub.slug))) {
-      return true;
-    }
+onMounted(async () => {
+  try {
+    // Exécution parallèle des appels pour gagner en vitesse
+    const [catData, subData] = await Promise.all([
+      $fetch("/api/directus/categories_new", {
+        method: "POST",
+        body: { fields: ["id", "name", "slug", "important"] },
+      }),
+      $fetch("/api/directus/sub_categories", {
+        method: "POST",
+        body: { fields: ["id", "name", "slug", "categories_new"] },
+      }),
+    ]);
+    categories.value = catData;
+    sub_categories.value = subData;
+  } catch (e) {
+    console.error("Erreur chargement menus:", e);
   }
-  return false;
 });
 </script>
