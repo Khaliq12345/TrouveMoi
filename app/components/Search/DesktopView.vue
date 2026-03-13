@@ -31,7 +31,7 @@
                                 style="height: 0"
                             >
                                 <SearchResultList
-                                    :results="results"
+                                    :businesses="results"
                                     @load="$emit('load', $event)"
                                     class="w-100"
                                 />

@@ -3,6 +3,13 @@ export const useFilterURL = () => {
   const router = useRouter();
   const route = useRoute();
 
+  // Mappage des clés spéciales vers leurs noms dans Directus
+  const specialKeys: Record<string, string> = {
+    search: "search",
+    is_open: "status",
+    phone: "phone",
+  };
+
   const updateURL = (key: string, values: string[]) => {
     const sorted = [...values].sort();
     router.push({
@@ -19,5 +26,28 @@ export const useFilterURL = () => {
       : [];
   };
 
-  return { updateURL, getURLFilter };
+  const getAllURLFilters = (): Record<string, any> => {
+    const filters: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(route.query)) {
+      if (!value) continue;
+
+      for (const [key, value] of Object.entries(route.query)) {
+        if (!value) continue;
+
+        if (key in specialKeys) {
+          // On utilise le nom mappé (ex: is_open devient status)
+          // et on stocke la valeur brute en string
+          filters[specialKeys[key]] = String(value);
+        } else {
+          // Comportement par défaut pour les listes (catégories, etc.)
+          filters[key] = String(value).split(",").filter(Boolean);
+        }
+      }
+    }
+
+    return filters;
+  };
+
+  return { updateURL, getURLFilter, getAllURLFilters };
 };
