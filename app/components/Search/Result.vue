@@ -42,12 +42,12 @@
                   class="text-h6 font-weight-bold mb-2 text-truncate"
                   style="line-height: 1.2"
                 >
-                  {{ item.title }}
+                  {{ bussness?.name }}
                 </h3>
                 <!-- Rating display with star icon -->
                 <div class="d-flex align-center mt-1">
                   <v-rating
-                    :model-value="item.rating"
+                    :model-value="bussness?.rating"
                     color="amber-darken-2"
                     density="compact"
                     size="small"
@@ -55,7 +55,7 @@
                     half-increments
                   ></v-rating>
                   <span class="text-subtitle-2 font-weight-bold ms-2">{{
-                    item.rating
+                    bussness?.rating
                   }}</span>
                   <span class="text-caption text-medium-emphasis text-truncate">
                     ({{ item.reviews }}) • {{ item.tag }}
@@ -152,6 +152,9 @@ interface HotelItem {
 defineOptions({
   inheritAttrs: false,
 });
+
+const props = defineProps({ bussness: Object });
+
 // Sample result item data
 const item = ref<HotelItem>({
   title: "Kanazawa Grand Inn Hotel",

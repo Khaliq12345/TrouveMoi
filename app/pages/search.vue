@@ -14,7 +14,7 @@
     <!-- Desktop view (filters + results + map) -->
     <SearchDesktopView
       v-show="!isMobile"
-      :results="results"
+      :results="businesses"
       @load="onLoad"
       @open-drawer="drawer = true"
     />
@@ -53,7 +53,7 @@
         <v-divider class="flex-shrink-0" />
 
         <v-card-text class="pa-1 flex-grow-1 overflow-y-auto">
-          <SearchResultList :results="results" @load="onLoad" />
+          <SearchResultList :businesses="businesses" @load="getBussness" />
         </v-card-text>
       </v-card>
     </v-bottom-sheet>
@@ -89,6 +89,7 @@ const results = ref([]);
 const page = ref(1);
 const isEmpty = ref(false);
 const isLoading = ref(false);
+const businesses = ref<any[]>([]);
 
 const { getAllURLFilters } = useFilterURL();
 
@@ -189,7 +190,6 @@ async function getBussness() {
   }
   console.log("business: ", businesses.value);
 }
-const businesses = ref<any[]>([]);
 onMounted(async () => {
   await getBussness();
 });
