@@ -77,6 +77,9 @@
 </template>
 
 <script setup lang="ts">
+// Si le dossier types est à la racine de ton projet
+import type { Business, BusinessMedia, GroupedBusinessMedia } from "~/types/bussness";
+
 const config = useRuntimeConfig();
 const isMobile = inject("isMobile");
 const { $directus, $readItems } = useNuxtApp();
@@ -84,7 +87,7 @@ const { $directus, $readItems } = useNuxtApp();
 const route = useRoute();
 const slug = computed(() => route.params.slug as string);
 
-const { data: results } = await useAsyncData(
+const { data: results } = await useAsyncData<Business[]>(
   "businesses",
   async () => {
     // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
@@ -98,10 +101,10 @@ const { data: results } = await useAsyncData(
   },
 );
 
-const bussness = ref(results?.value?.[0]);
+const bussness = ref<Business>(results.value?.[0]);
 
 // Récupération des médias liés
-const { data: businessMedia } = await useAsyncData(
+const { data: businessMedia } = await useAsyncData<BusinessMedia>(
   `media-${bussness.value?.id}`,
   () => {
     if (!bussness.value?.id) return [];
@@ -124,7 +127,8 @@ const { data: businessMedia } = await useAsyncData(
     },
   },
 );
-const separatedMedia = computed(() => {
+
+const separatedMedia = computed<GroupedBusinessMedia>(() => {
   if (!businessMedia.value) return {};
 
   return businessMedia.value.reduce((acc, media) => {

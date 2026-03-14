@@ -49,13 +49,20 @@
 </template>
 
 <script setup lang="ts">
+import type { Business, GroupedBusinessMedia } from "~/types/bussness";
+
 import { useElementVisibility } from "@vueuse/core";
 
-const props = defineProps({ bussness: Object, media: Object });
+const props = defineProps<{
+  bussness: Business | undefined;
+  media: GroupedBusinessMedia | undefined;
+}>();
 
 // Créer une liste avec tous les liens de chaque tableau dans media
 const images = computed(() => {
-  return Object.values(props.media).flat().map(item => item.link);
+  return Object.values(props?.media)
+    .flat()
+    .map((item) => item.link);
 });
 
 // Inject mobile state from parent

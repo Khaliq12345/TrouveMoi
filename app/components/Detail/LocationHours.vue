@@ -65,7 +65,8 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({ bussness: Object });
+import type { Business, BusinessLocations } from "~/types/bussness";
+const props = defineProps<{ bussness: Business }>();
 
 const { $directus, $readItems } = useNuxtApp();
 
@@ -84,7 +85,7 @@ const businessHours = computed(() => {
 });
 
 // Récupération des données
-const { data: locations } = await useAsyncData(
+const { data: locations } = await useAsyncData<BusinessLocations>(
   `locations-${props.bussness?.id}`,
   () => {
     return $directus.request(

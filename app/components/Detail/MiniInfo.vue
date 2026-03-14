@@ -28,5 +28,6 @@
   </v-container>
 </template>
 <script setup lang="ts">
-const props = defineProps({bussness: Object})
+import type { Business } from "~/types/bussness";
+const props = defineProps<{ bussness: Business }>();
 </script>
