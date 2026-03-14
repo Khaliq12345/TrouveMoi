@@ -81,10 +81,10 @@
 </template>
 
 <script setup lang="ts">
-import type { BusinessMediaItem } from "~/types/bussness";
+import type { BizsMediaItem } from "~/types/biz";
 const props = defineProps<{
   id: string; // ID du Business
-  media: BusinessMediaItem; // Le tableau d'objets media (ton JSON)
+  media: BizsMediaItem; // Le tableau d'objets media (ton JSON)
 }>();
 </script>
 

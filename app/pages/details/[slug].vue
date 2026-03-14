@@ -72,12 +72,7 @@
 
 <script setup lang="ts">
 // Si le dossier types est à la racine de ton projet
-import type {
-  Business,
-  BusinessMedia,
-  GroupedBusinessMedia,
-  FeaturedSlot,
-} from "~/types/bussness";
+import type { Biz, BizMedia, GroupedBizMedia, FeaturedSlot } from "~/types/biz";
 
 const config = useRuntimeConfig();
 const isMobile = inject("isMobile");
@@ -86,7 +81,7 @@ const { $directus, $readItems } = useNuxtApp();
 const route = useRoute();
 const slug = route.params.slug;
 
-const { data: businessWithSlots } = await useAsyncData<Business[]>(
+const { data: businessWithSlots } = await useAsyncData<Biz[]>(
   `business-${slug}`,
   async () => {
     // Requête unique qui récupère le business ET ses featured slots liés
@@ -126,13 +121,13 @@ const { data: businessWithSlots } = await useAsyncData<Business[]>(
 );
 
 // Accès simplifié
-const biz = computed<Business>(() => businessWithSlots.value);
+const biz = computed<Biz>(() => businessWithSlots.value);
 const featuredSlots = computed<FeaturedSlot>(
   () => businessWithSlots.value?.featured_slots || [],
 );
 
 // Récupération des médias liés
-const { data: businessMedia } = await useAsyncData<BusinessMedia>(
+const { data: businessMedia } = await useAsyncData<BizMedia>(
   `media-${biz.value?.id}`,
   () => {
     if (!biz.value?.id) return [];
@@ -157,7 +152,7 @@ const { data: businessMedia } = await useAsyncData<BusinessMedia>(
 );
 
 // Chaque type de media separé par leur tags, retourn { tag: [...], ... }
-const separatedMedia = computed<GroupedBusinessMedia>(() => {
+const separatedMedia = computed<GroupedBizMedia>(() => {
   if (!businessMedia.value) return {};
 
   return businessMedia.value.reduce((acc, media) => {

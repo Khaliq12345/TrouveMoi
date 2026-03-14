@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FeaturedSlot } from "~/types/bussness";
+import type { FeaturedSlot } from "~/types/biz";
 const props = defineProps<{
   id: string;
   featuredSlots: FeaturedSlot[];

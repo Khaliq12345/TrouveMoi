@@ -65,8 +65,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Business, BusinessLocations } from "~/types/bussness";
-const props = defineProps<{ biz: Business }>();
+import type { Biz, BusinessLocations } from "~/types/biz";
+const props = defineProps<{ biz: Biz }>();
 
 const { $directus, $readItems } = useNuxtApp();
 

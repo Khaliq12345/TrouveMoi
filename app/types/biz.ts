@@ -1,4 +1,4 @@
-export interface BusinessLocation {
+export interface BizLocation {
   id: string;
   user_created: string;
   date_created: string;
@@ -14,9 +14,9 @@ export interface BusinessLocation {
 }
 
 // Si tu reçois une liste d'emplacements
-export type BusinessLocations = BusinessLocation[];
+export type BusinessLocations = BizLocation[];
 
-export interface BusinessHours {
+export interface BizHours {
   open: string | null;
   close: string | null;
 }
@@ -33,16 +33,16 @@ export interface FeaturedSlot {
 }
 
 export interface DaySchedule {
-  Lundi: BusinessHours;
-  Mardi: BusinessHours;
-  Mercredi: BusinessHours;
-  Jeudi: BusinessHours;
-  Vendredi: BusinessHours;
-  Samedi: BusinessHours;
-  Dimanche: BusinessHours;
+  Lundi: BizHours;
+  Mardi: BizHours;
+  Mercredi: BizHours;
+  Jeudi: BizHours;
+  Vendredi: BizHours;
+  Samedi: BizHours;
+  Dimanche: BizHours;
 }
 
-export interface BusinessMediaItem {
+export interface BizsMediaItem {
   id: string;
   user_created: string;
   date_created: string;
@@ -58,9 +58,9 @@ export interface BusinessMediaItem {
 }
 
 // Le type pour l'objet groupé
-export type GroupedBusinessMedia = Record<string, BusinessMediaItem[]>;
+export type GroupedBizMedia = Record<string, BizsMediaItem[]>;
 
-export interface BusinessMedia {
+export interface BizMedia {
   id: string;
   user_created: string;
   date_created: string;
@@ -74,7 +74,7 @@ export interface BusinessMedia {
   description: string | null;
 }
 
-export interface Business {
+export interface Biz {
   id: string;
   sort: number | null;
   user_created: string;

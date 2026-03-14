@@ -49,13 +49,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Business, GroupedBusinessMedia } from "~/types/bussness";
+import type { Biz, GroupedBizMedia } from "~/types/biz";
 
 import { useElementVisibility } from "@vueuse/core";
 
 const props = defineProps<{
-  biz: Business | undefined;
-  media: GroupedBusinessMedia | undefined;
+  biz: Biz | undefined;
+  media: GroupedBizMedia | undefined;
 }>();
 
 // Créer une liste avec tous les liens de chaque tableau dans media
