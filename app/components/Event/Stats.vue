@@ -39,6 +39,22 @@
 </template>
 
 <script setup lang="ts">
+// Interface strictement conforme au schéma API
+interface BusinessEvent {
+  id: string;
+  user_created: string;
+  date_created: string;
+  user_updated: string | null;
+  date_updated: string | null;
+  business_id: string;
+  title: string;
+  description: string;
+  start_at: string;
+  end_at: string;
+  link: string | null;
+  image: string;
+}
+
 type StatStatus = "live" | "upcoming" | "past";
 type StatColor = "error" | "primary" | "grey";
 
@@ -49,31 +65,45 @@ interface EventStat {
   icon: string;
   color: StatColor;
 }
+
 const props = defineProps<{
-  events: any[];
+  events: BusinessEvent[];
 }>();
 
-defineEmits(["filter"]);
+defineEmits<{
+  (e: "filter", value: StatStatus): void;
+}>();
+
+// Calcul du statut dynamique depuis start_at/end_at
+const getEventStatus = (event: BusinessEvent): StatStatus => {
+  const now = new Date().getTime();
+  const start = new Date(event.start_at).getTime();
+  const end = new Date(event.end_at).getTime();
+
+  if (now >= start && now <= end) return "live";
+  if (now < start) return "upcoming";
+  return "past";
+};
 
 const stats = computed<EventStat[]>(() => [
   {
     label: "En cours",
     value: "live",
-    count: props.events.filter((e) => e.status === "live").length,
+    count: props.events.filter((e) => getEventStatus(e) === "live").length,
     icon: "mdi-access-point",
     color: "error",
   },
   {
     label: "À venir",
     value: "upcoming",
-    count: props.events.filter((e) => e.status === "upcoming").length,
+    count: props.events.filter((e) => getEventStatus(e) === "upcoming").length,
     icon: "mdi-calendar-clock",
     color: "primary",
   },
   {
     label: "Passés",
     value: "past",
-    count: props.events.filter((e) => e.status === "past").length,
+    count: props.events.filter((e) => getEventStatus(e) === "past").length,
     icon: "mdi-history",
     color: "grey",
   },
