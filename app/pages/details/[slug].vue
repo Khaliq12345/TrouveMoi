@@ -1,10 +1,7 @@
 <template>
   <v-layout>
     <div class="w-100">
-      <DetailMobileBusinessHeader
-        :bussness="bussness"
-        :media="separatedMedia"
-      />
+      <DetailMobileBusinessHeader :biz="biz" :media="separatedMedia" />
 
       <v-container class="mx-auto" style="max-width: 1200px">
         <v-row justify="center" align="start">
@@ -15,7 +12,7 @@
               class="border-opacity-100"
               color="primary ma-1"
             ></v-divider>
-            <DetailMiniInfo :bussness="bussness" />
+            <DetailMiniInfo :biz="biz" />
             <v-divider
               class="border-opacity-100"
               color="primary ma-2"
@@ -26,10 +23,7 @@
               color="primary ma-2"
             ></v-divider>
             <section id="services" class="scroll-section">
-              <DetailServiceSlide
-                :id="bussness?.id"
-                :media="separatedMedia?.menu"
-              />
+              <DetailServiceSlide :id="biz?.id" :media="separatedMedia?.menu" />
             </section>
             <v-divider
               class="border-opacity-100"
@@ -37,8 +31,8 @@
             ></v-divider>
             <section id="amenities" class="scroll-section">
               <DetailAmenities
-                :id="bussness?.id || ''"
-                :featuredSlots="bussness?.featuredslots || []"
+                :id="biz?.id || ''"
+                :featuredSlots="featuredSlots || []"
               />
             </section>
             <v-divider
@@ -46,7 +40,7 @@
               color="primary ma-1"
             ></v-divider>
             <section id="location" class="scroll-section" v-show="isMobile">
-              <DetailLocationHours :bussness="bussness" />
+              <DetailLocationHours :biz="biz" />
             </section>
             <v-divider
               class="border-opacity-100"
@@ -57,13 +51,13 @@
             </section>
 
             <section id="reviews" class="scroll-section">
-              <DetailReviews :id="bussness?.id" />
+              <DetailReviews :id="biz?.id" />
             </section>
           </v-col>
 
           <!-- Right Section -->
           <v-col cols="12" md="4" v-if="!isMobile">
-            <DetailLocationHours :bussness="bussness" />
+            <DetailLocationHours :biz="biz" />
           </v-col>
         </v-row>
       </v-container>
@@ -78,20 +72,50 @@
 
 <script setup lang="ts">
 // Si le dossier types est à la racine de ton projet
-import type { Business, BusinessMedia, GroupedBusinessMedia } from "~/types/bussness";
+import type {
+  Business,
+  BusinessMedia,
+  GroupedBusinessMedia,
+  FeaturedSlot,
+} from "~/types/bussness";
 
 const config = useRuntimeConfig();
 const isMobile = inject("isMobile");
 const { $directus, $readItems } = useNuxtApp();
 
 const route = useRoute();
-const slug = computed(() => route.params.slug as string);
+const slug = route.params.slug;
 
-const { data: results } = await useAsyncData<Business[]>(
-  "businesses",
+const { data: businessWithSlots } = await useAsyncData<Business[]>(
+  `business-${slug}`,
   async () => {
-    // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
-    return $directus.request($readItems("businesses", { search: slug.value }));
+    // Requête unique qui récupère le business ET ses featured slots liés
+    const results = await $directus.request(
+      $readItems("businesses", {
+        filter: {
+          slug: { _eq: slug },
+        },
+        fields: [
+          "*", // Tous les champs du business
+          "featuredslots.featured_slots_id.*", // Récupère les featured slots via la relation
+        ],
+      }),
+    );
+
+    if (!results?.length) return null;
+
+    const business = results[0];
+
+    // Transforme les données de la relation pour extraire les featured slots
+    const featuredSlots =
+      business?.featuredslots?.map(
+        (junction: any) => junction.featured_slots_id,
+      ) || [];
+
+    return {
+      ...business,
+      featured_slots: featuredSlots, // Ajoute les slots plats
+    };
   },
   {
     getCachedData: (key) => {
@@ -101,20 +125,24 @@ const { data: results } = await useAsyncData<Business[]>(
   },
 );
 
-const bussness = ref<Business>(results.value?.[0]);
+// Accès simplifié
+const biz = computed<Business>(() => businessWithSlots.value);
+const featuredSlots = computed<FeaturedSlot>(
+  () => businessWithSlots.value?.featured_slots || [],
+);
 
 // Récupération des médias liés
 const { data: businessMedia } = await useAsyncData<BusinessMedia>(
-  `media-${bussness.value?.id}`,
+  `media-${biz.value?.id}`,
   () => {
-    if (!bussness.value?.id) return [];
+    if (!biz.value?.id) return [];
 
     return $directus.request(
       $readItems("buisness_media", {
         // Attention à l'orthographe 'buisness' vue sur ton screen
         filter: {
           extra_id: {
-            _eq: bussness.value.id,
+            _eq: biz.value.id,
           },
         },
       }),
@@ -128,6 +156,7 @@ const { data: businessMedia } = await useAsyncData<BusinessMedia>(
   },
 );
 
+// Chaque type de media separé par leur tags, retourn { tag: [...], ... }
 const separatedMedia = computed<GroupedBusinessMedia>(() => {
   if (!businessMedia.value) return {};
 

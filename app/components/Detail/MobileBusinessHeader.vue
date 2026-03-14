@@ -16,7 +16,7 @@
 
     <!-- Restaurant name -->
     <v-app-bar-title class="font-weight-bold">
-      {{ bussness?.name }}
+      {{ biz?.name }}
     </v-app-bar-title>
 
     <v-spacer></v-spacer>
@@ -38,11 +38,11 @@
   <!-- Hero section with image carousel (tracked for visibility) -->
   <div class="position-relative" ref="headerWithImage">
     <DetailBuisnessCard
-      :restaurant-title="bussness?.name || ''"
-      :review="bussness?.reviews_count || 0"
-      :rating="bussness?.rating || 0.0"
-      :isOpen="bussness?.status || ''"
-      :description="bussness?.description || ''"
+      :restaurant-title="biz?.name || ''"
+      :review="biz?.reviews_count || 0"
+      :rating="biz?.rating || 0.0"
+      :isOpen="biz?.is_open || false"
+      :description="biz?.description || ''"
       :images="images"
     ></DetailBuisnessCard>
   </div>
@@ -54,16 +54,14 @@ import type { Business, GroupedBusinessMedia } from "~/types/bussness";
 import { useElementVisibility } from "@vueuse/core";
 
 const props = defineProps<{
-  bussness: Business | undefined;
+  biz: Business | undefined;
   media: GroupedBusinessMedia | undefined;
 }>();
 
 // Créer une liste avec tous les liens de chaque tableau dans media
-const images = computed(() => {
-  return Object.values(props?.media)
-    .flat()
-    .map((item) => item.link);
-});
+const images = Object.values(props?.media)
+  .flat()
+  .map((item) => item.link);
 
 // Inject mobile state from parent
 const isMobile = inject("isMobile", false);

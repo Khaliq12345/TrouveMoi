@@ -6,7 +6,7 @@
     <!-- Amenities grid -->
     <v-row>
       <v-col
-        v-for="(slot, i) in featuredSlots"
+        v-for="(slot, i) in slots"
         :key="slot.id"
         cols="12"
         sm="6"
@@ -28,53 +28,12 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ 
-  id: string; 
-  featuredSlots: number[] 
-}>();
-
-const { $directus, $readItems } = useNuxtApp();
-
-// Interface pour les featured slots
-interface FeaturedSlot {
+import type { FeaturedSlot } from "~/types/bussness";
+const props = defineProps<{
   id: string;
-  feature: string;
-  slug: string;
-  categories: string | null;
-}
-
-const { data: featuredSlots } = await useAsyncData<FeaturedSlot[]>(
-  "featured-slots",
-  async () => {
-
-    if (!props.featuredSlots?.length) {
-      return [];
-    }
-
-    // Récupère les entrées de la table de jonction
-    const junctionEntries = await $directus.request(
-      $readItems("businesses_featured_slots_1", {
-        filter: {
-          id: {
-            _in: props.featuredSlots,
-          },
-        },
-        fields: ["featured_slots_id.*"],
-      }),
-    );
-
-    // Extrait uniquement les données de featured_slots_id
-    const slots = junctionEntries?.map((entry: any) => entry.featured_slots_id) || [];
-
-    return slots;
-  },
-  {
-    getCachedData: (key) => {
-      const nuxtApp = useNuxtApp();
-      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-    },
-  },
-);
+  featuredSlots: FeaturedSlot[];
+}>();
+const slots = props.featuredSlots;
 </script>
 
 <style scoped>

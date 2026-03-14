@@ -66,13 +66,13 @@
 
 <script setup lang="ts">
 import type { Business, BusinessLocations } from "~/types/bussness";
-const props = defineProps<{ bussness: Business }>();
+const props = defineProps<{ biz: Business }>();
 
 const { $directus, $readItems } = useNuxtApp();
 
 const businessHours = computed(() => {
   // On récupère le premier objet du tableau "hours"
-  const rawHours = props.bussness?.hours[0] || {};
+  const rawHours = props.biz?.hours[0] || {};
 
   // On transforme l'objet en tableau pour le v-for
   return Object.entries(rawHours).map(([day, times]: [string, any]) => {
@@ -86,14 +86,14 @@ const businessHours = computed(() => {
 
 // Récupération des données
 const { data: locations } = await useAsyncData<BusinessLocations>(
-  `locations-${props.bussness?.id}`,
+  `locations-${props.biz?.id}`,
   () => {
     return $directus.request(
       $readItems("business_locations", {
         filter: {
           bussness: {
             id: {
-              _eq: props.bussness?.id,
+              _eq: props.biz?.id,
             },
           },
         },

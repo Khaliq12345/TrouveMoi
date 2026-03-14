@@ -5,23 +5,23 @@
       <v-col cols="12">
         <!-- Business name -->
         <div class="text-h6 font-weight-bold mb-1 text-grey-darken-4">
-          {{ bussness?.name }}
+          {{ biz?.name }}
         </div>
 
         <!-- Closed status -->
         <p class="text-error font-weight-bold">
-          {{ bussness?.status === "opened" ? "Ouvert" : "Fermé" }}
+          {{ biz?.is_open === "opened" ? "Ouvert" : "Fermé" }}
         </p>
 
         <!-- Last updated timestamp -->
         <p class="text-caption text-grey mb-4">
           Dernière mise à jour
-          {{ new Date(bussness?.date_updated).toLocaleDateString("fr-FR") }}
+          {{ new Date(biz?.date_updated).toLocaleDateString("fr-FR") }}
         </p>
 
         <!-- Business description -->
         <p class="text-body-2 text-grey-darken-3">
-          {{ bussness?.description }}
+          {{ biz?.description }}
         </p>
       </v-col>
     </v-row>
@@ -29,5 +29,5 @@
 </template>
 <script setup lang="ts">
 import type { Business } from "~/types/bussness";
-const props = defineProps<{ bussness: Business }>();
+const props = defineProps<{ biz: Business }>();
 </script>

@@ -41,7 +41,7 @@
           <!-- This show the business type and open hours -->
           <p class="text-subtitle-1 font-weight-medium mb-2 shadow-text">
             $$$ • Italian Cuisine •
-            {{ isOpen === "opened" ? "Ouvert" : "Fermé" }}
+            {{ isOpen ? "Ouvert" : "Fermé" }}
           </p>
 
           <!-- Short description of the buisness -->
@@ -76,7 +76,7 @@ const props = defineProps<{
   restaurantTitle: string;
   review: number;
   rating: number;
-  isOpen: string;
+  isOpen: boolean;
   description: string;
   images: String[];
 }>();

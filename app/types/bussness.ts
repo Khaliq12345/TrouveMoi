@@ -9,7 +9,7 @@ export interface BusinessLocation {
   longitude: string;
   local_direction: string;
   is_main: boolean;
-  bussness: string;
+  biz: string;
   address: string;
 }
 
@@ -19,6 +19,17 @@ export type BusinessLocations = BusinessLocation[];
 export interface BusinessHours {
   open: string | null;
   close: string | null;
+}
+
+// Interface pour les objets liés via featured_slots
+export interface FeaturedSlot {
+  id: string;
+  user_created: string;
+  date_created: string;
+  user_updated: string;
+  date_updated: string;
+  feature: string;
+  slug: string;
 }
 
 export interface DaySchedule {
@@ -75,7 +86,7 @@ export interface Business {
   phone: string;
   whatsapp: string;
   reviews_count: number;
-  status: "opened" | "closed"; // Adapté selon tes besoins Directus
+  is_open: boolean;
   hours: DaySchedule[];
   rating: number;
   price_range: number;
@@ -84,4 +95,5 @@ export interface Business {
   featuredslots: number[];
   qa: any[]; // À typer si tu ajoutes des questions/réponses plus tard
   sub_categories: number[];
+  featured_slots: FeaturedSlot[];
 }
