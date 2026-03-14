@@ -5,16 +5,11 @@
       v-bind="props"
       :elevation="isHovering ? 8 : 0"
       height="380"
-      class="rounded-xl overflow-hidden position-relative"
-      :class="
-        event.status === 'live'
-          ? 'border-error border-md'
-          : 'border border-opacity-10'
-      "
+      class="rounded-xl overflow-hidden position-relative border border-opacity-10"
     >
-      <!-- Image pleine -->
+      <!-- Image -->
       <v-img
-        :src="event.image"
+        :src="imgLink(event.image) || 'https://blocks.astratic.com/img/general-img-landscape.png'"
         cover
         height="100%"
         :class="isHovering ? 'scale-110' : ''"
@@ -22,31 +17,15 @@
       >
         <template #placeholder>
           <v-skeleton-loader type="image" height="100%" />
-        </template> </v-img
-      >/>
+        </template>
+      </v-img>
 
       <!-- Contenu -->
       <div
         class="position-absolute top-0 left-0 right-0 bottom-0 d-flex flex-column justify-space-between pa-4"
       >
-        <!-- Header avec status et date -->
+        <!-- Header -->
         <div class="d-flex justify-space-between align-start">
-          <!-- Status badge -->
-          <v-chip
-            :color="statusColor"
-            size="small"
-            variant="elevated"
-            class="font-weight-bold text-uppercase tracking-wider"
-          >
-            <template v-if="event.status === 'live'">
-              <span class="pulse-dot mr-1" />
-              Live
-            </template>
-            <template v-else>
-              {{ statusLabel }}
-            </template>
-          </v-chip>
-
           <!-- Date -->
           <div
             class="blur-content rounded-xl px-4 py-2 text-center text-white border border-white/20"
@@ -60,18 +39,9 @@
           </div>
         </div>
 
-        <!-- Info principale en blur -->
-        <div class="blur-content rounded-xl pa-4 border border-white/10">
-          <v-chip
-            size="x-small"
-            :color="event.categoryColor"
-            variant="tonal"
-            class="mb-2 font-weight-medium"
-          >
-            {{ event.category }}
-          </v-chip>
-
-          <h3 class="text-h6 font-weight-bold text-white mb-2 text-truncate-2">
+        <!-- Info -->
+        <div class="blur-content rounded-xl pa-2 border border-white/10">
+          <h3 class="text-h7 font-weight-bold text-white mb-2 text-truncate-2">
             {{ event.title }}
           </h3>
 
@@ -85,26 +55,22 @@
             class="d-flex align-center gap-4 text-caption text-white text-opacity-70"
           >
             <span class="d-flex align-center gap-1">
-              <v-icon icon="mdi-map-marker" size="14" color="white" />
-              {{ event.location }}
-            </span>
-            <span class="d-flex align-center gap-1">
-              <v-icon icon="mdi-account-group" size="14" color="white" />
-              {{ event.participants }}
+              <v-icon icon="mdi-clock-outline" size="14" color="white" />
+              {{ formatTimeRange }}
             </span>
           </div>
 
           <v-btn
-            :color="event.status === 'live' ? 'error' : 'primary'"
-            :variant="event.status === 'live' ? 'flat' : 'elevated'"
-            :prepend-icon="
-              event.status === 'live' ? 'mdi-access-point' : 'mdi-arrow-right'
-            "
+            color="primary"
+            variant="elevated"
+            prepend-icon="mdi-arrow-right"
             block
             class="mt-4"
             size="small"
+            v-if="event.link"
+            @click="emit('click', event.id)"
           >
-            {{ event.status === "live" ? "Rejoindre" : "Voir" }}
+            Voir
           </v-btn>
         </div>
       </div>
@@ -113,52 +79,41 @@
 </template>
 
 <script setup lang="ts">
+import type { Event } from '~/types/event';
 const props = defineProps<{
-  event: any;
+  event: Event;
 }>();
 
-const statusColor = computed(() => {
-  const colors = { live: "error", upcoming: "primary", past: "grey" };
-  return colors[props.event.status] || "primary";
-});
+const emit = defineEmits<{
+  (e: 'click', id: string): void;
+}>();
 
-const statusLabel = computed(() => {
-  const labels = { live: "En direct", upcoming: "À venir", past: "Terminé" };
-  return labels[props.event.status] || props.event.status;
-});
+const startDate = computed(() => new Date(props.event.start_at));
+const endDate = computed(() => new Date(props.event.end_at));
 
-const formatDay = computed(() => new Date(props.event.date).getDate());
+const formatDay = computed(() => startDate.value.getDate());
+
 const formatMonth = computed(() =>
-  new Date(props.event.date).toLocaleString("fr-FR", { month: "short" }),
+  startDate.value.toLocaleString('fr-FR', { month: 'short' })
 );
+
+const formatTimeRange = computed(() => {
+  const start = startDate.value.toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const end = endDate.value.toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  return `${start} - ${end}`;
+});
 </script>
 
 <style scoped>
-/* Seulement pour l'animation du pulse */
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  background: currentColor;
-  border-radius: 50%;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.2);
-  }
-}
-
-/* Line clamp si pas dispo dans ton Vuetify */
 .text-truncate-2 {
   display: -webkit-box;
-  -line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
