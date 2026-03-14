@@ -13,16 +13,21 @@
 
     <!-- Vibe categories grid -->
     <v-row class="px-2">
-      <v-col v-for="(vibe, i) in vibes" :key="i" cols="12" sm="4">
-        <!-- Vibe card with image -->
+      <v-col v-for="(items, key) in media" :key="key" cols="12" sm="4">
+        <!-- Vibe card with first image of each category -->
         <v-card class="rounded-xl overflow-hidden vibe-card" flat height="350">
-          <v-img :src="vibe.image" height="100%" cover class="d-flex align-end">
+          <v-img
+            :src="items[0].link"
+            height="100%"
+            cover
+            class="d-flex align-end"
+          >
             <!-- Gradient overlay with text -->
             <div class="vibe-overlay pa-6 w-100">
               <h3 class="text-h5 font-weight-bold text-white mb-1">
-                {{ vibe.title }}
+                {{ key.charAt(0).toUpperCase() + key.slice(1) }}
               </h3>
-              <p class="text-body-2 text-white-70">{{ vibe.count }} photos</p>
+              <p class="text-body-2 text-white-70">{{ items.length }} photos</p>
             </div>
           </v-img>
         </v-card>
@@ -33,30 +38,8 @@
 
 <script setup lang="ts">
 // Vibe categories with photo counts
+const props = defineProps({ media: Object });
 
-interface Vibe {
-  title: string;
-  count: number | string;
-  image: string;
-}
-
-const vibes: Vibe[] = [
-  {
-    title: "Inside",
-    count: 444,
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
-  },
-  {
-    title: "Outside",
-    count: 83,
-    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
-  },
-  {
-    title: "All photos",
-    count: "3,143",
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
-  },
-];
 </script>
 
 <style scoped>

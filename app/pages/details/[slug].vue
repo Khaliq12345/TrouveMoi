@@ -1,7 +1,10 @@
 <template>
   <v-layout>
     <div class="w-100">
-      <DetailMobileBusinessHeader :bussness="bussness" :media="separatedMedia" />
+      <DetailMobileBusinessHeader
+        :bussness="bussness"
+        :media="separatedMedia"
+      />
 
       <v-container class="mx-auto" style="max-width: 1200px">
         <v-row justify="center" align="start">
@@ -78,13 +81,14 @@ const config = useRuntimeConfig();
 const isMobile = inject("isMobile");
 const { $directus, $readItems } = useNuxtApp();
 
+const route = useRoute();
+const slug = computed(() => route.params.slug as string);
+
 const { data: results } = await useAsyncData(
   "businesses",
   async () => {
     // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
-    return $directus.request(
-      $readItems("businesses", { search: "garage-central" }),
-    );
+    return $directus.request($readItems("businesses", { search: slug.value }));
   },
   {
     getCachedData: (key) => {
@@ -100,12 +104,14 @@ const bussness = ref(results?.value?.[0]);
 const { data: businessMedia } = await useAsyncData(
   `media-${bussness.value?.id}`,
   () => {
+    if (!bussness.value?.id) return [];
+
     return $directus.request(
       $readItems("buisness_media", {
         // Attention à l'orthographe 'buisness' vue sur ton screen
         filter: {
           extra_id: {
-            _eq: bussness.value?.id,
+            _eq: bussness.value.id,
           },
         },
       }),
