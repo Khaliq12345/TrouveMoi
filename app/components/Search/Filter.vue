@@ -54,7 +54,13 @@ const route = useRoute();
 const router = useRouter();
 
 const activeFiltersCount = computed(() => {
-    const filterKeys = ["sub_category", "price_range", "features", "is_open"];
+    const filterKeys = [
+        "sub_categories",
+        "price_range",
+        "features",
+        "is_open",
+        "categories",
+    ];
 
     return filterKeys.reduce((count, key) => {
         if (!route.query[key]) return count;

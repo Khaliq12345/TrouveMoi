@@ -6,7 +6,7 @@ export const useFilterURL = () => {
   // Mappage des clés spéciales vers leurs noms dans Directus
   const specialKeys: Record<string, string> = {
     search: "search",
-    is_open: "status",
+    is_open: "is_open",
     phone: "phone",
   };
 
@@ -18,6 +18,20 @@ export const useFilterURL = () => {
         [key]: sorted.length ? sorted.join(",") : undefined,
       },
     });
+  };
+
+  const removeFilter = (key: string, valueToRemove?: string) => {
+    if (!valueToRemove) {
+      // If no specific value is provided, remove the entire key from the URL
+      router.push({
+        query: { ...route.query, [key]: undefined },
+      });
+    } else {
+      // Existing logic: Remove only the specific value
+      const currentFilters = getURLFilter(key);
+      const updatedFilters = currentFilters.filter((v) => v !== valueToRemove);
+      updateURL(key, updatedFilters);
+    }
   };
 
   const getURLFilter = (key: string): string[] => {
