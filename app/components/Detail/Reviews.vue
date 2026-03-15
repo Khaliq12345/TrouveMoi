@@ -5,32 +5,24 @@
     <h2 class="text-h5 font-weight-bold mb-6">Recommended Reviews</h2>
 
     <!-- Reviews loop -->
-    <div v-for="(review, i) in reviews" :key="i" class="mb-10">
+    <div v-for="(review, i) in results" :key="review.id" class="mb-10">
       <!-- User info header -->
       <div class="d-flex align-center mb-4">
-        <!-- User avatar -->
-        <v-avatar size="64" class="mr-4">
-          <v-img :src="review.userAvatar"></v-img>
+        <!-- User avatar (placeholder only — pas de champ dans les données) -->
+        <v-avatar size="64" class="mr-4" color="grey-lighten-2">
+          <v-icon icon="mdi-account" size="32" color="grey-darken-1"></v-icon>
         </v-avatar>
+
         <!-- User details -->
         <div>
           <div class="text-subtitle-1 font-weight-bold">
-            {{ review.userName }}
+            {{ review.author }}
           </div>
-          <div class="text-caption text-grey-darken-1">
-            {{ review.userLocation }}
-          </div>
-          <!-- User stats (friends, reviews, photos) -->
-          <div class="d-flex align-center mt-1">
-            <v-icon size="14" color="grey" class="mr-1">mdi-account-group</v-icon>
-            <span class="text-caption mr-3">{{ review.friends }}</span>
-            <v-icon size="14" color="grey" class="mr-1">mdi-star-outline</v-icon>
-            <span class="text-caption mr-3">{{ review.reviewCount }}</span>
-            <v-icon size="14" color="grey" class="mr-1">mdi-camera-outline</v-icon>
-            <span class="text-caption">{{ review.photoCount }}</span>
-          </div>
+          <!-- Pas de localisation dans les données → omis -->
         </div>
+
         <v-spacer></v-spacer>
+
         <!-- More options button -->
         <v-btn icon="mdi-dots-horizontal" variant="text" color="grey"></v-btn>
       </div>
@@ -44,45 +36,22 @@
           readonly
           size="small"
         ></v-rating>
-        <span class="text-caption text-grey-darken-1 ml-3">{{ review.date }}</span>
+        <span class="text-caption text-grey-darken-1 ml-3">
+          {{ formatDate(review.date_created) }}
+        </span>
       </div>
 
       <!-- Review text -->
       <p class="text-body-1 text-grey-darken-4 mb-4 lh-relaxed">
-        {{ review.comment }}
+        {{ review.Comment }}
       </p>
 
-      <!-- Review images (if any) -->
-      <div v-if="review.images && review.images.length > 0" class="mb-4">
-        <!-- Single image -->
-        <v-img
-          v-if="review.images.length === 1"
-          :src="review.images[0]"
-          width="400"
-          max-height="300"
-          cover
-          class="rounded-lg shadow-sm"
-        >
-          <div class="position-absolute bottom-0 left-0 pa-2 text-white text-caption bg-black-alpha-blur w-100">
-            good
-          </div>
-        </v-img>
+      <!-- Aucune image dans les données → section supprimée -->
 
-        <!-- Multiple images -->
-        <div v-else class="d-flex flex-wrap gap-3">
-          <v-img
-            v-for="(img, idx) in review.images"
-            :key="idx"
-            :src="img"
-            width="200"
-            height="150"
-            cover
-            class="rounded-lg shadow-sm flex-grow-0"
-          ></v-img>
-        </div>
-      </div>
-
-      <!-- Reaction buttons -->
+      <!-- Reaction buttons (avec comptes à 0 ou omis si non requis) -->
+      <!-- ⚠️ Si vous ne stockez pas les réactions, mieux vaut les retirer entièrement -->
+      <!-- Sinon, gardez-les avec des valeurs statiques (ex: 0) ou via computed -->
+      <!-- Ici, on les garde mais en mode minimal (sans comptes si non fournis) -->
       <div class="d-flex flex-wrap align-center gap-4 mt-4">
         <v-btn
           variant="outlined"
@@ -92,7 +61,6 @@
           prepend-icon="mdi-lightbulb-outline"
         >
           Helpful
-          <span class="ml-1 text-grey">{{ review.reactions.helpful }}</span>
         </v-btn>
         <v-btn
           variant="outlined"
@@ -102,26 +70,6 @@
           prepend-icon="mdi-hand-okay"
         >
           Thanks
-          <span class="ml-1 text-grey">{{ review.reactions.thanks }}</span>
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          rounded="pill"
-          size="small"
-          class="text-none grey-border"
-          prepend-icon="mdi-heart-outline"
-        >
-          Love this
-          <span class="ml-1 text-grey">{{ review.reactions.love }}</span>
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          rounded="pill"
-          size="small"
-          class="text-none grey-border"
-          prepend-icon="mdi-emoticon-cry-outline"
-        >
-          Oh no <span class="ml-1 text-grey">{{ review.reactions.ohno }}</span>
         </v-btn>
       </div>
 
@@ -131,60 +79,42 @@
 </template>
 
 <script setup lang="ts">
-// Sample reviews data
-interface ReviewReactions {
-  helpful: number;
-  thanks: number;
-  love: number;
-  ohno: number;
-}
+const props = defineProps({ id: String });
+const { $directus, $readItems } = useNuxtApp();
 
-interface Review {
-  userName: string;
-  userAvatar: string;
-  userLocation: string;
-  friends: number;
-  reviewCount: number;
-  photoCount: number;
-  rating: number;
-  date: string;
-  comment: string;
-  images: string[];
-  reactions: ReviewReactions;
-}
+const formatDate = (isoString) => {
+  const date = new Date(isoString);
+  return date.toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
-const reviews: Review[] = [
-  {
-    userName: "Emily B.",
-    userAvatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    userLocation: "San Fernando Valley, CA",
-    friends: 0,
-    reviewCount: 1,
-    photoCount: 1,
-    rating: 5,
-    date: "Jan 20, 2026",
-    comment: "Really cute Italian place. I only stopped in for drinks this time, but I'm definitely coming back for a proper dinner. The pasta dishes looked amazing. The espresso martini was solid, and the staff was genuinely super friendly.",
-    images: ["https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500"],
-    reactions: { helpful: 1, thanks: 0, love: 0, ohno: 0 },
+const { data: results } = await useAsyncData(
+  "reviews",
+  async () => {
+    // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
+    return $directus.request(
+      $readItems("reviews", {
+        filter: {
+          businesses: {
+            // Ou 'business' selon ton renommage
+            id: {
+              _eq: props.id,
+            },
+          },
+        },
+      }),
+    );
   },
   {
-    userName: "Anh T.",
-    userAvatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    userLocation: "San Francisco, CA",
-    friends: 12,
-    reviewCount: 45,
-    photoCount: 10,
-    rating: 5,
-    date: "Feb 12, 2026",
-    comment: "I recently visited Bottega in SF with a few friends, and there were quite a few standout dishes. The vodka pink pasta with chicken was creamy, flavorful, and perfectly cooked. The waiter recommended the coda alla vaccinara to us. Great spot for classic Italian dishes!",
-    images: [
-      "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=400",
-      "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400",
-      "https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=400",
-    ],
-    reactions: { helpful: 0, thanks: 0, love: 0, ohno: 0 },
+    getCachedData: (key) => {
+      const nuxtApp = useNuxtApp();
+      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+    },
   },
-];
+);
 </script>
 
 <style scoped>

@@ -5,35 +5,29 @@
       <v-col cols="12">
         <!-- Business name -->
         <div class="text-h6 font-weight-bold mb-1 text-grey-darken-4">
-          Cuisine du Szechuan
-        </div>
-        
-        <!-- Status and hours link -->
-        <div class="d-flex align-center text-body-2 mb-1">
-          <!-- Closed status -->
-          <span class="text-error font-weight-bold">Closed</span>
-          <span class="text-grey-lighten-1 mx-2">•</span>
-          <!-- See hours button -->
-          <v-btn 
-            variant="text" 
-            color="cyan-darken-2" 
-            class="text-none pa-0 font-weight-bold"
-            density="compact"
-          >
-            See hours
-          </v-btn>
+          {{ biz?.name }}
         </div>
 
+        <!-- Closed status -->
+        <p class="text-error font-weight-bold">
+          {{ biz?.is_open === "opened" ? "Ouvert" : "Fermé" }}
+        </p>
+
         <!-- Last updated timestamp -->
-        <div class="text-caption text-grey mb-4">
-          Updated over 3 months ago
-        </div>
+        <p class="text-caption text-grey mb-4">
+          Dernière mise à jour
+          {{ new Date(biz?.date_updated).toLocaleDateString("fr-FR") }}
+        </p>
 
         <!-- Business description -->
         <p class="text-body-2 text-grey-darken-3">
-          Casual takeout spot focusing on spicy Szechuan dishes with popular crab rangoon.
+          {{ biz?.description }}
         </p>
       </v-col>
     </v-row>
   </v-container>
 </template>
+<script setup lang="ts">
+import type { Biz } from "~/types/biz";
+const props = defineProps<{ biz: Biz }>();
+</script>
