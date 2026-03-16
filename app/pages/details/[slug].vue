@@ -173,8 +173,8 @@ const { data: businessWithSlots, error: bizerr } =
       },
     },
   );
-console.log("out", businessWithSlots.value);
-console.log("While getting busineses on detail page", bizerr.value);
+
+if (bizerr.value) console.log("While getting busineses on detail page", bizerr.value);
 
 // Accès simplifié
 const biz = computed<Biz | null>(() => businessWithSlots.value!);

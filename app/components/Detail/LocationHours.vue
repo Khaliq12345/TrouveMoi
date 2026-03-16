@@ -14,11 +14,12 @@
       <v-card-text class="pa-0">
         <v-list density="compact" class="pa-0">
           <v-list-item
-            v-for="location in locations"
+            v-for="location in biz?.locations"
             :key="location?.id"
             class="px-4 py-3 border-b"
             :class="{
-              'border-b-0': location === locations?.[locations.length - 1],
+              'border-b-0':
+                location === biz?.locations?.[biz?.locations.length - 1],
             }"
           >
             <div class="d-flex justify-space-between align-center w-100">
@@ -65,10 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Biz, BusinessLocations, BizLocation } from "~/types/biz";
+import type { Biz } from "~/types/biz";
 const props = defineProps<{ biz: Biz | null }>();
-
-const { $directus, $readItems } = useNuxtApp();
 
 const businessHours = computed(() => {
   // On récupère le premier objet du tableau "hours"
@@ -83,35 +82,6 @@ const businessHours = computed(() => {
     };
   });
 });
-
-// Récupération des données
-// 1. Utilise le type tableau BusinessLocations[] ou BizLocation[]
-const { data: locations } = await useAsyncData<BizLocation[]>(
-  `locations-${props.biz?.id}`,
-  // 2. Ajoute async et le typage de retour explicite
-  async (): Promise<BizLocation[]> => {
-    const response = await $directus.request(
-      $readItems("business_locations", {
-        filter: {
-          bussness: { // Garde cette typo si elle est ainsi dans ta DB
-            id: {
-              _eq: props.biz?.id,
-            },
-          },
-        },
-      }),
-    );
-    
-    // 3. Cast la réponse pour garantir à TS que c'est le bon type
-    return response as BizLocation[];
-  },
-  {
-    getCachedData: (key) => {
-      const nuxtApp = useNuxtApp();
-      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-    },
-  },
-);
 </script>
 
 <style scoped>

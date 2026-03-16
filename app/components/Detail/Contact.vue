@@ -1,12 +1,10 @@
 <template>
   <v-card class="pa-4" color="transparent" density="compact" :elevation="0">
-    <!-- Header website -->
-    <v-card-title class="d-flex align-center px-0 pt-0">
+    <v-card-title v-if="website" class="d-flex align-center px-0 pt-0">
       <h2 class="text-h7 font-weight-bold">Website</h2>
     </v-card-title>
 
-    <!-- Téléphone -->
-    <v-list-item class="px-0">
+    <v-list-item v-if="website" class="px-0">
       <v-list-item-title class="text-body-1">
         {{ website }}
       </v-list-item-title>
@@ -18,55 +16,86 @@
           variant="tonal"
           size="small"
           :href="website"
+          target="_blank"
         />
       </template>
     </v-list-item>
 
-    <!-- Header Contact -->
-    <v-card-title class="d-flex align-center px-0 pt-0">
+    <v-card-title
+      v-if="phone || whatsapp"
+      class="d-flex align-center px-0 pt-0"
+    >
       <h2 class="text-h7 font-weight-bold">Contact</h2>
     </v-card-title>
 
-    <!-- Liste des contacts -->
     <v-list class="bg-transparent pa-0" density="compact">
-      <!-- Téléphone -->
-      <v-list-item v-if="phone" class="px-0">
+      <v-list-item v-if="phone && whatsapp && isSameNumber" class="px-0">
         <v-list-item-title class="text-body-1">
           {{ phone }}
         </v-list-item-title>
 
         <template #append>
-          <v-btn
-            icon="mdi-phone"
-            color="primary"
-            variant="tonal"
-            size="small"
-            :href="`tel:${phone}`"
-          />
+          <div class="d-flex g-2">
+            <v-btn
+              icon="mdi-phone"
+              color="primary"
+              variant="tonal"
+              size="small"
+              class="me-2"
+              :href="`tel:${phone}`"
+            />
+            <v-btn
+              icon="mdi-whatsapp"
+              color="success"
+              variant="tonal"
+              size="small"
+              :href="`https://wa.me/${whatsapp.replace(/\D/g, '')}`"
+              target="_blank"
+            />
+          </div>
         </template>
       </v-list-item>
 
-      <v-divider class="border-opacity-100" color="primary ma-1" />
+      <template v-else>
+        <v-list-item v-if="phone" class="px-0">
+          <v-list-item-title class="text-body-1">
+            {{ phone }}
+          </v-list-item-title>
+          <template #append>
+            <v-btn
+              icon="mdi-phone"
+              color="primary"
+              variant="tonal"
+              size="small"
+              :href="`tel:${phone}`"
+            />
+          </template>
+        </v-list-item>
 
-      <!-- WhatsApp -->
-      <v-list-item v-if="whatsapp" class="px-0">
-        <v-list-item-title class="text-body-1">
-          {{ whatsapp }}
-        </v-list-item-title>
+        <v-divider
+          v-if="phone && whatsapp"
+          class="border-opacity-100"
+          color="primary ma-1"
+        />
 
-        <template #append>
-          <v-btn
-            icon="mdi-whatsapp"
-            color="success"
-            variant="tonal"
-            size="small"
-            :href="`https://wa.me/${whatsapp.replace(/\D/g, '')}`"
-            target="_blank"
-          />
-        </template>
-      </v-list-item>
+        <v-list-item v-if="whatsapp" class="px-0">
+          <v-list-item-title class="text-body-1">
+            {{ whatsapp }}
+          </v-list-item-title>
 
-      <!-- Fallback si aucun contact -->
+          <template #append>
+            <v-btn
+              icon="mdi-whatsapp"
+              color="success"
+              variant="tonal"
+              size="small"
+              :href="`https://wa.me/${whatsapp.replace(/\D/g, '')}`"
+              target="_blank"
+            />
+          </template>
+        </v-list-item>
+      </template>
+
       <v-list-item v-if="!phone && !whatsapp" class="px-0">
         <v-list-item-title class="text-grey text-body-2">
           Aucun contact disponible
@@ -74,7 +103,6 @@
       </v-list-item>
     </v-list>
 
-    <!-- Header Locations -->
     <v-card-title v-if="hasLocations" class="d-flex align-center px-0 pt-4">
       <h2 class="text-h7 font-weight-bold">Adresses</h2>
       <v-chip v-if="mainLocation" size="small" color="primary" class="ms-3">
@@ -82,9 +110,12 @@
       </v-chip>
     </v-card-title>
 
-    <v-divider class="border-opacity-100" color="primary ma-1" />
+    <v-divider
+      v-if="hasLocations"
+      class="border-opacity-100"
+      color="primary ma-1"
+    />
 
-    <!-- Liste des locations -->
     <v-list
       v-if="hasLocations && !isMobile"
       class="bg-transparent pa-0"
@@ -135,6 +166,7 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, inject } from "vue"; // Ajout des imports explicites pour la clarté
 import type { BizLocation } from "~/types/biz";
 
 const isMobile = inject("isMobile");
@@ -146,7 +178,19 @@ const props = defineProps<{
   locations?: BizLocation[];
 }>();
 
-// Computed
+/**
+ * Compare le numéro de téléphone et le numéro WhatsApp.
+ * On nettoie les caractères non numériques pour une comparaison fiable.
+ */
+const isSameNumber = computed(() => {
+  if (!props.phone || !props.whatsapp) return false;
+  const cleanPhone = props.phone.replace(/\D/g, "");
+  const cleanWhatsapp = props.whatsapp.replace(/\D/g, "");
+  return cleanPhone === cleanWhatsapp;
+});
+
+// --- Autres Computed ---
+
 const hasLocations = computed(
   () => props.locations && props.locations.length > 0,
 );
@@ -164,10 +208,12 @@ const sortedLocations = computed(() => {
   });
 });
 
-// Génère l'URL Google Maps
+/**
+ * Génère l'URL Google Maps.
+ * Correction de la template string pour le format correct.
+ */
 const googleMapsUrl = (location: BizLocation): string => {
   const query = encodeURIComponent(`${location.address}, ${location.city}`);
   return `https://www.google.com/maps/search/?api=1&query=${query}`;
 };
 </script>
-<style></style>
