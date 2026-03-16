@@ -81,7 +81,7 @@ const { $directus, $readItems } = useNuxtApp();
 const route = useRoute();
 const slug = route.params.slug;
 
-const { data: businessWithSlots } = await useAsyncData<Biz | null>(
+const { data: businessWithSlots, error: bizerr } = await useAsyncData<Biz | null>(
   `business-${slug}`,
   async (): Promise<Biz | null> => {
     // Requête unique qui récupère le business ET ses featured slots liés
@@ -120,15 +120,17 @@ const { data: businessWithSlots } = await useAsyncData<Biz | null>(
   },
 );
 
+console.log("While getting busineses on detail page", bizerr.value)
+
 // Accès simplifié
 const biz = computed<Biz | null>(() => businessWithSlots.value!);
 const featuredSlots = computed<FeaturedSlot[]>(
   () => businessWithSlots.value?.featured_slots || [],
 );
 
-const { data: businessMedia } = await useAsyncData<BizMedia[]>(
+const { data: businessMedia, error } = await useAsyncData<BizMedia[]>(
   `media-${biz.value?.id}`,
-  async (): Promise<BizMedia[]> => { 
+  async (): Promise<BizMedia[]> => {
     if (!biz.value?.id) return [];
 
     const results = await $directus.request(
@@ -150,6 +152,8 @@ const { data: businessMedia } = await useAsyncData<BizMedia[]>(
     },
   },
 );
+
+console.log("While getting busineses media on detail page", error.value);
 
 // Chaque type de media separé par leur tags, retourn { tag: [...], ... }
 const separatedMedia = computed<GroupedBizMedia>(() => {
