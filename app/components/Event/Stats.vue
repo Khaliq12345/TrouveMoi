@@ -8,8 +8,10 @@
       border
       rounded="xl"
       @click="setFilter(stat.value)"
-      :class="['w-100 w-md-auto pa-0 cursor-pointer transition-all', 
-               { 'border-primary border-opacity-100': activeFilter === stat.value }]"
+      :class="[
+        'w-100 w-md-auto pa-0 cursor-pointer transition-all',
+        { 'border-primary border-opacity-100': activeFilter === stat.value },
+      ]"
       style="min-width: 160px"
       :variant="activeFilter === stat.value ? 'tonal' : 'text'"
     >
@@ -41,6 +43,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Event } from "~/types/event";
+
 // Types
 type StatStatus = "all" | "live" | "upcoming" | "past";
 type StatColor = "success" | "error" | "primary" | "grey";
@@ -53,21 +57,14 @@ interface EventStat {
   color: StatColor;
 }
 
-// Props & emits
-const props = defineProps<{
-  events: any[];
-  totalCount: number;
-}>();
-
-const emit = defineEmits<{
-  (e: "filter", value: StatStatus): void;
-}>();
-
-// État local du filtre actif (pour le style visuel)
-const activeFilter = ref<StatStatus>("all");
-
-// Expose via provide pour coordination si besoin
-provide("activeEventFilter", activeFilter);
+// Injection des données et fonctions depuis le parent (les props et emits sont supprimés)
+const { eventsData, totalEvents, activeFilter } = inject(
+  "eventContext",
+) as {
+  eventsData: Ref<Event[]>;
+  totalEvents: Ref<number>;
+  activeFilter: Ref<StatStatus>;
+};
 
 // Calcul des stats dynamiques
 const now = Date.now();
@@ -85,36 +82,39 @@ const allStats = computed<EventStat[]>(() => [
   {
     label: "Tous",
     value: "all",
-    count: props.totalCount,
+    count: totalEvents.value,
     icon: "mdi-view-grid",
     color: "success",
   },
   {
     label: "En cours",
     value: "live",
-    count: props.events.filter((e) => getEventStatus(e) === "live").length,
+    count: (eventsData.value || []).filter((e) => getEventStatus(e) === "live")
+      .length,
     icon: "mdi-access-point",
     color: "error",
   },
   {
     label: "À venir",
     value: "upcoming",
-    count: props.events.filter((e) => getEventStatus(e) === "upcoming").length,
+    count: (eventsData.value || []).filter(
+      (e) => getEventStatus(e) === "upcoming",
+    ).length,
     icon: "mdi-calendar-clock",
     color: "primary",
   },
   {
     label: "Passés",
     value: "past",
-    count: props.events.filter((e) => getEventStatus(e) === "past").length,
+    count: (eventsData.value || []).filter((e) => getEventStatus(e) === "past")
+      .length,
     icon: "mdi-history",
     color: "grey",
   },
 ]);
 
 // Handler de clic
-const setFilter = (value: StatStatus) => {
+const setFilter = async (value: StatStatus) => {
   activeFilter.value = value;
-  emit("filter", value);
 };
 </script>

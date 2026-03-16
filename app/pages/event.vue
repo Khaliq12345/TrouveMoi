@@ -5,11 +5,7 @@
     <v-main>
       <v-container class="pa-0 bg-background mx-auto" style="max-width: 1200px">
         <!-- Stats avec filtre actif -->
-        <EventStats
-          :events="allEvents"
-          :total-count="totalEvents"
-          @filter="handleFilterChange"
-        />
+        <EventStats />
 
         <!-- Recherche -->
         <v-row class="mb-6" justify="center">
@@ -144,6 +140,7 @@ const pageCount = computed(() => {
 });
 
 // 2. Récupération des events avec filtre serveur
+// Extraction de 'refresh' pour le passer au composant enfant
 const { data: eventsData, error } = await useAsyncData<Event[]>(
   "events",
   () => {
@@ -169,10 +166,16 @@ const { data: eventsData, error } = await useAsyncData<Event[]>(
     ) as Promise<Event[]>;
   },
   {
-    server: true,
     watch: [currentPage, activeFilter],
   },
 );
+
+// Partage du contexte avec les composants enfants (EventStats)
+provide("eventContext", {
+  eventsData,
+  totalEvents,
+  activeFilter,
+});
 
 console.log("events error: ", error.value);
 
@@ -191,16 +194,6 @@ const filteredEvents = computed(() => {
       e.description?.toLowerCase().includes(q),
   );
 });
-
-// Handler changement de filtre
-const handleFilterChange = async (filter: typeof activeFilter.value) => {
-  activeFilter.value = filter;
-  // Reset page quand on change de filtre
-  if (currentPage.value !== 1) {
-    await router.replace({ query: { ...route.query, page: "1" } });
-  }
-  // Les données se rechargent automatiquement via le watch
-};
 
 // Navigation pagination
 const goToPage = (targetPage: number) => {
