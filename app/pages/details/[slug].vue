@@ -84,15 +84,16 @@ const slug = route.params.slug;
 const { data: businessWithSlots, error: bizerr } = await useAsyncData<Biz | null>(
   `business-${slug}`,
   async (): Promise<Biz | null> => {
-    // Requête unique qui récupère le business ET ses featured slots liés
     const results = await $directus.request(
       $readItems("businesses", {
         filter: {
           slug: { _eq: slug },
         },
         fields: [
-          "*", // Tous les champs du business
-          "featuredslots.featured_slots_id.*", // Récupère les featured slots via la relation
+          "*",
+          "featuredslots.featured_slots_id.*",
+          // Ajoute la relation sub_categories via la table de jonction
+          "sub_categories.sub_categories_id.*",
         ],
       }),
     );
@@ -101,15 +102,22 @@ const { data: businessWithSlots, error: bizerr } = await useAsyncData<Biz | null
 
     const business = results[0] as Biz;
 
-    // Transforme les données de la relation pour extraire les featured slots
+    // Transforme les featured slots
     const featuredSlots =
       business?.featuredslots?.map(
         (junction: any) => junction.featured_slots_id,
       ) || [];
 
+    // Transforme les sub_categories de la même manière
+    const subCategories =
+      business?.sub_categories?.map(
+        (junction: any) => junction.sub_categories_id,
+      ) || [];
+
     return {
       ...business,
-      featured_slots: featuredSlots, // Ajoute les slots plats
+      featured_slots: featuredSlots,
+      subcategories: subCategories, // Remplace les IDs par les objets complets
     };
   },
   {
@@ -119,8 +127,8 @@ const { data: businessWithSlots, error: bizerr } = await useAsyncData<Biz | null
     },
   },
 );
-
-console.log("While getting busineses on detail page", bizerr.value)
+console.log("out", businessWithSlots.value);
+console.log("While getting busineses on detail page", bizerr.value);
 
 // Accès simplifié
 const biz = computed<Biz | null>(() => businessWithSlots.value!);

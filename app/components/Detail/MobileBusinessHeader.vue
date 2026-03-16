@@ -41,9 +41,11 @@
       :restaurant-title="biz?.name || ''"
       :review="biz?.reviews_count || 0"
       :rating="biz?.rating || 0.0"
+      :price_range="biz?.price_range || 0"
       :isOpen="biz?.is_open || false"
       :description="biz?.description || ''"
       :images="images"
+      :subcategories="biz?.subcategories || []"
     ></DetailBuisnessCard>
   </div>
 </template>
