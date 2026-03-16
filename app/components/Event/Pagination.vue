@@ -1,3 +1,13 @@
+<template>
+  <v-pagination
+    v-if="pageCount > 1"
+    :model-value="currentPage"
+    :length="pageCount"
+    :total-visible="7"
+    class="pt-5"
+    @update:model-value="goToPage"
+  />
+</template>
 <script lang="ts" setup>
 const route = useRoute();
 const router = useRouter();
@@ -29,14 +39,3 @@ const goToPage = (targetPage: number) => {
   });
 };
 </script>
-
-<template>
-  <v-pagination
-    v-if="pageCount > 1"
-    :model-value="currentPage"
-    :length="pageCount"
-    :total-visible="7"
-    class="pt-5"
-    @update:model-value="goToPage"
-  />
-</template>
