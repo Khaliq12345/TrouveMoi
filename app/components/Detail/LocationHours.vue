@@ -14,11 +14,12 @@
       <v-card-text class="pa-0">
         <v-list density="compact" class="pa-0">
           <v-list-item
-            v-for="location in locations"
-            :key="location.id"
+            v-for="location in biz?.locations"
+            :key="location?.id"
             class="px-4 py-3 border-b"
             :class="{
-              'border-b-0': location === locations[locations.length - 1],
+              'border-b-0':
+                location === biz?.locations?.[biz?.locations.length - 1],
             }"
           >
             <div class="d-flex justify-space-between align-center w-100">
@@ -65,10 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Biz, BusinessLocations } from "~/types/biz";
-const props = defineProps<{ biz: Biz }>();
-
-const { $directus, $readItems } = useNuxtApp();
+import type { Biz } from "~/types/biz";
+const props = defineProps<{ biz: Biz | null }>();
 
 const businessHours = computed(() => {
   // On récupère le premier objet du tableau "hours"
@@ -83,31 +82,6 @@ const businessHours = computed(() => {
     };
   });
 });
-
-// Récupération des données
-const { data: locations } = await useAsyncData<BusinessLocations>(
-  `locations-${props.biz?.id}`,
-  () => {
-    return $directus.request(
-      $readItems("business_locations", {
-        filter: {
-          bussness: {
-            id: {
-              _eq: props.biz?.id,
-            },
-          },
-        },
-      }),
-    );
-  },
-  {
-    // Récupère les données du cache Nuxt si elles existent
-    getCachedData: (key) => {
-      const nuxtApp = useNuxtApp();
-      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-    },
-  },
-);
 </script>
 
 <style scoped>

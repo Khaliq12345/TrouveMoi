@@ -41,9 +41,11 @@
       :restaurant-title="biz?.name || ''"
       :review="biz?.reviews_count || 0"
       :rating="biz?.rating || 0.0"
+      :price_range="biz?.price_range || 0"
       :isOpen="biz?.is_open || false"
       :description="biz?.description || ''"
       :images="images"
+      :subcategories="biz?.subcategories || []"
     ></DetailBuisnessCard>
   </div>
 </template>
@@ -54,12 +56,12 @@ import type { Biz, GroupedBizMedia } from "~/types/biz";
 import { useElementVisibility } from "@vueuse/core";
 
 const props = defineProps<{
-  biz: Biz | undefined;
-  media: GroupedBizMedia | undefined;
+  biz: Biz | undefined | null;
+  media: GroupedBizMedia | undefined | null;
 }>();
 
 // Créer une liste avec tous les liens de chaque tableau dans media
-const images = Object.values(props?.media)
+const images = Object.values(props?.media || {})
   .flat()
   .map((item) => item.link);
 

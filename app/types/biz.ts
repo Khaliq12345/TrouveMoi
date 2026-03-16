@@ -16,6 +16,17 @@ export interface BizLocation {
 // Si tu reçois une liste d'emplacements
 export type BusinessLocations = BizLocation[];
 
+export interface SubCategory {
+  id: string; // UUID
+  user_created: string; // UUID
+  date_created: string; // ISO Date String
+  user_updated: string | null;
+  date_updated: string | null;
+  name: string;
+  slug: string;
+  categories_new: string; // UUID (Clé étrangère)
+}
+
 export interface BizHours {
   open: string | null;
   close: string | null;
@@ -86,6 +97,7 @@ export interface Biz {
   phone: string;
   whatsapp: string;
   reviews_count: number;
+  website?: string;
   is_open: boolean;
   hours: DaySchedule[];
   rating: number;
@@ -96,4 +108,6 @@ export interface Biz {
   qa: any[]; // À typer si tu ajoutes des questions/réponses plus tard
   sub_categories: number[];
   featured_slots: FeaturedSlot[];
+  subcategories?: SubCategory[];
+  locations?: BizLocation[];
 }

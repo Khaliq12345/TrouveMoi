@@ -10,13 +10,13 @@
 
         <!-- Closed status -->
         <p class="text-error font-weight-bold">
-          {{ biz?.is_open === "opened" ? "Ouvert" : "Fermé" }}
+          {{ biz?.is_open ? "Ouvert" : "Fermé" }}
         </p>
 
         <!-- Last updated timestamp -->
         <p class="text-caption text-grey mb-4">
           Dernière mise à jour
-          {{ new Date(biz?.date_updated).toLocaleDateString("fr-FR") }}
+          {{ new Date(biz?.date_updated || "").toLocaleDateString("fr-FR") }}
         </p>
 
         <!-- Business description -->
@@ -29,5 +29,5 @@
 </template>
 <script setup lang="ts">
 import type { Biz } from "~/types/biz";
-const props = defineProps<{ biz: Biz }>();
+const props = defineProps<{ biz: Biz | null }>();
 </script>

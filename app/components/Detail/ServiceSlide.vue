@@ -83,8 +83,8 @@
 <script setup lang="ts">
 import type { BizsMediaItem } from "~/types/biz";
 const props = defineProps<{
-  id: string; // ID du Business
-  media: BizsMediaItem; // Le tableau d'objets media (ton JSON)
+  id: string | undefined; // ID du Business
+  media: BizsMediaItem[] | undefined; // Le tableau d'objets media (ton JSON)
 }>();
 </script>
 

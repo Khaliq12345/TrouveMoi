@@ -39,7 +39,15 @@
               class="border-opacity-100"
               color="primary ma-1"
             ></v-divider>
-            <section id="location" class="scroll-section" v-show="isMobile">
+            <section v-show="isMobile">
+              <DetailContact
+                :website="biz?.website"
+                :phone="biz?.phone"
+                :whatsapp="biz?.whatsapp"
+                :locations="biz?.locations || []"
+              />
+            </section>
+            <section id="location" class="scroll-section">
               <DetailLocationHours :biz="biz" />
             </section>
             <v-divider
@@ -57,7 +65,12 @@
 
           <!-- Right Section -->
           <v-col cols="12" md="4" v-if="!isMobile">
-            <DetailLocationHours :biz="biz" />
+            <DetailContact
+              :website="biz?.website"
+              :phone="biz?.phone"
+              :whatsapp="biz?.whatsapp"
+              :locations="biz?.locations || []"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -72,7 +85,13 @@
 
 <script setup lang="ts">
 // Si le dossier types est à la racine de ton projet
-import type { Biz, BizMedia, GroupedBizMedia, FeaturedSlot } from "~/types/biz";
+import type {
+  Biz,
+  BizMedia,
+  GroupedBizMedia,
+  FeaturedSlot,
+  BizLocation,
+} from "~/types/biz";
 
 const config = useRuntimeConfig();
 const isMobile = inject("isMobile");
@@ -81,60 +100,95 @@ const { $directus, $readItems } = useNuxtApp();
 const route = useRoute();
 const slug = route.params.slug;
 
-const { data: businessWithSlots } = await useAsyncData<Biz[]>(
-  `business-${slug}`,
-  async () => {
-    // Requête unique qui récupère le business ET ses featured slots liés
-    const results = await $directus.request(
-      $readItems("businesses", {
-        filter: {
-          slug: { _eq: slug },
-        },
-        fields: [
-          "*", // Tous les champs du business
-          "featuredslots.featured_slots_id.*", // Récupère les featured slots via la relation
-        ],
-      }),
-    );
+const { data: businessWithSlots, error: bizerr } =
+  await useAsyncData<Biz | null>(
+    `business-${slug}`,
+    async (): Promise<Biz | null> => {
+      // 1. Récupère le business avec toutes ses relations
+      const results = await $directus.request(
+        $readItems("businesses", {
+          filter: {
+            slug: { _eq: slug },
+          },
+          fields: [
+            "*",
+            "featuredslots.featured_slots_id.*",
+            "sub_categories.sub_categories_id.*",
+            // Récupère les locations liées via la relation inverse
+            "locations.*", // ou "business_locations.*" selon ton schéma
+          ],
+        }),
+      );
 
-    if (!results?.length) return null;
+      if (!results?.length) return null;
 
-    const business = results[0];
+      const business = results[0] as Biz & {
+        featuredslots?: any[];
+        sub_categories?: any[];
+        locations?: any[]; // ou business_locations
+      };
 
-    // Transforme les données de la relation pour extraire les featured slots
-    const featuredSlots =
-      business?.featuredslots?.map(
-        (junction: any) => junction.featured_slots_id,
-      ) || [];
+      // Transforme les featured slots
+      const featuredSlots =
+        business?.featuredslots?.map(
+          (junction: any) => junction.featured_slots_id,
+        ) || [];
 
-    return {
-      ...business,
-      featured_slots: featuredSlots, // Ajoute les slots plats
-    };
-  },
-  {
-    getCachedData: (key) => {
-      const nuxtApp = useNuxtApp();
-      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+      // Transforme les sub_categories
+      const subCategories =
+        business?.sub_categories?.map(
+          (junction: any) => junction.sub_categories_id,
+        ) || [];
+
+      // 2. Récupère les locations si pas incluses dans la requête principale
+      // (si relation inverse non configurée, on fait une requête séparée)
+      let locations: BizLocation[] = [];
+
+      if (!business.locations && business.id) {
+        const locResponse = await $directus.request(
+          $readItems("business_locations", {
+            filter: {
+              bussness: {
+                id: { _eq: business.id },
+              },
+            },
+          }),
+        );
+        locations = (locResponse as BizLocation[]) || [];
+      } else {
+        locations = business.locations || [];
+      }
+
+      return {
+        ...business,
+        featured_slots: featuredSlots,
+        subcategories: subCategories,
+        locations, // Ajoute les locations
+      };
     },
-  },
-);
+    {
+      getCachedData: (key) => {
+        const nuxtApp = useNuxtApp();
+        return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+      },
+    },
+  );
+
+if (bizerr.value) console.log("While getting busineses on detail page", bizerr.value);
 
 // Accès simplifié
-const biz = computed<Biz>(() => businessWithSlots.value);
-const featuredSlots = computed<FeaturedSlot>(
+const biz = computed<Biz | null>(() => businessWithSlots.value!);
+const featuredSlots = computed<FeaturedSlot[]>(
   () => businessWithSlots.value?.featured_slots || [],
 );
 
-// Récupération des médias liés
-const { data: businessMedia } = await useAsyncData<BizMedia>(
+const { data: businessMedia, error } = await useAsyncData<BizMedia[]>(
   `media-${biz.value?.id}`,
-  () => {
+  async (): Promise<BizMedia[]> => {
     if (!biz.value?.id) return [];
 
-    return $directus.request(
+    const results = await $directus.request(
       $readItems("buisness_media", {
-        // Attention à l'orthographe 'buisness' vue sur ton screen
         filter: {
           extra_id: {
             _eq: biz.value.id,
@@ -142,6 +196,8 @@ const { data: businessMedia } = await useAsyncData<BizMedia>(
         },
       }),
     );
+
+    return results as BizMedia[];
   },
   {
     getCachedData: (key) => {
@@ -150,6 +206,8 @@ const { data: businessMedia } = await useAsyncData<BizMedia>(
     },
   },
 );
+
+console.log("While getting busineses media on detail page", error.value);
 
 // Chaque type de media separé par leur tags, retourn { tag: [...], ... }
 const separatedMedia = computed<GroupedBizMedia>(() => {
@@ -174,6 +232,6 @@ const separatedMedia = computed<GroupedBizMedia>(() => {
     });
 
     return acc;
-  }, {});
+  }, {} as GroupedBizMedia);
 });
 </script>

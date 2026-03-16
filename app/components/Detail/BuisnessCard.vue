@@ -7,12 +7,7 @@
     :height="isMobile ? 500 : 600"
     class="carousel-wrapper"
   >
-    <v-carousel-item
-      v-for="(image, i) in images"
-      :key="i"
-      :src="image"
-      cover
-    />
+    <v-carousel-item v-for="(image, i) in images" :key="i" :src="image" cover />
 
     <div class="carousel-overlay">
       <v-container class="h-100 d-flex align-end pb-10">
@@ -38,10 +33,13 @@
             </span>
           </div>
 
-          <!-- This show the business type and open hours -->
+          <!-- This show the business type, subcategories and open hours -->
           <p class="text-subtitle-1 font-weight-medium mb-2 shadow-text">
-            $$$ • Italian Cuisine •
-            {{ isOpen ? "Ouvert" : "Fermé" }}
+            {{ "F".repeat(price_range || 0) }}
+            <span v-if="subcategories?.length">
+              • {{ subcategories.map((sub) => sub.name).join(" • ") }}
+            </span>
+            • {{ isOpen ? "Ouvert" : "Fermé" }}
           </p>
 
           <!-- Short description of the buisness -->
@@ -72,13 +70,17 @@
 </template>
 
 <script setup lang="ts">
+import type { SubCategory } from "~/types/biz";
+
 const props = defineProps<{
   restaurantTitle: string;
   review: number;
   rating: number;
   isOpen: boolean;
+  price_range: number;
   description: string;
   images: String[];
+  subcategories: SubCategory[];
 }>();
 
 const isMobile = inject("isMobile");
