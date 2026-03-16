@@ -94,7 +94,7 @@ const { data: countData } = await useAsyncData("events-count", () =>
 );
 
 // Count filtré pour la pagination
-const { data: filteredCountData } = await useAsyncData(
+const { data: filteredCountData, error: paginationerr } = await useAsyncData(
   "events-filtered-count",
   () => {
     const filter = buildDateFilter(activeFilter.value);
@@ -108,6 +108,8 @@ const { data: filteredCountData } = await useAsyncData(
   },
   { watch: [activeFilter, searchQuery] },
 );
+
+if(paginationerr.value) console.log("Pagination error: ", paginationerr.value)
 
 // 2. Récupération des events
 const {
