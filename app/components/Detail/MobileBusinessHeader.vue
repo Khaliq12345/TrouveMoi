@@ -54,12 +54,12 @@ import type { Biz, GroupedBizMedia } from "~/types/biz";
 import { useElementVisibility } from "@vueuse/core";
 
 const props = defineProps<{
-  biz: Biz | undefined;
-  media: GroupedBizMedia | undefined;
+  biz: Biz | undefined | null;
+  media: GroupedBizMedia | undefined | null;
 }>();
 
 // Créer une liste avec tous les liens de chaque tableau dans media
-const images = Object.values(props?.media)
+const images = Object.values(props?.media || {})
   .flat()
   .map((item) => item.link);
 

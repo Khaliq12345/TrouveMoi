@@ -15,10 +15,10 @@
         <v-list density="compact" class="pa-0">
           <v-list-item
             v-for="location in locations"
-            :key="location.id"
+            :key="location?.id"
             class="px-4 py-3 border-b"
             :class="{
-              'border-b-0': location === locations[locations.length - 1],
+              'border-b-0': location === locations?.[locations.length - 1],
             }"
           >
             <div class="d-flex justify-space-between align-center w-100">
@@ -65,8 +65,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Biz, BusinessLocations } from "~/types/biz";
-const props = defineProps<{ biz: Biz }>();
+import type { Biz, BusinessLocations, BizLocation } from "~/types/biz";
+const props = defineProps<{ biz: Biz | null }>();
 
 const { $directus, $readItems } = useNuxtApp();
 
@@ -85,13 +85,15 @@ const businessHours = computed(() => {
 });
 
 // Récupération des données
-const { data: locations } = await useAsyncData<BusinessLocations>(
+// 1. Utilise le type tableau BusinessLocations[] ou BizLocation[]
+const { data: locations } = await useAsyncData<BizLocation[]>(
   `locations-${props.biz?.id}`,
-  () => {
-    return $directus.request(
+  // 2. Ajoute async et le typage de retour explicite
+  async (): Promise<BizLocation[]> => {
+    const response = await $directus.request(
       $readItems("business_locations", {
         filter: {
-          bussness: {
+          bussness: { // Garde cette typo si elle est ainsi dans ta DB
             id: {
               _eq: props.biz?.id,
             },
@@ -99,13 +101,17 @@ const { data: locations } = await useAsyncData<BusinessLocations>(
         },
       }),
     );
+    
+    // 3. Cast la réponse pour garantir à TS que c'est le bon type
+    return response as BizLocation[];
   },
   {
-    // Récupère les données du cache Nuxt si elles existent
     getCachedData: (key) => {
       const nuxtApp = useNuxtApp();
       return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
     },
+    // Optionnel: évite de lancer la requête si l'ID est manquant
+    watch: [() => props.biz?.id]
   },
 );
 </script>

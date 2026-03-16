@@ -81,9 +81,9 @@ const { $directus, $readItems } = useNuxtApp();
 const route = useRoute();
 const slug = route.params.slug;
 
-const { data: businessWithSlots } = await useAsyncData<Biz[]>(
+const { data: businessWithSlots } = await useAsyncData<Biz | null>(
   `business-${slug}`,
-  async () => {
+  async (): Promise<Biz | null> => {
     // Requête unique qui récupère le business ET ses featured slots liés
     const results = await $directus.request(
       $readItems("businesses", {
@@ -99,7 +99,7 @@ const { data: businessWithSlots } = await useAsyncData<Biz[]>(
 
     if (!results?.length) return null;
 
-    const business = results[0];
+    const business = results[0] as Biz;
 
     // Transforme les données de la relation pour extraire les featured slots
     const featuredSlots =
@@ -121,20 +121,18 @@ const { data: businessWithSlots } = await useAsyncData<Biz[]>(
 );
 
 // Accès simplifié
-const biz = computed<Biz>(() => businessWithSlots.value);
-const featuredSlots = computed<FeaturedSlot>(
+const biz = computed<Biz | null>(() => businessWithSlots.value!);
+const featuredSlots = computed<FeaturedSlot[]>(
   () => businessWithSlots.value?.featured_slots || [],
 );
 
-// Récupération des médias liés
-const { data: businessMedia } = await useAsyncData<BizMedia>(
+const { data: businessMedia } = await useAsyncData<BizMedia[]>(
   `media-${biz.value?.id}`,
-  () => {
+  async (): Promise<BizMedia[]> => { 
     if (!biz.value?.id) return [];
 
-    return $directus.request(
+    const results = await $directus.request(
       $readItems("buisness_media", {
-        // Attention à l'orthographe 'buisness' vue sur ton screen
         filter: {
           extra_id: {
             _eq: biz.value.id,
@@ -142,6 +140,8 @@ const { data: businessMedia } = await useAsyncData<BizMedia>(
         },
       }),
     );
+
+    return results as BizMedia[];
   },
   {
     getCachedData: (key) => {
@@ -174,6 +174,6 @@ const separatedMedia = computed<GroupedBizMedia>(() => {
     });
 
     return acc;
-  }, {});
+  }, {} as GroupedBizMedia);
 });
 </script>
