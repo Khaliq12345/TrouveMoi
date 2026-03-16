@@ -108,4 +108,5 @@ export interface Biz {
   sub_categories: number[];
   featured_slots: FeaturedSlot[];
   subcategories?: SubCategory[];
+  locations?: BizLocation[];
 }

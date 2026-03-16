@@ -110,8 +110,6 @@ const { data: locations } = await useAsyncData<BizLocation[]>(
       const nuxtApp = useNuxtApp();
       return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
     },
-    // Optionnel: évite de lancer la requête si l'ID est manquant
-    watch: [() => props.biz?.id]
   },
 );
 </script>
