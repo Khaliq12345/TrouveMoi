@@ -4,8 +4,12 @@
     <AppBar />
     <v-main>
       <v-container class="pa-0 bg-background mx-auto" style="max-width: 1200px">
-        <!-- Stats - filtre sans reload -->
-        <EventStats :events="allEvents" @filter="activeFilter = $event" />
+        <!-- Stats avec filtre actif -->
+        <EventStats
+          :events="allEvents"
+          :total-count="totalEvents"
+          @filter="handleFilterChange"
+        />
 
         <!-- Recherche -->
         <v-row class="mb-6" justify="center">
@@ -24,9 +28,9 @@
         </v-row>
 
         <!-- Grid -->
-        <v-row v-if="paginatedEvents.length">
+        <v-row v-if="filteredEvents.length">
           <v-col
-            v-for="event in paginatedEvents"
+            v-for="event in filteredEvents"
             :key="event.id"
             cols="12"
             sm="6"
@@ -46,7 +50,7 @@
           class="py-12"
         />
 
-        <!-- Pagination - seulement pour changer de page -->
+        <!-- Pagination -->
         <v-pagination
           v-if="pageCount > 1"
           :model-value="currentPage"
@@ -61,91 +65,146 @@
 </template>
 
 <script setup lang="ts">
-import { aggregate } from "@directus/sdk";
+import { aggregate, readItems } from "@directus/sdk";
 import type { Event } from "~/types/event";
 
 const PER_PAGE = 10;
 
-const { $directus, $readItems } = useNuxtApp();
+const { $directus } = useNuxtApp();
 const route = useRoute();
+const router = useRouter();
 
-// État local (pas dans l'URL)
+// État
 const searchQuery = ref("");
-const activeFilter = ref<"all" | "upcoming" | "past" | "live">("all");
+const activeFilter = ref<"all" | "live" | "upcoming" | "past">("all");
 
-// Page depuis URL (seule la pagination recharge)
+// Page depuis URL
 const currentPage = computed(() => {
   const p = parseInt(route.query.page as string);
   return isNaN(p) || p < 1 ? 1 : p;
 });
 
-// 1. Count total
-const { data: countData } = await useAsyncData(
-  "events-count",
-  () => $directus.request(aggregate("business_events", { aggregate: { count: "*" } })),
+// Construction du filtre Directus selon le statut
+const buildDateFilter = (filter: typeof activeFilter.value) => {
+  switch (filter) {
+    case "live":
+      // En cours: start_at <= NOW ET end_at >= NOW
+      return {
+        _and: [{ start_at: { _lte: "$NOW" } }, { end_at: { _gte: "$NOW" } }],
+      };
+    case "upcoming":
+      // À venir: start_at > NOW
+      return { start_at: { _gt: "$NOW" } };
+    case "past":
+      // Passés: end_at < NOW
+      return { end_at: { _lt: "$NOW" } };
+    case "all":
+    default:
+      return undefined;
+  }
+};
+
+// 1. Count total (sans filtre de date pour avoir le vrai total)
+const { data: countData } = await useAsyncData("events-count", () =>
+  $directus.request(
+    aggregate("business_events", { aggregate: { count: "*" } }),
+  ),
 );
+
+// Count filtré pour la pagination
+const { data: filteredCountData, error: filtererr } = await useAsyncData(
+  "events-filtered-count",
+  () => {
+    const filter = buildDateFilter(activeFilter.value);
+    return $directus.request(
+      aggregate("business_events", {
+        aggregate: { count: "*" },
+        ...(filter && { filter }),
+      }),
+    );
+  },
+  { watch: [activeFilter] },
+);
+
+console.log("filter error: ", filtererr.value);
 
 const totalEvents = computed(() => {
   const r = countData.value as any;
   return Array.isArray(r) && r[0]?.count ? parseInt(r[0].count) : 0;
 });
 
-const pageCount = computed(() => {
-  if (!totalEvents.value) return 1;
-  return Math.ceil(totalEvents.value / PER_PAGE);
+const filteredTotal = computed(() => {
+  const r = filteredCountData.value as any;
+  return Array.isArray(r) && r[0]?.count ? parseInt(r[0].count) : 0;
 });
 
-// 2. Tous les events de la page courante (pour les stats)
-const { data: eventsData } = await useAsyncData<Event[]>(
+const pageCount = computed(() => {
+  const total = filteredTotal.value;
+  return total ? Math.ceil(total / PER_PAGE) : 1;
+});
+
+// 2. Récupération des events avec filtre serveur
+const { data: eventsData, error } = await useAsyncData<Event[]>(
   "events",
-  () => $directus.request($readItems("business_events", {
-    sort: ["-date_created"],
-    limit: PER_PAGE,
-    page: currentPage.value,
-  })) as Promise<Event[]>,
-  { watch: [currentPage] },
+  () => {
+    const filter = buildDateFilter(activeFilter.value);
+
+    return $directus.request(
+      readItems("business_events", {
+        sort: ["-date_created"],
+        limit: PER_PAGE,
+        page: currentPage.value,
+        ...(filter && { filter }),
+        fields: [
+          "id",
+          "title",
+          "description",
+          "start_at",
+          "end_at",
+          "image",
+          "link",
+          "date_created",
+        ],
+      }),
+    ) as Promise<Event[]>;
+  },
+  {
+    server: true,
+    watch: [currentPage, activeFilter],
+  },
 );
+
+console.log("events error: ", error.value);
 
 const allEvents = computed(() => eventsData.value || []);
 
-// Statut
-const getStatus = (event: Event): "live" | "upcoming" | "past" => {
-  const now = Date.now();
-  const start = new Date(event.start_at).getTime();
-  const end = new Date(event.end_at).getTime();
-  if (now >= start && now <= end) return "live";
-  if (now < start) return "upcoming";
-  return "past";
-};
-
-// 3. Filtres côté client (sans reload)
+// Filtre client pour la recherche texte uniquement
 const filteredEvents = computed(() => {
   if (!allEvents.value.length) return [];
-  
-  let result = [...allEvents.value];
-  
-  if (searchQuery.value?.trim()) {
-    const q = searchQuery.value.toLowerCase().trim();
-    result = result.filter(
-      (e) => e.title?.toLowerCase().includes(q) || e.description?.toLowerCase().includes(q)
-    );
-  }
-  
-  if (activeFilter.value !== "all") {
-    result = result.filter((e) => getStatus(e) === activeFilter.value);
-  }
-  
-  return result;
+
+  if (!searchQuery.value?.trim()) return allEvents.value;
+
+  const q = searchQuery.value.toLowerCase().trim();
+  return allEvents.value.filter(
+    (e) =>
+      e.title?.toLowerCase().includes(q) ||
+      e.description?.toLowerCase().includes(q),
+  );
 });
 
-// Events affichés (filtrés, pas repaginés)
-const paginatedEvents = computed(() => filteredEvents.value);
+// Handler changement de filtre
+const handleFilterChange = async (filter: typeof activeFilter.value) => {
+  activeFilter.value = filter;
+  // Reset page quand on change de filtre
+  if (currentPage.value !== 1) {
+    await router.replace({ query: { ...route.query, page: "1" } });
+  }
+  // Les données se rechargent automatiquement via le watch
+};
 
-// Navigation pagination (seul moment où on reload)
+// Navigation pagination
 const goToPage = (targetPage: number) => {
   const validPage = Math.max(1, Math.min(targetPage, pageCount.value));
-  const url = new URL(window.location.href);
-  url.searchParams.set("page", validPage.toString());
-  window.location.href = url.toString();
+  router.push({ query: { ...route.query, page: validPage.toString() } });
 };
 </script>

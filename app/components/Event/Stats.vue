@@ -2,14 +2,16 @@
 <template>
   <div class="pa-4 d-flex flex-column flex-md-row justify-md-center ga-2">
     <v-card
-      v-for="stat in stats"
+      v-for="stat in allStats"
       :key="stat.value"
       elevation="0"
       border
       rounded="xl"
-      @click="$emit('filter', stat.value)"
-      class="w-100 w-md-auto pa-0"
+      @click="setFilter(stat.value)"
+      :class="['w-100 w-md-auto pa-0 cursor-pointer transition-all', 
+               { 'border-primary border-opacity-100': activeFilter === stat.value }]"
       style="min-width: 160px"
+      :variant="activeFilter === stat.value ? 'tonal' : 'text'"
     >
       <v-card-text class="d-flex align-center pa-2 px-3">
         <v-avatar
@@ -39,24 +41,9 @@
 </template>
 
 <script setup lang="ts">
-// Interface strictement conforme au schéma API
-interface BusinessEvent {
-  id: string;
-  user_created: string;
-  date_created: string;
-  user_updated: string | null;
-  date_updated: string | null;
-  business_id: string;
-  title: string;
-  description: string;
-  start_at: string;
-  end_at: string;
-  link: string | null;
-  image: string;
-}
-
-type StatStatus = "live" | "upcoming" | "past";
-type StatColor = "error" | "primary" | "grey";
+// Types
+type StatStatus = "all" | "live" | "upcoming" | "past";
+type StatColor = "success" | "error" | "primary" | "grey";
 
 interface EventStat {
   label: string;
@@ -66,17 +53,26 @@ interface EventStat {
   color: StatColor;
 }
 
+// Props & emits
 const props = defineProps<{
-  events: BusinessEvent[];
+  events: any[];
+  totalCount: number;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   (e: "filter", value: StatStatus): void;
 }>();
 
-// Calcul du statut dynamique depuis start_at/end_at
-const getEventStatus = (event: BusinessEvent): StatStatus => {
-  const now = new Date().getTime();
+// État local du filtre actif (pour le style visuel)
+const activeFilter = ref<StatStatus>("all");
+
+// Expose via provide pour coordination si besoin
+provide("activeEventFilter", activeFilter);
+
+// Calcul des stats dynamiques
+const now = Date.now();
+
+const getEventStatus = (event: any): Exclude<StatStatus, "all"> => {
   const start = new Date(event.start_at).getTime();
   const end = new Date(event.end_at).getTime();
 
@@ -85,7 +81,14 @@ const getEventStatus = (event: BusinessEvent): StatStatus => {
   return "past";
 };
 
-const stats = computed<EventStat[]>(() => [
+const allStats = computed<EventStat[]>(() => [
+  {
+    label: "Tous",
+    value: "all",
+    count: props.totalCount,
+    icon: "mdi-view-grid",
+    color: "success",
+  },
   {
     label: "En cours",
     value: "live",
@@ -108,4 +111,10 @@ const stats = computed<EventStat[]>(() => [
     color: "grey",
   },
 ]);
+
+// Handler de clic
+const setFilter = (value: StatStatus) => {
+  activeFilter.value = value;
+  emit("filter", value);
+};
 </script>
