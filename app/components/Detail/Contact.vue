@@ -1,18 +1,36 @@
 <template>
-  <v-card class="pa-4" color="transparent" :elevation="0">
+  <v-card class="pa-4" color="transparent" density="compact" :elevation="0">
+    <!-- Header website -->
+    <v-card-title class="d-flex align-center px-0 pt-0">
+      <h2 class="text-h7 font-weight-bold">Website</h2>
+    </v-card-title>
+
+    <!-- Téléphone -->
+    <v-list-item class="px-0">
+      <v-list-item-title class="text-body-1">
+        {{ website }}
+      </v-list-item-title>
+
+      <template #append>
+        <v-btn
+          icon="mdi-web"
+          color="primary"
+          variant="tonal"
+          size="small"
+          :href="website"
+        />
+      </template>
+    </v-list-item>
+
     <!-- Header Contact -->
     <v-card-title class="d-flex align-center px-0 pt-0">
-      <h2 class="text-h5 font-weight-bold">Contact</h2>
+      <h2 class="text-h7 font-weight-bold">Contact</h2>
     </v-card-title>
 
     <!-- Liste des contacts -->
-    <v-list class="bg-transparent pa-0 mt-4" density="compact">
+    <v-list class="bg-transparent pa-0" density="compact">
       <!-- Téléphone -->
       <v-list-item v-if="phone" class="px-0">
-        <template #prepend>
-          <v-icon icon="mdi-phone-outline" color="grey-darken-1" />
-        </template>
-
         <v-list-item-title class="text-body-1">
           {{ phone }}
         </v-list-item-title>
@@ -28,12 +46,10 @@
         </template>
       </v-list-item>
 
+      <v-divider class="border-opacity-100" color="primary ma-1" />
+
       <!-- WhatsApp -->
       <v-list-item v-if="whatsapp" class="px-0">
-        <template #prepend>
-          <v-icon icon="mdi-whatsapp" color="success" />
-        </template>
-
         <v-list-item-title class="text-body-1">
           {{ whatsapp }}
         </v-list-item-title>
@@ -58,38 +74,34 @@
       </v-list-item>
     </v-list>
 
-    <!-- Divider -->
-    <v-divider v-if="hasLocations" class="my-6" />
-
     <!-- Header Locations -->
-    <v-card-title v-if="hasLocations" class="d-flex align-center px-0 pt-0">
-      <h2 class="text-h5 font-weight-bold">Adresses</h2>
+    <v-card-title v-if="hasLocations" class="d-flex align-center px-0 pt-4">
+      <h2 class="text-h7 font-weight-bold">Adresses</h2>
       <v-chip v-if="mainLocation" size="small" color="primary" class="ms-3">
         Principale
       </v-chip>
     </v-card-title>
 
+    <v-divider class="border-opacity-100" color="primary ma-1" />
+
     <!-- Liste des locations -->
-    <v-list v-if="hasLocations && !isMobile" class="bg-transparent pa-0 mt-4" density="compact">
+    <v-list
+      v-if="hasLocations && !isMobile"
+      class="bg-transparent pa-0"
+      density="compact"
+    >
       <v-list-item
         v-for="location in sortedLocations"
         :key="location.id"
-        class="px-0 mb-4"
+        class="px-0 mb-1"
       >
-        <template #prepend>
-          <v-icon 
-            icon="mdi-map-marker-outline" 
-            :color="location.is_main ? 'primary' : 'grey-darken-1'" 
-          />
-        </template>
-
         <v-list-item-title class="text-body-1 font-weight-medium">
           {{ location.city }}
-          <v-icon 
-            v-if="location.is_main" 
-            icon="mdi-star" 
-            size="x-small" 
-            color="primary" 
+          <v-icon
+            v-if="location.is_main"
+            icon="mdi-star"
+            size="x-small"
+            color="primary"
             class="ms-1"
           />
         </v-list-item-title>
@@ -98,8 +110,8 @@
           {{ location.address }}
         </v-list-item-subtitle>
 
-        <v-list-item-subtitle 
-          v-if="location.local_direction" 
+        <v-list-item-subtitle
+          v-if="location.local_direction"
           class="text-caption text-grey mt-1"
         >
           <v-icon icon="mdi-near-me" size="x-small" class="me-1" />
@@ -116,6 +128,7 @@
             target="_blank"
           />
         </template>
+        <v-divider class="border-opacity-100" color="primary ma-1" />
       </v-list-item>
     </v-list>
   </v-card>
@@ -127,18 +140,19 @@ import type { BizLocation } from "~/types/biz";
 const isMobile = inject("isMobile");
 
 const props = defineProps<{
+  website?: string;
   phone?: string;
   whatsapp?: string;
   locations?: BizLocation[];
 }>();
 
 // Computed
-const hasLocations = computed(() => 
-  props.locations && props.locations.length > 0
+const hasLocations = computed(
+  () => props.locations && props.locations.length > 0,
 );
 
-const mainLocation = computed(() => 
-  props.locations?.find(loc => loc.is_main)
+const mainLocation = computed(() =>
+  props.locations?.find((loc) => loc.is_main),
 );
 
 // Locations triées : principale d'abord
@@ -152,9 +166,7 @@ const sortedLocations = computed(() => {
 
 // Génère l'URL Google Maps
 const googleMapsUrl = (location: BizLocation): string => {
-  const query = encodeURIComponent(
-    `${location.address}, ${location.city}`
-  );
+  const query = encodeURIComponent(`${location.address}, ${location.city}`);
   return `https://www.google.com/maps/search/?api=1&query=${query}`;
 };
 </script>

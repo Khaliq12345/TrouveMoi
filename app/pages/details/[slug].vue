@@ -41,6 +41,7 @@
             ></v-divider>
             <section v-show="isMobile">
               <DetailContact
+                :website="biz?.website"
                 :phone="biz?.phone"
                 :whatsapp="biz?.whatsapp"
                 :locations="biz?.locations || []"
@@ -65,6 +66,7 @@
           <!-- Right Section -->
           <v-col cols="12" md="4" v-if="!isMobile">
             <DetailContact
+              :website="biz?.website"
               :phone="biz?.phone"
               :whatsapp="biz?.whatsapp"
               :locations="biz?.locations || []"

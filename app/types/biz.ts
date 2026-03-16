@@ -97,6 +97,7 @@ export interface Biz {
   phone: string;
   whatsapp: string;
   reviews_count: number;
+  website?: string;
   is_open: boolean;
   hours: DaySchedule[];
   rating: number;
