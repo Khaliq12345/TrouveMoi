@@ -60,12 +60,23 @@
   </v-card>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Sort state
 const sortBy = ref('Recommended')
 
 // Reviews data
-const allReviews = [
+interface ReviewPreview {
+  id: number;
+  author: string;
+  avatar: string;
+  location: string;
+  reviewCount: number;
+  rating: 1 | 2 | 3 | 4 | 5; // Typage strict pour les étoiles
+  date: string;
+  text: string;
+}
+
+const allReviews: ReviewPreview[] = [
   {
     id: 1,
     author: 'Jennifer L.',

@@ -30,9 +30,15 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Business highlights with icons and colors
-const highlights = [
+interface Highlight {
+  text: string;
+  icon: string;
+  color: string;
+}
+
+const highlights: Highlight[] = [
   { text: 'Outdoor seating', icon: 'mdi-umbrella-beach', color: 'teal-darken-1' },
   { text: 'Locally owned & operated', icon: 'mdi-store-check', color: 'orange-darken-2' },
   { text: 'Vegetarian friendly', icon: 'mdi-leaf', color: 'green-darken-2' },

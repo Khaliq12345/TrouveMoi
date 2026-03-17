@@ -1,77 +1,70 @@
-<!-- Filter panel with category chips, specifications, and apply/reset buttons -->
 <template>
-  <!-- Main container with full height flex layout -->
-  <div class="d-flex flex-column" style="height: 100%; max-height: 100vh">
-    <!-- Scrollable filter options area -->
-    <div class="mt-3 flex-grow-1 overflow-y-auto px-4 pt-lg-3">
-      <!-- Categories section with multi-select chips -->
-      <p class="text-body-2 mb-2">Categories</p>
-      <v-chip-group v-model="selectedFilters" column multiple>
-        <v-chip
-          v-for="i in 10"
-          :key="i"
-          :value="`cat${i}`"
-          variant="outlined"
-          size="small"
-          filter
-          color="primary"
-        >
-          Catégorie {{ i }}
-        </v-chip>
-      </v-chip-group>
+    <v-card class="d-flex flex-column h-100" flat tile color="transparent">
+        <!-- Filter title and count section with action -->
+        <v-card-item class="border-b pa-4" color="transparent">
+            <div class="d-flex align-center justify-space-between w-100">
+                <v-card-title class="text-h6 font-weight-bold pa-0"
+                    >Filtres</v-card-title
+                >
+                <v-btn
+                    v-if="activeFiltersCount > 0"
+                    variant="text"
+                    size="small"
+                    color="primary"
+                    class="text-none font-weight-bold"
+                    @click="clearAllFilters"
+                >
+                    Tout effacer
+                </v-btn>
+            </div>
+            <v-card-subtitle class="pa-0 mt-1">
+                {{ activeFiltersCount }} filtre{{
+                    activeFiltersCount > 1 ? "s" : ""
+                }}
+                actif
+            </v-card-subtitle>
+        </v-card-item>
 
-      <v-divider class="my-4" />
+        <!-- All filters section -->
 
-      <!-- Specifications section with toggle buttons -->
-      <p class="text-body-2 font-weight-medium mb-2">Spécificités</p>
-      <div class="d-flex flex-column ga-2">
-        <v-btn
-          v-for="i in 15"
-          :key="i"
-          @click="toggleSpec(`spec${i}`)"
-          :variant="selectedFilters2.includes(`spec${i}`) ? 'flat' : 'outlined'"
-          size="small"
-          class="text-none justify-start"
-          color="primary"
-          rounded="lg"
-        >
-          Specification {{ i }}
-        </v-btn>
-      </div>
-    </div>
-  </div>
+        <v-card-item color="transparent">
+            <div style="height: 800px; overflow-y: auto">
+                <v-list
+                    lines="one"
+                    select-strategy="classic"
+                    class="pa-0 bg-transparent"
+                >
+                    <search-is-open-filter />
+                    <v-divider />
+                    <search-price-filter />
+                    <v-divider />
+                    <search-category-filter />
+                    <v-divider />
+                    <search-feature-filter />
+                    <v-divider />
+                </v-list>
+            </div>
+        </v-card-item>
+    </v-card>
 </template>
 
 <script setup lang="ts">
-// Inject mobile state from parent
-const isMobile = inject("isMobile");
+const isMobile = inject("isMobile", ref(false));
+const route = useRoute();
+const router = useRouter();
 
-// Define component events
-const emit = defineEmits(["applyFilter", "cancel"]);
+const activeFiltersCount = computed(() => {
+    const filterKeys = ["sub_category", "price_range", "features", "is_open"];
 
-// State for category filters
-const selectedFilters = ref<string[]>([]);
-// State for specification filters
-const selectedFilters2 = ref<string[]>([]);
+    return filterKeys.reduce((count, key) => {
+        if (!route.query[key]) return count;
+        return (
+            count + String(route.query[key]).split(",").filter(Boolean).length
+        );
+    }, 0);
+});
 
-// Computed total count of active filters
-const filterCount = computed(
-  () => selectedFilters.value.length + selectedFilters2.value.length,
-);
-
-// Toggle specification filter on/off
-function toggleSpec(value: string) {
-  const index = selectedFilters2.value.indexOf(value);
-  if (index > -1) {
-    selectedFilters2.value.splice(index, 1);
-  } else {
-    selectedFilters2.value.push(value);
-  }
-}
-
-// Clear all selected filters
-function clearFilters() {
-  selectedFilters.value = [];
-  selectedFilters2.value = [];
-}
+const clearAllFilters = () => {
+    router.push({ query: {} });
+};
 </script>

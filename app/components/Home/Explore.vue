@@ -1,11 +1,8 @@
 <!-- Carousel showcasing 30 zones to explore in Benin with images and descriptions -->
 <template>
-    <v-container fluid class="py-12">
+    <v-container>
         <!-- Header section with title and description -->
-        <div class="text-center mb-10">
-            <v-chip color="primary" class="mb-4" variant="flat">
-                Exploration
-            </v-chip>
+        <div class="text-center mb-4">
             <h2 class="text-h5 text-md-h4 font-weight-bold mb-2">
                 30 zones à explorer au Bénin
             </h2>
@@ -16,12 +13,12 @@
 
         <!-- Horizontal carousel of zone cards -->
         <v-carousel hide-delimiters show-arrows="hover" height="600">
-            <v-carousel-item v-for="(zone, index) in zones" :key="index">
-                <gradient-card-with-image
-                    :title="zone.name"
+            <v-carousel-item v-for="(zone, index) in explore_zone" :key="zone.id">
+                <HomeGradientCardWithImage
+                    :name="zone.Name"
                     :subtitle="zone.location"
                     :description="zone.description"
-                    :image="zone.image"
+                    :image_id="zone.image_id"
                     :link="'example.com'"
                 />
             </v-carousel-item>
@@ -29,11 +26,36 @@
     </v-container>
 </template>
 
-<script setup>
-import GradientCardWithImage from "./GradientCardWithImage.vue";
+<script setup lang="ts">
+
+interface TouristicZone {
+  id: number;
+  name: string;
+  location: string;
+  description: string;
+  image: string;
+}
+const { $directus, $readItems } = useNuxtApp();
+const { data: explore_zone } = await useAsyncData(
+    "explore_zone",
+    () => {
+        return $directus.request($readItems("explore_zone"));
+    },
+    {
+        getCachedData: (key) => {
+            return (
+                useNuxtApp().payload.data[key] || useNuxtApp().static.data[key]
+            );
+        },
+    },
+);
+
+onMounted(() => {
+    console.log(explore_zone.value);
+})
 
 // Array of 30 tourist zones in Benin with location and description
-const zones = [
+const zones: TouristicZone[] = [
     {
         id: 1,
         name: "Ouidah",

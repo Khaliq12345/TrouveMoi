@@ -2,10 +2,7 @@
 <template>
   <v-sheet color="transparent" class="d-flex align-center">
     <!-- Horizontal scrolling container -->
-    <v-slide-group
-      show-arrows
-      class="align-center"
-    >
+    <v-slide-group show-arrows class="align-center">
       <!-- First group: More filters button and region selector -->
       <v-slide-group-item>
         <div class="d-flex align-center">
@@ -56,11 +53,7 @@
 
       <!-- Second group: Single-select filter chips -->
       <v-slide-group-item>
-        <v-chip-group
-          v-model="singleFilter"
-          mandatory
-          class="pa-0"
-        >
+        <v-chip-group v-model="singleFilter" mandatory class="pa-0">
           <v-chip
             v-for="i in 4"
             :key="`single-${i}`"
@@ -80,11 +73,7 @@
 
       <!-- Third group: Multi-select filter chips -->
       <v-slide-group-item>
-        <v-chip-group
-          v-model="multiFilters"
-          multiple
-          class="pa-0"
-        >
+        <v-chip-group v-model="multiFilters" multiple class="pa-0">
           <v-chip
             v-for="i in 4"
             :key="`multi-${i}`"
@@ -104,18 +93,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 
 // Component events
 const emit = defineEmits(["showDrawer"]);
 
 // Available regions for dropdown
-const regions = ['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming'];
+const regions: string[] = [
+  "California",
+  "Colorado",
+  "Florida",
+  "Georgia",
+  "Texas",
+  "Wyoming",
+];
 const select = ref("Texas");
 
 // Filter states
-const singleFilter = ref(1);        // Single choice filter
-const multiFilters = ref([]);       // Multiple choice filters
+const singleFilter = ref(1); // Single choice filter
+const multiFilters = ref([]); // Multiple choice filters
 </script>
 
 <style scoped>

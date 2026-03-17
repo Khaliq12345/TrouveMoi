@@ -1,9 +1,9 @@
-<!-- Search page with mobile/desktop views, filters, and infinite scroll results -->
 <template>
   <!-- Main layout container -->
   <v-layout class="flex-column fill-height">
     <!-- Top navigation bar -->
-    <HomeAppBar />
+    <AppBar />
+
     <!-- Mobile view (map/video toggle) -->
     <SearchMobileView
       v-show="isMobile"
@@ -14,7 +14,7 @@
     <!-- Desktop view (filters + results + map) -->
     <SearchDesktopView
       v-show="!isMobile"
-      :results="results"
+      :results="businesses || []"
       @load="onLoad"
       @open-drawer="drawer = true"
     />
@@ -34,7 +34,6 @@
       class="w-100"
     >
       <v-card height="70vh" class="d-flex flex-column">
-        <!-- Header fixe (non scrollable) -->
         <v-card-title class="d-flex flex-column align-start pa-2 flex-shrink-0">
           <div class="d-flex align-center w-100">
             <span class="text-h6">Results</span>
@@ -45,7 +44,6 @@
               @click="resultsSheet = false"
             />
           </div>
-          <!-- Mini filter bar - reste visible en haut -->
           <SearchMiniFilter
             @show-drawer="mobileFilter = true"
             class="overflow-auto w-100"
@@ -54,31 +52,32 @@
 
         <v-divider class="flex-shrink-0" />
 
-        <!-- Results list - zone scrollable -->
         <v-card-text class="pa-1 flex-grow-1 overflow-y-auto">
-          <SearchResultList :results="results" @load="onLoad" />
+          <SearchResultList :businesses="businesses || []" @load="onLoad" />
         </v-card-text>
       </v-card>
     </v-bottom-sheet>
   </v-layout>
-  <!-- Desktop filter drawer (temporary sidebar) -->
-  <ClientOnly>
-    <v-navigation-drawer
-      v-if="!isMobile"
-      v-model="drawer"
-      temporary
-      width="320"
-      location="left"
-      class="fill-height z-50"
-      elevation="10"
-      style="top: 0; height: 100vh; position: fixed"
-    >
-      <SearchFilter />
-    </v-navigation-drawer>
-  </ClientOnly>
+
+  <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
+  <v-navigation-drawer
+    v-if="!isMobile"
+    v-model="drawer"
+    temporary
+    width="320"
+    location="left"
+    class="fill-height z-50"
+    elevation="10"
+    style="top: 0; height: 100vh; position: fixed"
+  >
+    <SearchFilter />
+  </v-navigation-drawer>
+  <!-- Le v-layout doit fermer APRÈS le drawer -->
 </template>
 
-<script setup>
+<script setup lang="ts">
+const route = useRoute();
+
 // UI state management
 const drawer = ref(false); // Desktop filter drawer visibility
 const resultsSheet = ref(false); // Mobile results sheet visibility
@@ -90,6 +89,8 @@ const results = ref([]);
 const page = ref(1);
 const isEmpty = ref(false);
 const isLoading = ref(false);
+
+const { getAllURLFilters } = useFilterURL();
 
 // Inject mobile state from parent
 const isMobile = inject("isMobile");
@@ -135,4 +136,72 @@ async function loadMore({ done }) {
     isLoading.value = false;
   }
 }
+
+const { $directus, $readItems } = useNuxtApp();
+
+const { data: businesses } = await useAsyncData(
+  "businesses",
+  async () => {
+    const filters = getAllURLFilters();
+
+    // On prépare l'objet de requête final
+    const query: any = {
+      filter: {},
+    };
+
+    for (const [key, value] of Object.entries(filters)) {
+      // Si la clé est 'search', on l'extrait du 'filter' car
+      // Directus traite la recherche globale à la racine de la requête
+      if (key === "search") {
+        query.search = value;
+        continue;
+      }
+
+      // Traitement spécial pour la relation many-to-many featured_slots
+      if (key === "featured_slots" && Array.isArray(value)) {
+        query.filter.featuredslots = {
+          featured_slots_id: {
+            slug: { _in: value }, // ← slug au lieu de _in avec IDs
+          },
+        };
+        continue;
+      }
+
+      // Cas spécifique pour les sous-catégories (Relation M2M)
+      if (key === "sub_categories") {
+        query.filter[key] = {
+          sub_categories_id: {
+            slug: Array.isArray(value) ? { _in: value } : { _eq: value },
+          },
+        };
+        continue;
+      }
+
+      if (key === "categories") continue;
+
+      // Les autres clés sont traitées comme des filtres de colonnes classiques
+      query.filter[key] = Array.isArray(value)
+        ? { _in: value }
+        : { _eq: value };
+    }
+
+    // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
+    return $directus.request($readItems("businesses", query));
+  },
+  {
+    getCachedData: (key) => {
+      const nuxtApp = useNuxtApp();
+      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
+    },
+  },
+);
+
+// React when the page parameter changes
+watch(
+  () => route.query,
+  () => {
+    window.location.reload();
+  },
+  { deep: true },
+);
 </script>

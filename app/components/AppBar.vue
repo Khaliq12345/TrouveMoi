@@ -14,8 +14,7 @@
 
     <v-spacer />
 
-    <div style="width: 100%; max-width: 500px"
-    >
+    <div style="width: 100%; max-width: 500px">
       <v-text-field
         v-model="searchQuery"
         placeholder="Rechercher un lieu, une ville..."
@@ -25,6 +24,7 @@
         rounded="lg"
         prepend-inner-icon="mdi-magnify"
         append-inner-icon="mdi-arrow-right"
+        @keyup.enter="onEnterPressed"
       />
     </div>
 
@@ -51,6 +51,30 @@ const props = defineProps({
     default: "dark",
   },
 });
+
+const { updateURL } = useFilterURL();
+
+const router = useRouter();
+const route = useRoute();
+
 const searchQuery = ref("");
 const isMobile = inject("isMobile");
+
+function onEnterPressed() {
+  const value = searchQuery.value.trim()
+
+  const searchArray = [value]
+
+  if (route.path !== "/search") {
+    router.push({
+      path: "/search",
+      query: {
+        ...route.query,
+        search: value
+      }
+    })
+  } else {
+    updateURL("search", searchArray)
+  }
+}
 </script>

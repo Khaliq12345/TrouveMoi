@@ -12,7 +12,7 @@
           <!-- Responsive flex container -->
           <div
             class="d-flex w-100 overflow-hidden"
-             :class="isMobile ? 'flex-column' : 'flex-sm-row'"
+            :class="isMobile ? 'flex-column' : 'flex-sm-row'"
             :color="isHovering ? 'primary' : undefined"
           >
             <!-- Image section (responsive: mobile/desktop) -->
@@ -42,12 +42,12 @@
                   class="text-h6 font-weight-bold mb-2 text-truncate"
                   style="line-height: 1.2"
                 >
-                  {{ item.title }}
+                  {{ bussness?.name }}
                 </h3>
                 <!-- Rating display with star icon -->
                 <div class="d-flex align-center mt-1">
                   <v-rating
-                    :model-value="item.rating"
+                    :model-value="bussness?.rating"
                     color="amber-darken-2"
                     density="compact"
                     size="small"
@@ -55,7 +55,7 @@
                     half-increments
                   ></v-rating>
                   <span class="text-subtitle-2 font-weight-bold ms-2">{{
-                    item.rating
+                    bussness?.rating
                   }}</span>
                   <span class="text-caption text-medium-emphasis text-truncate">
                     ({{ item.reviews }}) • {{ item.tag }}
@@ -132,12 +132,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+interface HotelAmenity {
+  text: string;
+  icon: string;
+}
+
+interface HotelItem {
+  title: string;
+  rating: number;
+  reviews: string;
+  tag: string;
+  pricePerNight: number;
+  discount: `${number}%`;
+  isDeal: boolean;
+  amenities: HotelAmenity[];
+  images: number[];
+}
+
 defineOptions({
   inheritAttrs: false,
 });
+
+const props = defineProps({ bussness: Object });
+
 // Sample result item data
-const item = ref({
+const item = ref<HotelItem>({
   title: "Kanazawa Grand Inn Hotel",
   rating: 4.8,
   reviews: "1,257",

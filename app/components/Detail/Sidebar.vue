@@ -88,16 +88,30 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+interface CommunityQuestion {
+  id: number;
+  text: string;
+  answers: number;
+}
+
+interface SimilarBusiness {
+  name: string;
+  image: string;
+  rating: number; 
+  reviewCount: number;
+  category: string | 'Italian' | 'French' | 'Pizza'; // On peut mixer string et littéraux
+}
+
 // Community questions data
-const communityQuestions = [
+const communityQuestions: CommunityQuestion[] = [
   { id: 1, text: 'Is there outdoor seating available?', answers: 3 },
   { id: 2, text: 'Do they take reservations for large groups?', answers: 2 },
   { id: 3, text: 'What\'s the best dish here?', answers: 8 }
 ]
 
 // Similar businesses data
-const similarBusinesses = [
+const similarBusinesses: SimilarBusiness[] = [
   { name: 'Flour + Water', image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200', rating: 4.5, reviewCount: 892, category: 'Italian' },
   { name: 'Delfina', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200', rating: 4, reviewCount: 567, category: 'Italian' }
 ]
