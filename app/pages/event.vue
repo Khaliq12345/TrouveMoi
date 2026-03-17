@@ -1,6 +1,6 @@
 <!-- pages/events/index.vue -->
 <template>
-  <v-layout>
+  <v-layout class="pb-4">
     <AppBar />
     <v-main>
       <v-container class="pa-0 bg-background mx-auto" style="max-width: 1200px">
@@ -47,7 +47,32 @@
             class="py-12"
           />
         </div>
-        <div v-else class="py-10 text-center">Chargement...</div>
+        <div v-else class="py-10 d-flex justify-center">
+          <v-sheet
+            border
+            rounded="lg"
+            class="pa-4 d-flex align-center ga-4"
+            max-width="400"
+            color="transparent"
+            :elevation="0"
+          >
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="24"
+              width="3"
+            ></v-progress-circular>
+
+            <div class="d-flex flex-column">
+              <span class="text-body-2 font-weight-bold"
+                >Mise à jour des événements</span
+              >
+              <span class="text-caption text-medium-emphasis"
+                >Veuillez patienter quelques instants...</span
+              >
+            </div>
+          </v-sheet>
+        </div>
 
         <!-- Pagination -->
         <EventPagination />
@@ -64,54 +89,71 @@ const PER_PAGE = 10;
 
 const { $directus } = useNuxtApp();
 const route = useRoute();
+const router = useRouter();
 
-// État
+// 1. États réactifs
 const searchQuery = ref("");
 const activeFilter = ref<"all" | "live" | "upcoming" | "past">("all");
 
-// Construction du filtre Directus selon le statut
+// OPTIMISATION 1 : Remplacer le switch par un dictionnaire (Object Mapping)
+// C'est plus court à lire et tout aussi performant.
 const buildDateFilter = (filter: typeof activeFilter.value) => {
-  switch (filter) {
-    case "live":
-      return {
-        _and: [{ start_at: { _lte: "$NOW" } }, { end_at: { _gte: "$NOW" } }],
-      };
-    case "upcoming":
-      return { start_at: { _gt: "$NOW" } };
-    case "past":
-      return { end_at: { _lt: "$NOW" } };
-    case "all":
-    default:
-      return undefined;
-  }
+  const filters = {
+    live: {
+      _and: [{ start_at: { _lte: "$NOW" } }, { end_at: { _gte: "$NOW" } }],
+    },
+    upcoming: { start_at: { _gt: "$NOW" } },
+    past: { end_at: { _lt: "$NOW" } },
+    all: undefined,
+  };
+  return filters[filter];
 };
 
-// 1. Count total (sans filtre de date pour avoir le vrai total)
-const { data: countData } = await useAsyncData("events-count", () =>
-  $directus.request(
-    aggregate("business_events", { aggregate: { count: "*" } }),
-  ),
+// OPTIMISATION 2 : Nettoyage de getCachedData
+// Nuxt 3 gère le cache automatiquement via le payload en production,
+// pas besoin de le redéclarer manuellement sauf cas très spécifique.
+const { data: allEventsData } = await useAsyncData<Event[]>(
+  "events-all",
+  () =>
+    $directus.request(
+      readItems("business_events", {
+        sort: ["-date_created"],
+        limit: -1,
+        fields: ["id", "start_at", "end_at"],
+      }),
+    ) as Promise<Event[]>,
 );
 
-// Count filtré pour la pagination
-const { data: filteredCountData, error: paginationerr } = await useAsyncData(
-  "events-filtered-count",
-  () => {
+const totalEvents = computed(() => allEventsData.value?.length || 0);
+
+// OPTIMISATION 3 : La magie de useAsyncData pour le Count
+// On supprime fetchFilteredCount, try/catch, et le watch manuel.
+// useAsyncData écoute les refs passées dans "watch" et relance la requête tout seul !
+const { data: filteredCount, status: countStatus } = await useAsyncData(
+  "events-count",
+  async () => {
     const filter = buildDateFilter(activeFilter.value);
-    return $directus.request(
+    const result = (await $directus.request(
       aggregate("business_events", {
         aggregate: { count: "*" },
-        ...(filter && { filter }),
-        search: searchQuery.value || undefined,
+        query: {
+          ...(filter && { filter }),
+          search: searchQuery.value || undefined,
+        },
       }),
-    );
+    )) as any[];
+    return result[0]?.count ? parseInt(result[0].count) : 0;
   },
-  { watch: [activeFilter, searchQuery] },
+  {
+    watch: [activeFilter, searchQuery], // Se relance automatiquement au changement
+    default: () => 0, // Remplace ta déclaration `ref(0)` initiale
+  },
 );
 
-if(paginationerr.value) console.log("Pagination error: ", paginationerr.value)
+// Statut dérivé directement du composable Nuxt
+const countPending = computed(() => countStatus.value === "pending");
 
-// 2. Récupération des events
+// 4. Récupération des events paginés
 const {
   data: eventsData,
   error,
@@ -120,14 +162,13 @@ const {
   "events",
   () => {
     const filter = buildDateFilter(activeFilter.value);
-    // On récupère la page directement depuis la route ici pour l'appel API
     const page = parseInt(route.query.page as string) || 1;
 
     return $directus.request(
       readItems("business_events", {
         sort: ["-date_created"],
         limit: PER_PAGE,
-        page: page,
+        page,
         ...(filter && { filter }),
         search: searchQuery.value || undefined,
         fields: [
@@ -146,30 +187,25 @@ const {
   { watch: [() => route.query.page, activeFilter, searchQuery] },
 );
 
-const totalEvents = computed(() => {
-  const r = countData.value as any;
-  return Array.isArray(r) && r[0]?.count ? parseInt(r[0].count) : 0;
+// OPTIMISATION 4 : Éviter les push inutiles dans le router
+watch([activeFilter, searchQuery], () => {
+  // On ne remplace la route que si on n'est PAS déjà sur la page 1,
+  // ça évite des déclenchements en double du useAsyncData "events".
+  if (route.query.page !== "1" && route.query.page !== undefined) {
+    router.replace({ query: { ...route.query, page: "1" } });
+  }
 });
 
-const filteredTotal = computed(() => {
-  const r = filteredCountData.value as any;
-  return Array.isArray(r) && r[0]?.count ? parseInt(r[0].count) : 0;
-});
-
-// Partage du contexte nécessaire à l'enfant pour qu'il gère SA pagination
+// 5. Partage du contexte
 provide("eventContext", {
   eventsData,
+  allEventsData,
   totalEvents,
-  filteredTotal, // L'enfant en a besoin pour calculer le nombre de pages
+  filteredTotal: filteredCount,
   activeFilter,
-  searchQuery,
   PER_PAGE,
+  countPending,
 });
 
-if (error.value) console.log("events error: ", error.value);
-
-// Reset de la page via router quand la recherche change
-watch(searchQuery, () => {
-  useRouter().replace({ query: { ...route.query, page: "1" } });
-});
+if (error.value) console.error("events error: ", error.value);
 </script>

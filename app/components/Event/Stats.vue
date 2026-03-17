@@ -45,7 +45,6 @@
 <script setup lang="ts">
 import type { Event } from "~/types/event";
 
-// Types
 type StatStatus = "all" | "live" | "upcoming" | "past";
 type StatColor = "success" | "error" | "primary" | "grey";
 
@@ -57,19 +56,16 @@ interface EventStat {
   color: StatColor;
 }
 
-// Injection des données et fonctions depuis le parent (les props et emits sont supprimés)
-const { eventsData, totalEvents, activeFilter } = inject(
-  "eventContext",
-) as {
-  eventsData: Ref<Event[]>;
+// Injection
+const { allEventsData, totalEvents, activeFilter } = inject("eventContext") as {
+  allEventsData: Ref<Event[]>;
   totalEvents: Ref<number>;
   activeFilter: Ref<StatStatus>;
 };
 
-// Calcul des stats dynamiques
 const now = Date.now();
 
-const getEventStatus = (event: any): Exclude<StatStatus, "all"> => {
+const getEventStatus = (event: Event): Exclude<StatStatus, "all"> => {
   const start = new Date(event.start_at).getTime();
   const end = new Date(event.end_at).getTime();
 
@@ -78,43 +74,43 @@ const getEventStatus = (event: any): Exclude<StatStatus, "all"> => {
   return "past";
 };
 
-const allStats = computed<EventStat[]>(() => [
-  {
-    label: "Tous",
-    value: "all",
-    count: totalEvents.value,
-    icon: "mdi-view-grid",
-    color: "success",
-  },
-  {
-    label: "En cours",
-    value: "live",
-    count: (eventsData.value || []).filter((e) => getEventStatus(e) === "live")
-      .length,
-    icon: "mdi-access-point",
-    color: "error",
-  },
-  {
-    label: "À venir",
-    value: "upcoming",
-    count: (eventsData.value || []).filter(
-      (e) => getEventStatus(e) === "upcoming",
-    ).length,
-    icon: "mdi-calendar-clock",
-    color: "primary",
-  },
-  {
-    label: "Passés",
-    value: "past",
-    count: (eventsData.value || []).filter((e) => getEventStatus(e) === "past")
-      .length,
-    icon: "mdi-history",
-    color: "grey",
-  },
-]);
+// Stats basées sur TOUS les événements, pas seulement la page courante
+const allStats = computed<EventStat[]>(() => {
+  const allEvents = allEventsData.value || [];
+  
+  return [
+    {
+      label: "Tous",
+      value: "all",
+      count: totalEvents.value,
+      icon: "mdi-view-grid",
+      color: "success",
+    },
+    {
+      label: "En cours",
+      value: "live",
+      count: allEvents.filter((e) => getEventStatus(e) === "live").length,
+      icon: "mdi-access-point",
+      color: "error",
+    },
+    {
+      label: "À venir",
+      value: "upcoming",
+      count: allEvents.filter((e) => getEventStatus(e) === "upcoming").length,
+      icon: "mdi-calendar-clock",
+      color: "primary",
+    },
+    {
+      label: "Passés",
+      value: "past",
+      count: allEvents.filter((e) => getEventStatus(e) === "past").length,
+      icon: "mdi-history",
+      color: "grey",
+    },
+  ];
+});
 
-// Handler de clic
-const setFilter = async (value: StatStatus) => {
+const setFilter = (value: StatStatus) => {
   activeFilter.value = value;
 };
 </script>
