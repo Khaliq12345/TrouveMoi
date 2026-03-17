@@ -109,9 +109,7 @@ const buildDateFilter = (filter: typeof activeFilter.value) => {
   return filters[filter];
 };
 
-// OPTIMISATION 2 : Nettoyage de getCachedData
-// Nuxt 3 gère le cache automatiquement via le payload en production,
-// pas besoin de le redéclarer manuellement sauf cas très spécifique.
+// On récupère tous les événements
 const { data: allEventsData } = await useAsyncData<Event[]>(
   "events-all",
   () =>
@@ -126,9 +124,7 @@ const { data: allEventsData } = await useAsyncData<Event[]>(
 
 const totalEvents = computed(() => allEventsData.value?.length || 0);
 
-// OPTIMISATION 3 : La magie de useAsyncData pour le Count
-// On supprime fetchFilteredCount, try/catch, et le watch manuel.
-// useAsyncData écoute les refs passées dans "watch" et relance la requête tout seul !
+// On récupère le nombre d'événements filtrés
 const { data: filteredCount, status: countStatus } = await useAsyncData(
   "events-count",
   async () => {
@@ -153,7 +149,7 @@ const { data: filteredCount, status: countStatus } = await useAsyncData(
 // Statut dérivé directement du composable Nuxt
 const countPending = computed(() => countStatus.value === "pending");
 
-// 4. Récupération des events paginés
+// On récupère les événements paginés
 const {
   data: eventsData,
   error,
@@ -187,10 +183,8 @@ const {
   { watch: [() => route.query.page, activeFilter, searchQuery] },
 );
 
-// OPTIMISATION 4 : Éviter les push inutiles dans le router
+// Éviter les push inutiles dans le router, attendre que le filtre soit appliqué et réinitialiser la page à 1
 watch([activeFilter, searchQuery], () => {
-  // On ne remplace la route que si on n'est PAS déjà sur la page 1,
-  // ça évite des déclenchements en double du useAsyncData "events".
   if (route.query.page !== "1" && route.query.page !== undefined) {
     router.replace({ query: { ...route.query, page: "1" } });
   }

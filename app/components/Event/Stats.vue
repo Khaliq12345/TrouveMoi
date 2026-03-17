@@ -27,12 +27,8 @@
         </v-avatar>
 
         <div class="d-flex flex-column justify-center overflow-hidden">
-          <span class="text-body-2 font-weight-bold mb-n1 text-truncate">
-            {{ stat.count }}
-          </span>
           <span
-            class="text-caption text-medium-emphasis text-truncate"
-            style="font-size: 0.7rem"
+            class="font-weight-bold"
           >
             {{ stat.label }}
           </span>
