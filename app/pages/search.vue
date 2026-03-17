@@ -7,58 +7,10 @@
         />
 
         <!-- Mobile view (map/video toggle) -->
-        <SearchMobileView
-            v-show="isMobile"
-            v-model:viewMode="viewMode"
-            @open-results="resultsSheet = true"
-        />
+        <SearchMobileView v-show="isMobile" />
 
         <!-- Desktop view (filters + results + map) -->
         <SearchDesktopView v-show="!isMobile" @open-drawer="drawer = true" />
-
-        <!-- Mobile filter dialog -->
-        <v-dialog v-if="isMobile" v-model="mobileFilter" width="auto">
-            <v-card max-width="400">
-                <SearchFilter @applyFilter="mobileFilter = false" />
-            </v-card>
-        </v-dialog>
-
-        <!-- Mobile results bottom sheet -->
-        <v-bottom-sheet
-            v-if="isMobile"
-            v-model="resultsSheet"
-            scrollable
-            class="w-100"
-        >
-            <v-card height="70vh" class="d-flex flex-column">
-                <v-card-title
-                    class="d-flex flex-column align-start pa-2 flex-shrink-0"
-                >
-                    <div class="d-flex align-center w-100">
-                        <span class="text-h6">Results</span>
-                        <v-spacer />
-                        <v-btn
-                            icon="mdi-close"
-                            variant="text"
-                            @click="resultsSheet = false"
-                        />
-                    </div>
-                    <SearchMiniFilter
-                        @show-drawer="mobileFilter = true"
-                        class="overflow-auto w-100"
-                    />
-                </v-card-title>
-
-                <v-divider class="flex-shrink-0" />
-
-                <v-card-text class="pa-1 flex-grow-1 overflow-y-auto">
-                    <SearchResultList
-                        :businesses="businesses || []"
-                        @load="onLoad"
-                    />
-                </v-card-text>
-            </v-card>
-        </v-bottom-sheet>
     </v-layout>
 
     <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
@@ -82,14 +34,10 @@ const route = useRoute();
 
 // UI state management
 const drawer = ref(false); // Desktop filter drawer visibility
-const resultsSheet = ref(false); // Mobile results sheet visibility
-const viewMode = ref("carte"); // Mobile view mode: 'carte' or 'video'
-const mobileFilter = ref(false); // Mobile filter dialog visibility
 
-// Results data and pagination
+// pagination and filters
 const page = ref(1);
 const limit = ref(5);
-
 const { getAllURLFilters } = useFilterURL();
 
 // Inject mobile state from parent
