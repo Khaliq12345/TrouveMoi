@@ -62,8 +62,8 @@
 
 <script setup lang="ts">
 defineEmits(["showDialog"]);
-const search = ref("");
-const statusFilter = ref("Tous");
+const search = defineModel<string>('search', { default: "" });
+const statusFilter = defineModel<string>('statusFilter', { default: 'Tous' });
 </script>
 
 <style scoped>

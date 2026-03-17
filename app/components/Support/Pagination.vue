@@ -8,6 +8,7 @@
             size="large"
             class="text-none px-10"
             :loading="loading"
+            @click="$emit('update:page', page + 1)"
         >
             Charger plus
             <template v-slot:append>
@@ -29,4 +30,5 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+defineEmits(["update:page"]);
 </script>

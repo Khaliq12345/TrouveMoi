@@ -44,8 +44,9 @@
           <!-- Photo -->
           <v-file-input
             v-model="issue.photo"
-            label="Photo (optionnel)"
-            placeholder="Ajoutez une capture d'écran"
+            multiple
+            label="Photos (optionnel)"
+            placeholder="Ajoutez des captures d'écran"
             variant="outlined"
             density="comfortable"
             rounded="lg"
@@ -81,43 +82,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-
 const props = defineProps({
   modelValue: Boolean,
+  loading: Boolean, // Ajout d'une prop loading pour bloquer le bouton
 });
 
 const emit = defineEmits(["update:modelValue", "submit"]);
 
 const valid = ref(false);
-const form = ref(null);
 
 const issue = reactive({
   title: "",
   description: "",
-  photo: null,
+  photo: [],
 });
 
 const close = () => {
   emit("update:modelValue", false);
-  // Reset après fermeture
+  // Reset complet après la fermeture de l'animation
   setTimeout(() => {
-    issue.title = "";
-    issue.description = "";
-    issue.photo = null;
-    form.value?.resetValidation();
-  }, 300); // Attendre la fin de l'animation
+    issue.photo = []; // Sécurité pour Vuetify
+  }, 300);
 };
 
-const submit = () => {
+const submit = async () => {
   if (!valid.value) return;
 
+  // On envoie les données
   emit("submit", {
     title: issue.title,
     description: issue.description,
     photo: issue.photo,
   });
-
-  close();
 };
 </script>
