@@ -27,7 +27,7 @@
       <div class="d-flex justify-space-between align-center">
         <div class="d-flex align-center text-caption text-disabled">
           <v-icon size="14" class="mr-1">mdi-clock-outline</v-icon>
-          {{ formatDate(ticket.date) }}
+          {{ formatDate(ticket.date_created) }}
         </div>
         <v-btn
           variant="text"
@@ -54,13 +54,13 @@
           v-if="hasImages"
           height="250"
           hide-delimiters
-          :show-arrows="ticket.images.length > 1 ? 'hover' : false"
+          :show-arrows="ticket.image_id.length > 1 ? 'hover' : false"
           class="bg-grey-lighten-4"
         >
-          <v-carousel-item
-            v-for="(image, i) in ticket.images"
+        <v-carousel-item
+            v-for="(image, i) in ticket.image_id"
             :key="i"
-            :src="image"
+            :src="imgLink(image ?? '')"
             cover
           />
           <div class="position-absolute top-0 right-0 pa-4" style="z-index: 2">
@@ -85,7 +85,7 @@
                 class="d-flex align-center text-caption text-medium-emphasis"
               >
                 <v-icon icon="mdi-calendar-range" size="14" class="mr-1" />
-                {{ formatFullDate(ticket.date) }}
+                {{ formatFullDate(ticket.date_created) }}
               </div>
             </div>
             <v-chip
@@ -115,24 +115,14 @@
   </v-card>
 </template>
 <script setup lang="ts">
+import type { SupportTicket } from "~/types/support";
 const dialog = ref(false);
 
-const props = defineProps({
-  ticket: {
-    type: Object,
-    required: true,
-    default: () => ({
-      id: "",
-      title: "",
-      description: "",
-      resolved: false,
-      date: new Date(),
-      images: [],
-    }),
-  },
-});
+const props = defineProps<{
+  ticket: SupportTicket;
+}>();
 
-const hasImages = computed(() => props.ticket.images?.length > 0);
+const hasImages = computed(() => props.ticket.image_id?.length > 0);
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("fr-FR", {

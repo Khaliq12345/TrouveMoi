@@ -1,13 +1,14 @@
 <template>
     <div class="d-flex flex-column align-center mt-8 mb-12">
         <v-btn
-            v-if="page < length"
+            v-if="currentPage < totalPages"
             color="primary"
             variant="outlined"
             rounded="xl"
             size="large"
             class="text-none px-10"
-            :loading="loading"
+            :loading="isLoading"
+            @click="currentPage++"
         >
             Charger plus
             <template v-slot:append>
@@ -22,11 +23,15 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
-    page: number;
-    length: number;
-    loading?: boolean;
-}
+const { currentPage, totalCount, PER_PAGE, isLoading } = inject("supportContext") as {
+    currentPage: Ref<number>;
+    totalCount: Ref<number>;
+    PER_PAGE: number;
+    isLoading: Ref<boolean>;
+};
 
-const props = defineProps<Props>();
+/** Nombre total de pages calculé à partir du count et de PER_PAGE */
+const totalPages = computed(() =>
+    totalCount.value > 0 ? Math.ceil(totalCount.value / PER_PAGE) : 1
+);
 </script>

@@ -1,69 +1,132 @@
 <template>
     <v-layout>
-        <HomeAppBar />
+        <AppBar />
         <v-main>
             <v-container class="mx-auto" style="max-width: 1200px">
-                <SupportHeader @show-dialog="dialog = true" />
-
-                <v-row>
-                    <v-col
-                        v-for="ticket in tickets"
-                        :key="ticket.id"
-                        cols="12"
-                        sm="6"
-                        md="4"
-                    >
-                        <SupportCard :ticket="ticket" />
-                    </v-col>
-                </v-row>
-
-                <SupportPagination
-                    v-model:page="currentPage"
-                    :length="totalPages"
-                    :loading="isLoadingMore"
+                <SupportHeader
+                    v-model:search="searchQuery"
+                    v-model:statusFilter="statusFilter"
+                    @show-dialog="dialog = true"
                 />
+
+                <div v-if="status === 'pending' && !tickets.length" class="text-center py-10">
+                    <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                </div>
+                <template v-else>
+                    <v-row v-if="tickets.length > 0">
+                        <v-col
+                            v-for="ticket in tickets"
+                            :key="ticket.id"
+                            cols="12"
+                            sm="6"
+                            md="4"
+                        >
+                            <SupportCard :ticket="ticket" />
+                        </v-col>
+                    </v-row>
+                    <v-empty-state
+                        v-else
+                        icon="mdi-ticket-outline"
+                        title="Aucun signalement"
+                        class="py-12"
+                    />
+                </template>
+
+                <SupportPagination v-if="tickets.length > 0" />
             </v-container>
+            <SupportModal v-model="dialog" @refresh="refresh" />
         </v-main>
     </v-layout>
 </template>
 
 <script setup lang="ts">
+import { aggregate, readItems } from "@directus/sdk";
+import { useNuxtApp, useAsyncData } from "#imports";
+import type { SupportTicket } from "~/types/support";
+
+const { $directus } = useNuxtApp();
+const PER_PAGE = 10;
+
 // Dialog visibility state
 const dialog = ref(false);
 
-// Pagination variables
+// Pagination & filters variables
 const currentPage = ref(1);
-const totalPages = ref(4);
-const isLoadingMore = ref(false);
+const searchQuery = ref("");
+const statusFilter = ref("Tous");
 
-// List of support tickets
-const tickets = ref([
-    {
-        id: 1,
-        title: "Problème de connexion API",
-        description: "Impossible de se connecter à l'API depuis ce matin...",
-        resolved: false,
-        date: "2024-03-06",
-    },
-    {
-        id: 2,
-        title: "Demande de fonctionnalité export CSV",
-        description: "Les utilisateurs demandent un export CSV...",
-        resolved: true,
-        date: "2024-03-01",
-    },
-]);
+const buildFilter = (filter: string) => {
+    if (filter === "En cours") return { resolved: { _eq: false } };
+    if (filter === "Résolu") return { resolved: { _eq: true } };
+    return undefined;
+};
 
-// Add new issue to the beginning of tickets list
-function addIssue(data) {
-    tickets.value.unshift({
-        id: Date.now(),
-        title: data.title,
-        description: data.description,
-        resolved: false,
-        date: new Date().toISOString().split("T")[0],
-    });
-}
+// Count filtré pour la pagination
+const { data: countData, error: countErr } = await useAsyncData(
+    "support-count",
+    () => {
+        const filter = buildFilter(statusFilter.value);
+        return $directus.request(
+            aggregate("supports", {
+                aggregate: { count: "*" },
+                ...(filter && { filter }),
+                search: searchQuery.value || undefined,
+            })
+        );
+    },
+    { watch: [statusFilter, searchQuery] }
+);
+
+if (countErr.value) console.log("Support Count Error:", countErr.value);
+
+// Fetch items
+const {
+    data: ticketsData,
+    status,
+    error: itemsErr,
+    refresh
+} = await useAsyncData<SupportTicket[]>(
+    "support-items",
+    () => {
+        const filter = buildFilter(statusFilter.value);
+        return $directus.request(
+            readItems("supports", {
+                sort: ["-date_created"],
+                limit: PER_PAGE * currentPage.value,
+                ...(filter && { filter }),
+                search: searchQuery.value || undefined,
+                fields: ["*"],
+            })
+        ) as Promise<SupportTicket[]>;
+    },
+    { watch: [currentPage, statusFilter, searchQuery] }
+);
+
+if (itemsErr.value) console.log("Support Items Error:", itemsErr.value);
+
+// Reset page to 1 only when search or filter changes (NOT on page increment)
+watch([searchQuery, statusFilter], () => {
+    currentPage.value = 1;
+});
+
+
+// Raw count extracted from Directus aggregate response
+const totalCount = computed(() => {
+    const r = countData.value as any;
+    return Array.isArray(r) && r[0]?.count ? parseInt(r[0].count) : 0;
+});
+
+// Safe typed unwrap of ticketsData (Ref<SupportTicket[] | null>)
+const tickets = computed<SupportTicket[]>(() => ticketsData.value ?? []);
+
+// Provide context to child components (Pagination)
+provide("supportContext", {
+    currentPage,
+    totalCount,
+    PER_PAGE,
+    isLoading: computed(() => status.value === "pending"),
+});
+
 </script>
 
 <style scoped>

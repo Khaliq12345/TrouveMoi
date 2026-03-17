@@ -14,7 +14,7 @@
 
       <!-- Form content -->
       <v-card-text class="pa-4 pt-2">
-        <v-form ref="form" v-model="valid">
+        <v-form ref="form" :disabled="valid">
           <!-- Titre -->
           <v-text-field
             v-model="issue.title"
@@ -44,8 +44,9 @@
           <!-- Photo -->
           <v-file-input
             v-model="issue.photo"
-            label="Photo (optionnel)"
-            placeholder="Ajoutez une capture d'écran"
+            multiple
+            label="Photos (optionnel)"
+            placeholder="Ajoutez des captures d'écran"
             variant="outlined"
             density="comfortable"
             rounded="lg"
@@ -70,8 +71,7 @@
           variant="flat"
           rounded="lg"
           class="text-none px-6"
-          :disabled="!valid"
-          @click="submit"
+          @click="addIssue"
         >
           Soumettre le problème
         </v-btn>
@@ -81,43 +81,87 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import type { CreateSupportTicketPayload, SupportModalSubmitPayload } from "~/types/support";
+import { createItem, uploadFiles } from "@directus/sdk";
 
 const props = defineProps({
   modelValue: Boolean,
+  loading: Boolean, // Ajout d'une prop loading pour bloquer le bouton
 });
 
-const emit = defineEmits(["update:modelValue", "submit"]);
+const { $directus } = useNuxtApp();
 
+
+const emit = defineEmits(["update:modelValue", "refresh"]);
+
+// Vérouille le formulaire
 const valid = ref(false);
-const form = ref(null);
 
 const issue = reactive({
   title: "",
   description: "",
-  photo: null,
+  photo: [],
 });
 
 const close = () => {
   emit("update:modelValue", false);
-  // Reset après fermeture
-  setTimeout(() => {
-    issue.title = "";
-    issue.description = "";
-    issue.photo = null;
-    form.value?.resetValidation();
-  }, 300); // Attendre la fin de l'animation
+  // Reset complet après la fermeture de l'animation
+  issue.title = "";
+  issue.description = "";
+  issue.photo = [];
 };
 
-const submit = () => {
-  if (!valid.value) return;
 
-  emit("submit", {
-    title: issue.title,
-    description: issue.description,
-    photo: issue.photo,
-  });
+async function addIssue() {
+    valid.value = true
+    try {
+        const itemData: CreateSupportTicketPayload = {
+            title: issue.title,
+            description: issue.description,
+            resolved: false,
+            image_id: [],
+        };
 
-  close();
-};
+        if (issue.photo && Array.isArray(issue.photo) && issue.photo.length > 0) {
+            const uploadedUuids: string[] = [];
+            
+            for (const file of issue.photo) {
+                const formData = new FormData();
+                formData.append("title", file?.name || "");
+                formData.append("file", file);
+                
+                // ENVOI DANS LE DOSSIER "supports"
+                // Remplacez 'votre-uuid-de-dossier' par l'ID réel du dossier dans Directus
+                formData.append("folder", "votre-uuid-de-dossier"); 
+
+                try {
+                    const uploadResult = await $directus.request(uploadFiles(formData));
+                    
+                    // On récupère l'UUID (id) du fichier uploadé
+                    const fileId = Array.isArray(uploadResult) ? uploadResult[0]?.id : uploadResult?.id;
+                    
+                    if (fileId) {
+                        uploadedUuids.push(fileId);
+                    }
+                } catch (uploadErr) {
+                    console.error("Erreur upload fichier:", file.name, uploadErr);
+                }
+            }
+            
+            // On injecte directement le tableau d'UUIDs dans le champ JSON
+            itemData.image_id = uploadedUuids;
+        }
+
+        // Création de l'item dans la collection 'supports'
+        await $directus.request(createItem("supports", itemData));
+
+        // Fermeture + signal au parent pour rafraîchir la liste
+        close();
+        emit("refresh");
+    } catch (err) {
+        console.error("Erreur lors de la création du ticket:", err);
+    }
+    valid.value = false;
+}
+
 </script>
