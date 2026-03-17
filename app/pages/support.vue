@@ -32,12 +32,7 @@
                     />
                 </template>
 
-                <SupportPagination
-                    v-if="tickets.length > 0"
-                    v-model:page="currentPage"
-                    :length="totalPages"
-                    :loading="status === 'pending'"
-                />
+                <SupportPagination v-if="tickets.length > 0" />
             </v-container>
             <SupportModal v-model="dialog" @refresh="refresh" />
         </v-main>
@@ -93,8 +88,6 @@ const {
 } = await useAsyncData<SupportTicket[]>(
     "support-items",
     () => {
-        // Réinitialise la page
-        currentPage.value = 1;
         const filter = buildFilter(statusFilter.value);
         return $directus.request(
             readItems("supports", {
@@ -111,14 +104,28 @@ const {
 
 if (itemsErr.value) console.log("Support Items Error:", itemsErr.value);
 
-const totalPages = computed(() => {
+// Reset page to 1 only when search or filter changes (NOT on page increment)
+watch([searchQuery, statusFilter], () => {
+    currentPage.value = 1;
+});
+
+
+// Raw count extracted from Directus aggregate response
+const totalCount = computed(() => {
     const r = countData.value as any;
-    const count = Array.isArray(r) && r[0]?.count ? parseInt(r[0].count) : 0;
-    return Math.ceil(count / PER_PAGE);
+    return Array.isArray(r) && r[0]?.count ? parseInt(r[0].count) : 0;
 });
 
 // Safe typed unwrap of ticketsData (Ref<SupportTicket[] | null>)
 const tickets = computed<SupportTicket[]>(() => ticketsData.value ?? []);
+
+// Provide context to child components (Pagination)
+provide("supportContext", {
+    currentPage,
+    totalCount,
+    PER_PAGE,
+    isLoading: computed(() => status.value === "pending"),
+});
 
 </script>
 
