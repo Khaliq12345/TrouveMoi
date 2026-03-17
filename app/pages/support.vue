@@ -1,6 +1,6 @@
 <template>
     <v-layout>
-        <HomeAppBar />
+        <AppBar />
         <v-main>
             <v-container class="mx-auto" style="max-width: 1200px">
                 <SupportHeader @show-dialog="dialog = true" />
