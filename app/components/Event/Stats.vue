@@ -2,14 +2,18 @@
 <template>
   <div class="pa-4 d-flex flex-column flex-md-row justify-md-center ga-2">
     <v-card
-      v-for="stat in stats"
+      v-for="stat in allStats"
       :key="stat.value"
       elevation="0"
       border
       rounded="xl"
-      @click="$emit('filter', stat.value)"
-      class="w-100 w-md-auto pa-0"
+      @click="setFilter(stat.value)"
+      :class="[
+        'w-100 w-md-auto pa-0 cursor-pointer transition-all',
+        { 'border-primary border-opacity-100': activeFilter === stat.value },
+      ]"
       style="min-width: 160px"
+      :variant="activeFilter === stat.value ? 'tonal' : 'text'"
     >
       <v-card-text class="d-flex align-center pa-2 px-3">
         <v-avatar
@@ -39,8 +43,11 @@
 </template>
 
 <script setup lang="ts">
-type StatStatus = "live" | "upcoming" | "past";
-type StatColor = "error" | "primary" | "grey";
+import type { Event } from "~/types/event";
+
+// Types
+type StatStatus = "all" | "live" | "upcoming" | "past";
+type StatColor = "success" | "error" | "primary" | "grey";
 
 interface EventStat {
   label: string;
@@ -49,33 +56,65 @@ interface EventStat {
   icon: string;
   color: StatColor;
 }
-const props = defineProps<{
-  events: any[];
-}>();
 
-defineEmits(["filter"]);
+// Injection des données et fonctions depuis le parent (les props et emits sont supprimés)
+const { eventsData, totalEvents, activeFilter } = inject(
+  "eventContext",
+) as {
+  eventsData: Ref<Event[]>;
+  totalEvents: Ref<number>;
+  activeFilter: Ref<StatStatus>;
+};
 
-const stats = computed<EventStat[]>(() => [
+// Calcul des stats dynamiques
+const now = Date.now();
+
+const getEventStatus = (event: any): Exclude<StatStatus, "all"> => {
+  const start = new Date(event.start_at).getTime();
+  const end = new Date(event.end_at).getTime();
+
+  if (now >= start && now <= end) return "live";
+  if (now < start) return "upcoming";
+  return "past";
+};
+
+const allStats = computed<EventStat[]>(() => [
+  {
+    label: "Tous",
+    value: "all",
+    count: totalEvents.value,
+    icon: "mdi-view-grid",
+    color: "success",
+  },
   {
     label: "En cours",
     value: "live",
-    count: props.events.filter((e) => e.status === "live").length,
+    count: (eventsData.value || []).filter((e) => getEventStatus(e) === "live")
+      .length,
     icon: "mdi-access-point",
     color: "error",
   },
   {
     label: "À venir",
     value: "upcoming",
-    count: props.events.filter((e) => e.status === "upcoming").length,
+    count: (eventsData.value || []).filter(
+      (e) => getEventStatus(e) === "upcoming",
+    ).length,
     icon: "mdi-calendar-clock",
     color: "primary",
   },
   {
     label: "Passés",
     value: "past",
-    count: props.events.filter((e) => e.status === "past").length,
+    count: (eventsData.value || []).filter((e) => getEventStatus(e) === "past")
+      .length,
     icon: "mdi-history",
     color: "grey",
   },
 ]);
+
+// Handler de clic
+const setFilter = async (value: StatStatus) => {
+  activeFilter.value = value;
+};
 </script>
