@@ -39,16 +39,15 @@
                     :loading="status === 'pending'"
                 />
             </v-container>
-            <SupportModal v-model="dialog" @submit="addIssue" />
+            <SupportModal v-model="dialog" @refresh="refresh" />
         </v-main>
     </v-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { aggregate, readItems, createItem, uploadFiles } from "@directus/sdk";
+import { aggregate, readItems } from "@directus/sdk";
 import { useNuxtApp, useAsyncData } from "#imports";
-import type { SupportTicket, CreateSupportTicketPayload, SupportModalSubmitPayload } from "~/types/support";
+import type { SupportTicket } from "~/types/support";
 
 const { $directus } = useNuxtApp();
 const PER_PAGE = 10;
@@ -94,6 +93,8 @@ const {
 } = await useAsyncData<SupportTicket[]>(
     "support-items",
     () => {
+        // Réinitialise la page
+        currentPage.value = 1;
         const filter = buildFilter(statusFilter.value);
         return $directus.request(
             readItems("supports", {
@@ -119,62 +120,6 @@ const totalPages = computed(() => {
 // Safe typed unwrap of ticketsData (Ref<SupportTicket[] | null>)
 const tickets = computed<SupportTicket[]>(() => ticketsData.value ?? []);
 
-// Reset page when search or filter change
-watch([searchQuery, statusFilter], () => {
-    currentPage.value = 1;
-});
-
-async function addIssue(data: SupportModalSubmitPayload) {
-    try {
-        const itemData: CreateSupportTicketPayload = {
-            title: data.title,
-            description: data.description,
-            resolved: false,
-            image_id: [],
-        };
-
-        if (data.photo && Array.isArray(data.photo) && data.photo.length > 0) {
-            const uploadedUuids: string[] = [];
-            
-            for (const file of data.photo) {
-                const formData = new FormData();
-                formData.append("title", file.name);
-                formData.append("file", file);
-                
-                // ENVOI DANS LE DOSSIER "supports"
-                // Remplacez 'votre-uuid-de-dossier' par l'ID réel du dossier dans Directus
-                formData.append("folder", "votre-uuid-de-dossier"); 
-
-                try {
-                    const uploadResult = await $directus.request(uploadFiles(formData));
-                    
-                    // On récupère l'UUID (id) du fichier uploadé
-                    const fileId = Array.isArray(uploadResult) ? uploadResult[0]?.id : uploadResult?.id;
-                    
-                    if (fileId) {
-                        uploadedUuids.push(fileId);
-                    }
-                } catch (uploadErr) {
-                    console.error("Erreur upload fichier:", file.name, uploadErr);
-                }
-            }
-            
-            // On injecte directement le tableau d'UUIDs dans le champ JSON
-            itemData.image_id = uploadedUuids;
-        }
-
-        // Création de l'item dans la collection 'supports'
-        await $directus.request(createItem("supports", itemData));
-        
-        // Actions de fin
-        dialog.value = false; 
-        await refresh();
-        console.log("Ticket créé avec succès !");
-        
-    } catch (err) {
-        console.error("Erreur lors de la création du ticket:", err);
-    }
-}
 </script>
 
 <style scoped>
