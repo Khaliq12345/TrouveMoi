@@ -7,28 +7,65 @@
 
         <v-row class="mb-6" justify="center">
           <v-col cols="12" md="6" lg="4">
-            <v-text-field v-model="searchQuery" placeholder="Rechercher..." prepend-inner-icon="mdi-magnify"
-              variant="outlined" density="comfortable" rounded="lg" hide-details class="mt-2" />
+            <v-text-field
+              :model-value="searchQuery"
+              @update:model-value="onSearchUpdate"
+              placeholder="Rechercher..."
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              density="comfortable"
+              rounded="lg"
+              hide-details
+              class="mt-2"
+            />
           </v-col>
         </v-row>
 
         <div v-if="status !== 'pending'">
           <v-row v-if="eventsData?.length">
-            <v-col v-for="event in eventsData || []" :key="event.id" cols="12" sm="6" lg="4" xl="3" class="px-4">
+            <v-col
+              v-for="event in eventsData || []"
+              :key="event.id"
+              cols="12"
+              sm="6"
+              lg="4"
+              xl="3"
+              class="px-4"
+            >
               <EventCard :event="event" />
             </v-col>
           </v-row>
 
-          <v-empty-state v-else icon="mdi-calendar-blank" title="Aucun événement" class="py-12" />
+          <v-empty-state
+            v-else
+            icon="mdi-calendar-blank"
+            title="Aucun événement"
+            class="py-12"
+          />
         </div>
         <div v-else class="py-10 d-flex justify-center">
-          <v-sheet border rounded="lg" class="pa-4 d-flex align-center ga-4" max-width="400" color="transparent"
-            :elevation="0">
-            <v-progress-circular indeterminate color="primary" size="24" width="3"></v-progress-circular>
+          <v-sheet
+            border
+            rounded="lg"
+            class="pa-4 d-flex align-center ga-4"
+            max-width="400"
+            color="transparent"
+            :elevation="0"
+          >
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="24"
+              width="3"
+            ></v-progress-circular>
 
             <div class="d-flex flex-column">
-              <span class="text-body-2 font-weight-bold">Mise à jour des événements</span>
-              <span class="text-caption text-medium-emphasis">Veuillez patienter quelques instants...</span>
+              <span class="text-body-2 font-weight-bold"
+                >Mise à jour des événements</span
+              >
+              <span class="text-caption text-medium-emphasis"
+                >Veuillez patienter quelques instants...</span
+              >
             </div>
           </v-sheet>
         </div>
@@ -43,20 +80,41 @@
 import { aggregate, readItems } from "@directus/sdk";
 import type { Event } from "~/types/event";
 
-// Déclaration de la constante de pagination
+// Définition de la limite par page
 const PER_PAGE = 10;
 
-// Utilisation du contexte Nuxt et Vue Router
+// Utilisation des composables Nuxt
 const { $directus } = useNuxtApp();
 const route = useRoute();
 const router = useRouter();
 
-// États réactifs de l'interface
+// Variables réactives d'état
 const searchQuery = ref("");
 const activeFilter = ref<"all" | "live" | "upcoming" | "past">("all");
 
-// Fonction pour récupérer le filtre Directus selon le statut sélectionné
-// On utilise une approche dictionnaire pour améliorer la lisibilité
+// Fonction centralisée pour réinitialiser la pagination dans l'URL
+// Elle est appelée manuellement lors des changements au lieu d'utiliser un watch
+const resetPageToFirst = () => {
+  if (route.query.page !== "1" && route.query.page !== undefined) {
+    router.replace({ query: { ...route.query, page: "1" } });
+  }
+};
+
+// Gestionnaire d'événement pour la mise à jour de la recherche
+// Met à jour la valeur et réinitialise la page explicitement
+const onSearchUpdate = (newValue: string) => {
+  searchQuery.value = newValue;
+  resetPageToFirst();
+};
+
+// Fonction à injecter dans l'enfant pour mettre à jour le filtre
+// Permet de centraliser la logique de changement de filtre et de pagination
+const updateFilter = (newFilter: typeof activeFilter.value) => {
+  activeFilter.value = newFilter;
+  resetPageToFirst();
+};
+
+// Fonction pour construire les filtres d'API Directus
 const buildDateFilter = (filter: typeof activeFilter.value) => {
   const filters = {
     live: {
@@ -69,59 +127,39 @@ const buildDateFilter = (filter: typeof activeFilter.value) => {
   return filters[filter];
 };
 
-// -------------------------------------------------------------------------------------------------
-// APPEL 1 : AGRÉGATION (Compter le nombre d'éléments pour chaque catégorie)
-// -------------------------------------------------------------------------------------------------
-// On utilise Promise.all pour exécuter les 4 requêtes d'agrégation simultanément, de façon très rapide.
-// Cela nous donne les totaux pour mettre à jour les statistiques dans le composant `EventStats`
-const { data: countsData, status: countStatus } = await useAsyncData(
-  "events-counts",
+// Appel d'API pour le compteur unique basé sur les paramètres actuels
+// L'option watch interne à useAsyncData est conservée car c'est la façon optimale de déclencher la requête côté Nuxt
+const { data: filteredCount, status: countStatus,error: errorCount } = await useAsyncData(
+  "events-count",
   async () => {
-    // Fonction utilitaire interne pour exécuter un comptage spécifique sur Directus
-    const fetchCount = async (categoryFilter: any) => {
-      const result = (await $directus.request(
-        aggregate("business_events", {
-          aggregate: { count: "*" },
-          query: {
-            ...(categoryFilter && { filter: categoryFilter }),
-            search: searchQuery.value || undefined,
-          },
-        }),
-      )) as any[];
-      return result[0]?.count ? parseInt(result[0].count, 10) : 0;
-    };
-
-    // On lance en parallèle les appels pour le compte global et chaque catégorie
-    const [all, live, upcoming, past] = await Promise.all([
-      fetchCount(buildDateFilter("all")),
-      fetchCount(buildDateFilter("live")),
-      fetchCount(buildDateFilter("upcoming")),
-      fetchCount(buildDateFilter("past")),
-    ]);
-
-    // Retourne un objet structuré avec chaque compteur
-    return { all, live, upcoming, past };
+    const filter = buildDateFilter(activeFilter.value);
+    const result = (await $directus.request(
+      aggregate("business_events", {
+        aggregate: { count: "*" },
+        query: {
+          ...(filter && { filter }),
+          search: searchQuery.value || undefined,
+        },
+      }),
+    )) as any[];
+    return result[0]?.count ? parseInt(result[0].count, 10) : 0;
   },
   {
-    // On observe la recherche textuelle car elle impacte l'ensemble des compteurs de statistiques
-    watch: [searchQuery],
-    default: () => ({ all: 0, live: 0, upcoming: 0, past: 0 }),
+    watch: [activeFilter, searchQuery],
+    default: () => 0,
   },
 );
 
-// Calcul du statut de chargement pour les indicateurs visuels
+// Log error if any
+if (errorCount.value) {
+  console.error("Error fetching filtered count:", errorCount.value);
+}
+
+// État calculé pour le chargement du compteur
 const countPending = computed(() => countStatus.value === "pending");
 
-// Calcul dynamique du total filtré (utilisé par la pagination) selon le filtre courant
-const filteredTotal = computed(() => {
-  if (!countsData.value) return 0;
-  return countsData.value[activeFilter.value] || 0;
-});
-
-// -------------------------------------------------------------------------------------------------
-// APPEL 2 : RÉCUPÉRATION DES DONNÉES (Pour la grille d'événements)
-// -------------------------------------------------------------------------------------------------
-// Appel qui ne récupère QUE les données de l'onglet actif, limitées par la pagination
+// Appel d'API pour la récupération des données paginées
+// Ici aussi, l'option watch de useAsyncData est la méthode recommandée par Nuxt pour le refetching
 const {
   data: eventsData,
   error,
@@ -132,7 +170,6 @@ const {
     const filter = buildDateFilter(activeFilter.value);
     const page = parseInt(route.query.page as string) || 1;
 
-    // Requête Directus limitant aux colonnes strictement nécessaires
     return $directus.request(
       readItems("business_events", {
         sort: ["-date_created"],
@@ -156,25 +193,16 @@ const {
   { watch: [() => route.query.page, activeFilter, searchQuery] },
 );
 
-// Réinitialisation de la pagination lors du changement de filtre ou de recherche
-// On évite d'ajouter des historiques inutiles dans le navigateur avec `replace`
-watch([activeFilter, searchQuery], () => {
-  if (route.query.page !== "1" && route.query.page !== undefined) {
-    router.replace({ query: { ...route.query, page: "1" } });
-  }
-});
-
-// Partage du contexte aux composants enfants
-// On fournit `countsData` pour le composant des statistiques, et `filteredTotal` pour la pagination
+// Partage de l'état et des méthodes avec les composants enfants
 provide("eventContext", {
   eventsData,
-  countsData,
-  filteredTotal,
+  filteredTotal: filteredCount,
   activeFilter,
+  updateFilter, // On transmet la fonction de mise à jour au lieu de laisser l'enfant muter la ref directement
   PER_PAGE,
   countPending,
 });
 
-// Gestion d'erreur (affichée en console)
-if (error.value) console.error("Erreur lors de la récupération des événements: ", error.value);
+// Affichage des erreurs en console
+if (error.value) console.error("events error: ", error.value);
 </script>
