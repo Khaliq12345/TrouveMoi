@@ -7,7 +7,7 @@
     >
         <!-- Image carousel with hover arrows -->
         <v-carousel
-            height="250"
+            height="180"
             hide-delimiters
             show-arrows="hover"
             class="rounded-s-xl bg-grey-lighten-4"
@@ -16,31 +16,14 @@
             <v-carousel-item
                 v-for="imgId in images"
                 :key="imgId"
-                :src="`https://picsum.photos/id/${imgId}/600/400`"
+                :src="imgId"
                 cover
             ></v-carousel-item>
         </v-carousel>
-
-        <!-- Discount badge overlay -->
-        <v-chip
-            v-if="discount"
-            color="success"
-            variant="flat"
-            size="small"
-            class="position-absolute font-weight-bold"
-            style="
-                bottom: 12px;
-                left: 12px;
-                z-index: 10 !important;
-                pointer-events: none;
-            "
-        >
-            {{ discount }} OFF
-        </v-chip>
     </div>
 </template>
 
 <script setup lang="ts">
 // Component props for images and optional discount
-defineProps<{ images: number[]; discount?: string }>();
+defineProps<{ images: string[]; }>();
 </script>
