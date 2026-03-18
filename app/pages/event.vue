@@ -1,80 +1,38 @@
-<!-- pages/events/index.vue -->
 <template>
   <v-layout class="pb-4">
     <AppBar />
     <v-main>
       <v-container class="pa-0 bg-background mx-auto" style="max-width: 1200px">
-        <!-- Stats avec filtre actif -->
         <EventStats />
 
-        <!-- Recherche -->
         <v-row class="mb-6" justify="center">
           <v-col cols="12" md="6" lg="4">
-            <v-text-field
-              v-model="searchQuery"
-              placeholder="Rechercher..."
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              density="comfortable"
-              rounded="lg"
-              hide-details
-              class="mt-2"
-            />
+            <v-text-field v-model="searchQuery" placeholder="Rechercher..." prepend-inner-icon="mdi-magnify"
+              variant="outlined" density="comfortable" rounded="lg" hide-details class="mt-2" />
           </v-col>
         </v-row>
 
         <div v-if="status !== 'pending'">
-          <!-- Grid -->
           <v-row v-if="eventsData?.length">
-            <v-col
-              v-for="event in eventsData || []"
-              :key="event.id"
-              cols="12"
-              sm="6"
-              lg="4"
-              xl="3"
-              class="px-4"
-            >
+            <v-col v-for="event in eventsData || []" :key="event.id" cols="12" sm="6" lg="4" xl="3" class="px-4">
               <EventCard :event="event" />
             </v-col>
           </v-row>
 
-          <!-- Empty -->
-          <v-empty-state
-            v-else
-            icon="mdi-calendar-blank"
-            title="Aucun événement"
-            class="py-12"
-          />
+          <v-empty-state v-else icon="mdi-calendar-blank" title="Aucun événement" class="py-12" />
         </div>
         <div v-else class="py-10 d-flex justify-center">
-          <v-sheet
-            border
-            rounded="lg"
-            class="pa-4 d-flex align-center ga-4"
-            max-width="400"
-            color="transparent"
-            :elevation="0"
-          >
-            <v-progress-circular
-              indeterminate
-              color="primary"
-              size="24"
-              width="3"
-            ></v-progress-circular>
+          <v-sheet border rounded="lg" class="pa-4 d-flex align-center ga-4" max-width="400" color="transparent"
+            :elevation="0">
+            <v-progress-circular indeterminate color="primary" size="24" width="3"></v-progress-circular>
 
             <div class="d-flex flex-column">
-              <span class="text-body-2 font-weight-bold"
-                >Mise à jour des événements</span
-              >
-              <span class="text-caption text-medium-emphasis"
-                >Veuillez patienter quelques instants...</span
-              >
+              <span class="text-body-2 font-weight-bold">Mise à jour des événements</span>
+              <span class="text-caption text-medium-emphasis">Veuillez patienter quelques instants...</span>
             </div>
           </v-sheet>
         </div>
 
-        <!-- Pagination -->
         <EventPagination />
       </v-container>
     </v-main>
@@ -85,18 +43,20 @@
 import { aggregate, readItems } from "@directus/sdk";
 import type { Event } from "~/types/event";
 
+// Déclaration de la constante de pagination
 const PER_PAGE = 10;
 
+// Utilisation du contexte Nuxt et Vue Router
 const { $directus } = useNuxtApp();
 const route = useRoute();
 const router = useRouter();
 
-// 1. États réactifs
+// États réactifs de l'interface
 const searchQuery = ref("");
 const activeFilter = ref<"all" | "live" | "upcoming" | "past">("all");
 
-// OPTIMISATION 1 : Remplacer le switch par un dictionnaire (Object Mapping)
-// C'est plus court à lire et tout aussi performant.
+// Fonction pour récupérer le filtre Directus selon le statut sélectionné
+// On utilise une approche dictionnaire pour améliorer la lisibilité
 const buildDateFilter = (filter: typeof activeFilter.value) => {
   const filters = {
     live: {
@@ -109,47 +69,59 @@ const buildDateFilter = (filter: typeof activeFilter.value) => {
   return filters[filter];
 };
 
-// On récupère tous les événements
-const { data: allEventsData } = await useAsyncData<Event[]>(
-  "events-all",
-  () =>
-    $directus.request(
-      readItems("business_events", {
-        sort: ["-date_created"],
-        limit: -1,
-        fields: ["id", "start_at", "end_at"],
-      }),
-    ) as Promise<Event[]>,
-);
-
-const totalEvents = computed(() => allEventsData.value?.length || 0);
-
-// On récupère le nombre d'événements filtrés
-const { data: filteredCount, status: countStatus } = await useAsyncData(
-  "events-count",
+// -------------------------------------------------------------------------------------------------
+// APPEL 1 : AGRÉGATION (Compter le nombre d'éléments pour chaque catégorie)
+// -------------------------------------------------------------------------------------------------
+// On utilise Promise.all pour exécuter les 4 requêtes d'agrégation simultanément, de façon très rapide.
+// Cela nous donne les totaux pour mettre à jour les statistiques dans le composant `EventStats`
+const { data: countsData, status: countStatus } = await useAsyncData(
+  "events-counts",
   async () => {
-    const filter = buildDateFilter(activeFilter.value);
-    const result = (await $directus.request(
-      aggregate("business_events", {
-        aggregate: { count: "*" },
-        query: {
-          ...(filter && { filter }),
-          search: searchQuery.value || undefined,
-        },
-      }),
-    )) as any[];
-    return result[0]?.count ? parseInt(result[0].count) : 0;
+    // Fonction utilitaire interne pour exécuter un comptage spécifique sur Directus
+    const fetchCount = async (categoryFilter: any) => {
+      const result = (await $directus.request(
+        aggregate("business_events", {
+          aggregate: { count: "*" },
+          query: {
+            ...(categoryFilter && { filter: categoryFilter }),
+            search: searchQuery.value || undefined,
+          },
+        }),
+      )) as any[];
+      return result[0]?.count ? parseInt(result[0].count, 10) : 0;
+    };
+
+    // On lance en parallèle les appels pour le compte global et chaque catégorie
+    const [all, live, upcoming, past] = await Promise.all([
+      fetchCount(buildDateFilter("all")),
+      fetchCount(buildDateFilter("live")),
+      fetchCount(buildDateFilter("upcoming")),
+      fetchCount(buildDateFilter("past")),
+    ]);
+
+    // Retourne un objet structuré avec chaque compteur
+    return { all, live, upcoming, past };
   },
   {
-    watch: [activeFilter, searchQuery], // Se relance automatiquement au changement
-    default: () => 0, // Remplace ta déclaration `ref(0)` initiale
+    // On observe la recherche textuelle car elle impacte l'ensemble des compteurs de statistiques
+    watch: [searchQuery],
+    default: () => ({ all: 0, live: 0, upcoming: 0, past: 0 }),
   },
 );
 
-// Statut dérivé directement du composable Nuxt
+// Calcul du statut de chargement pour les indicateurs visuels
 const countPending = computed(() => countStatus.value === "pending");
 
-// On récupère les événements paginés
+// Calcul dynamique du total filtré (utilisé par la pagination) selon le filtre courant
+const filteredTotal = computed(() => {
+  if (!countsData.value) return 0;
+  return countsData.value[activeFilter.value] || 0;
+});
+
+// -------------------------------------------------------------------------------------------------
+// APPEL 2 : RÉCUPÉRATION DES DONNÉES (Pour la grille d'événements)
+// -------------------------------------------------------------------------------------------------
+// Appel qui ne récupère QUE les données de l'onglet actif, limitées par la pagination
 const {
   data: eventsData,
   error,
@@ -160,6 +132,7 @@ const {
     const filter = buildDateFilter(activeFilter.value);
     const page = parseInt(route.query.page as string) || 1;
 
+    // Requête Directus limitant aux colonnes strictement nécessaires
     return $directus.request(
       readItems("business_events", {
         sort: ["-date_created"],
@@ -183,23 +156,25 @@ const {
   { watch: [() => route.query.page, activeFilter, searchQuery] },
 );
 
-// Éviter les push inutiles dans le router, attendre que le filtre soit appliqué et réinitialiser la page à 1
+// Réinitialisation de la pagination lors du changement de filtre ou de recherche
+// On évite d'ajouter des historiques inutiles dans le navigateur avec `replace`
 watch([activeFilter, searchQuery], () => {
   if (route.query.page !== "1" && route.query.page !== undefined) {
     router.replace({ query: { ...route.query, page: "1" } });
   }
 });
 
-// 5. Partage du contexte
+// Partage du contexte aux composants enfants
+// On fournit `countsData` pour le composant des statistiques, et `filteredTotal` pour la pagination
 provide("eventContext", {
   eventsData,
-  allEventsData,
-  totalEvents,
-  filteredTotal: filteredCount,
+  countsData,
+  filteredTotal,
   activeFilter,
   PER_PAGE,
   countPending,
 });
 
-if (error.value) console.error("events error: ", error.value);
+// Gestion d'erreur (affichée en console)
+if (error.value) console.error("Erreur lors de la récupération des événements: ", error.value);
 </script>
