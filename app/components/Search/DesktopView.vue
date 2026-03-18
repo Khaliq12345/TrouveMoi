@@ -1,56 +1,66 @@
-<!-- Desktop layout with filter sidebar, results list, and map view in three-column layout -->
 <template>
-    <!-- Main container (desktop only) -->
     <v-main class="fill-height">
-        <v-container fluid class="pa-0 fill-height">
-            <v-row no-gutters class="fill-height" size="12">
-                <!-- Left and center columns (filters + results) -->
-                <v-col lg="9" md="8" class="">
-                    <v-row no-gutters class="fill-height" size="12">
-                        <!-- Filter sidebar (large screens only) -->
-                        <v-col lg="3" class="d-none d-lg-flex fill-height">
+        <v-sheet class="pa-0 fill-height" border="md">
+            <v-row no-gutters class="fill-height">
+                <v-col cols="12" md="8" lg="9" class="fill-height">
+                    <v-row no-gutters class="fill-height">
+                        <v-col
+                            lg="3"
+                            class="d-none d-lg-flex flex-column border-e fill-height"
+                        >
                             <SearchFilter />
                         </v-col>
-                        <!-- Results list column -->
-                        <v-col lg="9" class="d-flex flex-column w-full pt-4">
-                            <!-- Header with title and mini filter -->
 
-                            <h1 class="text-h5 font-weight-bold">
-                                Liste des résultats
-                            </h1>
-                            <!-- Mini filter (shown when sidebar is hidden) -->
-                            <div class="d-block d-lg-none py-3">
-                                <SearchMiniFilter
-                                    @show-drawer="$emit('open-drawer')"
-                                />
+                        <v-col
+                            cols="12"
+                            lg="9"
+                            class="d-flex flex-column fill-height"
+                        >
+                            <div class="px-4 pt-4">
+                                <v-breadcrumbs
+                                    :items="['Foo', 'Bar']"
+                                ></v-breadcrumbs>
+                                <h1
+                                    class="text-h5 font-weight-bold d-flex align-center"
+                                >
+                                    Liste des résultats
+                                    <v-progress-circular
+                                        v-if="pending"
+                                        indeterminate
+                                        size="20"
+                                        width="2"
+                                        color="primary"
+                                        class="ms-3"
+                                    ></v-progress-circular>
+                                </h1>
+
+                                <div class="d-block d-lg-none py-3">
+                                    <SearchMiniFilter
+                                        @show-drawer="$emit('open-drawer')"
+                                    />
+                                </div>
                             </div>
 
-                            <!-- Scrollable results area -->
-                            <div
-                                class="flex-grow-1 overflow-y-auto pa-2"
-                                style="height: 0"
-                            >
-                                <SearchResultList
-                                    :businesses="results"
-                                    @load="$emit('load', $event)"
-                                    class="w-100"
-                                />
+                            <div class="flex-grow-1 overflow-y-auto pa-4">
+                                <SearchResultList />
                             </div>
                         </v-col>
                     </v-row>
                 </v-col>
 
-                <!-- Right column (map placeholder) -->
-                <v-col cols="4" lg="3" class="border-s bg-red-500"> </v-col>
+                <v-col
+                    md="4"
+                    lg="3"
+                    class="d-none d-md-flex bg-grey-lighten-3 border-s"
+                >
+                    <div class="pa-4">Map View</div>
+                </v-col>
             </v-row>
-        </v-container>
+        </v-sheet>
     </v-main>
 </template>
 
 <script setup lang="ts">
-// ✅ After
-
-// Component props and events
-defineProps(["results"]);
-defineEmits(["load", "open-drawer"]);
+const { pending } = inject("businesses-data") as any;
+defineEmits(["open-drawer"]);
 </script>

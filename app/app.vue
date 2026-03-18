@@ -1,7 +1,7 @@
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+    <NuxtLayout>
+        <NuxtPage />
+    </NuxtLayout>
 </template>
 <script setup lang="ts">
 import { useWindowSize } from "@vueuse/core";
@@ -13,7 +13,7 @@ const searchQuery = ref("");
 const { name } = useDisplay();
 
 const isMobile = computed(() => {
-  return ["xs", "sm", "md"].includes(name.value);
+    return ["xs", "sm"].includes(name.value);
 });
 
 // const isMobile = computed(() => {
