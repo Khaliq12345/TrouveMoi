@@ -1,4 +1,3 @@
-<!-- components/events/EventStats.vue -->
 <template>
   <div class="pa-4 d-flex flex-column flex-md-row justify-md-center ga-2">
     <v-card
@@ -7,7 +6,7 @@
       elevation="0"
       border
       rounded="xl"
-      @click="setFilter(stat.value)"
+      @click="updateFilter(stat.value)"
       :class="[
         'w-100 w-md-auto pa-0 cursor-pointer transition-all',
         { 'border-primary border-opacity-100': activeFilter === stat.value },
@@ -27,10 +26,11 @@
         </v-avatar>
 
         <div class="d-flex flex-column justify-center overflow-hidden">
-          <span
-            class="font-weight-bold"
-          >
+          <span class="font-weight-bold">
             {{ stat.label }}
+            <span v-if="activeFilter === stat.value" class="text-caption ms-1">
+              ({{ filteredTotal }})
+            </span>
           </span>
         </div>
       </v-card-text>
@@ -39,74 +39,53 @@
 </template>
 
 <script setup lang="ts">
-import type { Event } from "~/types/event";
-
+// Types stricts pour les statuts et les couleurs
 type StatStatus = "all" | "live" | "upcoming" | "past";
 type StatColor = "success" | "error" | "primary" | "grey";
 
+// Structure de données locale pour l'interface
 interface EventStat {
   label: string;
   value: StatStatus;
-  count: number;
   icon: string;
   color: StatColor;
 }
 
-// Injection
-const { allEventsData, totalEvents, activeFilter } = inject("eventContext") as {
-  allEventsData: Ref<Event[]>;
-  totalEvents: Ref<number>;
+// Récupération des données et de la fonction d'action depuis le parent
+// L'ajout de updateFilter permet au parent de garder le contrôle sur la logique de réinitialisation
+const { filteredTotal, activeFilter, updateFilter } = inject("eventContext") as {
+  filteredTotal: Ref<number>;
   activeFilter: Ref<StatStatus>;
+  updateFilter: (val: StatStatus) => void;
 };
 
-const now = Date.now();
-
-const getEventStatus = (event: Event): Exclude<StatStatus, "all"> => {
-  const start = new Date(event.start_at).getTime();
-  const end = new Date(event.end_at).getTime();
-
-  if (now >= start && now <= end) return "live";
-  if (now < start) return "upcoming";
-  return "past";
-};
-
-// Stats basées sur TOUS les événements, pas seulement la page courante
+// Définition de la configuration visuelle des filtres
 const allStats = computed<EventStat[]>(() => {
-  const allEvents = allEventsData.value || [];
-  
   return [
     {
       label: "Tous",
       value: "all",
-      count: totalEvents.value,
       icon: "mdi-view-grid",
       color: "success",
     },
     {
       label: "En cours",
       value: "live",
-      count: allEvents.filter((e) => getEventStatus(e) === "live").length,
       icon: "mdi-access-point",
       color: "error",
     },
     {
       label: "À venir",
       value: "upcoming",
-      count: allEvents.filter((e) => getEventStatus(e) === "upcoming").length,
       icon: "mdi-calendar-clock",
       color: "primary",
     },
     {
       label: "Passés",
       value: "past",
-      count: allEvents.filter((e) => getEventStatus(e) === "past").length,
       icon: "mdi-history",
       color: "grey",
     },
   ];
 });
-
-const setFilter = (value: StatStatus) => {
-  activeFilter.value = value;
-};
 </script>
