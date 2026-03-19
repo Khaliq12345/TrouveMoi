@@ -1,5 +1,9 @@
 <template>
+  <!-- Background global flouté basé sur l’item courant -->
   <div class="global-blurred-bg" v-if="currentItem">
+
+    <!-- Vidéo de fond synchronisée avec l’item courant -->
+    <!-- key force le refresh, autoplay + muted requis pour lecture auto -->
     <video
       :key="'bg-' + currentItem.media_id"
       :src="imgLink(currentItem.media_id)"
@@ -10,15 +14,21 @@
       class="video-bg-fullscreen"
       @loadeddata="$event.target.play()" 
     ></video>
+
+    <!-- Overlay visuel pour améliorer la lisibilité (darken / blur) -->
     <div class="bg-overlay"></div>
   </div>
 
+  <!-- Conteneur principal centré, dimensions adaptatives -->
   <v-sheet 
     class="mx-auto relative overflow-hidden bg-transparent" 
     :width="isMobile ? 415 : 600" 
     :height="isMobile ? 800 : 799"
     elevation="0"
   >
+
+    <!-- Carousel vertical des médias -->
+    <!-- v-model synchronise l’index courant -->
     <v-carousel 
       v-if="mediaItems && mediaItems.length" 
       v-model="currentIndex" 
@@ -29,9 +39,16 @@
       hide-delimiters
       :show-arrows="false"
     >
+
+      <!-- Itération sur chaque média -->
       <v-carousel-item v-for="(item, i) in mediaItems" :key="item.id">
         
+        <!-- Wrapper vidéo foreground -->
         <div class="video-container">
+
+          <!-- Vidéo principale -->
+          <!-- Chargement conditionnel pour éviter surcharge réseau -->
+          <!-- preload none = pas de buffer inutile -->
           <video
             :key="'fg-' + item.media_id"
             :src="shouldLoadVideo(i) ? imgLink(item.media_id) : ''"
@@ -43,20 +60,29 @@
             class="video-fg"
             @loadeddata="$event.target.play()"
           ></video>
+
         </div>
 
       </v-carousel-item>
 
+      <!-- Overlay UI au-dessus du carousel -->
+      <!-- Pas de scrim, n’intercepte pas les clics -->
       <v-overlay :scrim="false" contained model-value persistent no-click-animation
         content-class="w-100 h-100 d-flex flex-column align-center justify-end pointer-pass-through py-6">
 
+        <!-- Animation lors du changement d’item -->
         <v-scroll-x-transition mode="out-in">
+
+          <!-- Badge dynamique lié à l’index courant -->
           <v-sheet :key="currentIndex" rounded="pill" class="pa-1 pr-6 shadow-lg" elevation="4" color="rgba(255, 255, 255, 0.85)">
+
+            <!-- Affichage des infos du business -->
             <v-list-item 
               prepend-icon="mdi-map-marker-radius" 
               :title="currentItem?.business_name"
               subtitle="À découvrir"
             ></v-list-item>
+
           </v-sheet>
         </v-scroll-x-transition>
 
