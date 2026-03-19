@@ -18,40 +18,23 @@
 
       <v-divider class="mb-3"></v-divider>
 
-      <section class="mb-3">
-        <h3 class="text-caption font-weight-bold mb-1 text-uppercase text-grey-darken-2">
-          Top recherches à {{ cities[selectedCityIndex] }}
+      <!-- Boucle sur les sections -->
+      <section v-for="(section, key) in sections" :key="key" class="mb-3">
+        <h3 class="font-weight-bold mb-1 text-uppercase text-grey-darken-2">
+          {{ getSectionTitle(section, key) }}
         </h3>
         <v-row no-gutters>
-          <v-col v-for="(item, index) in visibleTopSearches" :key="index" cols="6" sm="4" md="3" class="py-1">
-            <a href="#" class="text-decoration-none text-grey-darken-3 text-caption d-block text-truncate">
+          <v-col v-for="(item, index) in getVisibleItems(key)" :key="index" cols="6" sm="4" md="3" class="py-1">
+            <a href="#" class="text-decoration-none text-grey-darken-3 d-block text-truncate">
               {{ item }}
             </a>
           </v-col>
         </v-row>
         <v-btn variant="text" color="primary" size="small" density="compact"
-          class="text-none px-0 mt-1 font-weight-bold text-caption"
-          :append-icon="showAllTop ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click="showAllTop = !showAllTop">
-          {{ showAllTop ? 'Voir moins' : 'Voir plus' }}
-        </v-btn>
-      </section>
-
-      <section>
-        <h3 class="text-caption font-weight-bold mb-1 text-uppercase text-grey-darken-2">
-          Tendances actuelles au Bénin
-        </h3>
-        <v-row no-gutters>
-          <v-col v-for="(item, index) in visibleTrending" :key="index" cols="6" sm="4" md="3" class="py-1">
-            <a href="#" class="text-decoration-none text-grey-darken-3 text-caption d-block text-truncate">
-              {{ item }}
-            </a>
-          </v-col>
-        </v-row>
-        <v-btn variant="text" color="primary" size="small" density="compact"
-          class="text-none px-0 mt-1 font-weight-bold text-caption"
-          :append-icon="showAllTrending ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-          @click="showAllTrending = !showAllTrending">
-          {{ showAllTrending ? 'Voir moins' : 'Voir plus' }}
+          class="text-none px-0 mt-1 font-weight-bold"
+          :append-icon="showAll[key] ? 'mdi-chevron-up' : 'mdi-chevron-down'" 
+          @click="showAll[key] = !showAll[key]">
+          {{ showAll[key] ? 'Voir moins' : 'Voir plus' }}
         </v-btn>
       </section>
     </v-card>
@@ -59,11 +42,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-
 const selectedCityIndex = ref(0)
-const showAllTop = ref(false)
-const showAllTrending = ref(false)
+const showAll = ref({
+  top: false,
+  trending: false
+})
 
 const cities = [
   'Cotonou', 'Porto-Novo', 'Parakou', 'Abomey-Calavi',
@@ -84,20 +67,35 @@ const trendingSearches = [
   'Législation foncière', 'Investir au Bénin', 'Art contemporain Béninois', 'Amazon de Cotonou'
 ]
 
-// Logique pour afficher seulement les 8 premiers éléments si "Voir plus" n'est pas activé
-const visibleTopSearches = computed(() => {
-  return showAllTop.value ? topSearches : topSearches.slice(0, 8)
-})
+// Configuration des sections (données conservées)
+const sections = {
+  top: {
+    data: topSearches,
+    title: 'Top recherches à {city}'
+  },
+  trending: {
+    data: trendingSearches,
+    title: 'Tendances actuelles au Bénin'
+  }
+}
 
-const visibleTrending = computed(() => {
-  return showAllTrending.value ? trendingSearches : trendingSearches.slice(0, 8)
-})
+// Génère le titre avec la ville dynamique pour la première section
+const getSectionTitle = (section, key) => {
+  if (key === 'top') {
+    return section.title.replace('{city}', cities[selectedCityIndex.value])
+  }
+  return section.title
+}
+
+// Retourne les items visibles selon l'état "voir plus"
+const getVisibleItems = (key) => {
+  const items = sections[key].data
+  return showAll.value[key] ? items : items.slice(0, 8)
+}
 </script>
 
 <style scoped>
-/* Optionnel : ajout d'un petit effet de survol sur les liens */
 a:hover {
   color: #1867C0 !important;
-  /* Couleur primary Vuetify */
 }
 </style>
