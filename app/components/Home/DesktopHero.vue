@@ -3,7 +3,7 @@
         style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000"
         color="white"
     />
-    <v-parallax :src="backgroundImage" height="800">
+    <v-parallax  height="800">
         <HomeCarousel v-model="backgroundImage" />
     </v-parallax>
 </template>
