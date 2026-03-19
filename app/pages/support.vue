@@ -3,36 +3,26 @@
         <AppBar />
         <v-main>
             <v-container class="mx-auto" style="max-width: 1200px">
-                <SupportHeader
-                    v-model:search="searchQuery"
-                    v-model:statusFilter="statusFilter"
-                    @show-dialog="dialog = true"
-                />
+                <SupportHeader v-model:search="searchQuery" v-model:statusFilter="statusFilter"
+                    @show-dialog="dialog = true" />
 
                 <div v-if="status === 'pending' && !tickets.length" class="text-center py-10">
                     <v-progress-circular indeterminate color="primary"></v-progress-circular>
                 </div>
                 <template v-else>
                     <v-row v-if="tickets.length > 0">
-                        <v-col
-                            v-for="ticket in tickets"
-                            :key="ticket.id"
-                            cols="12"
-                            sm="6"
-                            md="4"
-                        >
+                        <v-col v-for="ticket in tickets" :key="ticket.id" cols="12" sm="6" md="4">
                             <SupportCard :ticket="ticket" />
                         </v-col>
                     </v-row>
-                    <v-empty-state
-                        v-else
-                        icon="mdi-ticket-outline"
-                        title="Aucun signalement"
-                        class="py-12"
-                    />
+                    <v-empty-state v-else icon="mdi-ticket-outline" title="Aucun signalement" class="py-2" />
                 </template>
 
                 <SupportPagination v-if="tickets.length > 0" />
+
+                <!-- Popular search section -->
+                <PopulareSearch />
+
             </v-container>
             <SupportModal v-model="dialog" @refresh="refresh" />
         </v-main>
@@ -135,39 +125,29 @@ provide("supportContext", {
 .gradient-bg {
     /* Fusion de l'overlay (en premier) et des 4 vagues */
     background:
-    /* Calque Overlay (anciennement ::after) */
-        radial-gradient(
-            circle at 50% 50%,
+        /* Calque Overlay (anciennement ::after) */
+        radial-gradient(circle at 50% 50%,
             transparent 0%,
-            rgba(0, 0, 0, 0.1) 100%
-        ),
+            rgba(0, 0, 0, 0.1) 100%),
         /* Vague 1 - primary dense */
-        radial-gradient(
-                ellipse 80% 50% at 20% 40%,
-                rgb(var(--v-theme-primary)) 0%,
-                rgba(var(--v-theme-primary), 0.8) 25%,
-                transparent 50%
-            ),
+        radial-gradient(ellipse 80% 50% at 20% 40%,
+            rgb(var(--v-theme-primary)) 0%,
+            rgba(var(--v-theme-primary), 0.8) 25%,
+            transparent 50%),
         /* Vague 2 - primary plus clair */
-        radial-gradient(
-                ellipse 60% 40% at 60% 60%,
-                rgba(var(--v-theme-primary), 0.9) 0%,
-                rgba(var(--v-theme-primary), 0.5) 30%,
-                transparent 60%
-            ),
+        radial-gradient(ellipse 60% 40% at 60% 60%,
+            rgba(var(--v-theme-primary), 0.9) 0%,
+            rgba(var(--v-theme-primary), 0.5) 30%,
+            transparent 60%),
         /* Vague 3 - transition white */
-        radial-gradient(
-                ellipse 70% 60% at 80% 30%,
-                rgba(var(--v-theme-primary), 0.6) 0%,
-                rgba(255, 255, 255, 0.4) 40%,
-                transparent 70%
-            ),
+        radial-gradient(ellipse 70% 60% at 80% 30%,
+            rgba(var(--v-theme-primary), 0.6) 0%,
+            rgba(255, 255, 255, 0.4) 40%,
+            transparent 70%),
         /* Vague 4 - white diffuse */
-        radial-gradient(
-                ellipse 50% 50% at 40% 80%,
-                rgba(255, 255, 255, 0.3) 0%,
-                transparent 50%
-            );
+        radial-gradient(ellipse 50% 50% at 40% 80%,
+            rgba(255, 255, 255, 0.3) 0%,
+            transparent 50%);
 
     /* Comme on ne peut pas utiliser filter: blur() sans flouter le texte,
      on utilise backdrop-filter si le fond est transparent ou on joue sur
