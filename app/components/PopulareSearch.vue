@@ -19,21 +19,24 @@
       <v-divider class="mb-3"></v-divider>
 
       <!-- Boucle sur les sections -->
-      <section v-for="(section, key) in sections" :key="key" class="mb-3">
-        <h3 class="font-weight-bold mb-1 text-uppercase text-grey-darken-2">
+      <section v-for="(section, key) in sections" :key="key" class="mb-3 mb-md-6">
+        <h3 class="text-caption text-md-subtitle-1 font-weight-bold mb-1 mb-md-3 text-uppercase text-grey-darken-2">
           {{ getSectionTitle(section, key) }}
         </h3>
+
         <v-row no-gutters>
-          <v-col v-for="(item, index) in getVisibleItems(key)" :key="index" cols="6" sm="4" md="3" class="py-1">
-            <a href="#" class="text-decoration-none text-grey-darken-3 d-block text-truncate">
+          <v-col v-for="(item, index) in getVisibleItems(key)" :key="index" cols="6" sm="4" md="3" class="py-1 py-md-2">
+            <a href="#"
+              class="text-decoration-none text-grey-darken-3 text-caption text-md-body-2 d-block text-truncate">
               {{ item }}
             </a>
           </v-col>
         </v-row>
-        <v-btn variant="text" color="primary" size="small" density="compact"
-          class="text-none px-0 mt-1 font-weight-bold"
-          :append-icon="showAll[key] ? 'mdi-chevron-up' : 'mdi-chevron-down'" 
-          @click="showAll[key] = !showAll[key]">
+
+        <v-btn variant="text" color="primary" :size="$vuetify.display.mdAndUp ? 'default' : 'small'"
+          :density="$vuetify.display.mdAndUp ? 'default' : 'compact'"
+          class="text-none px-0 mt-1 mt-md-3 font-weight-bold text-caption text-md-body-2"
+          :append-icon="showAll[key] ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click="showAll[key] = !showAll[key]">
           {{ showAll[key] ? 'Voir moins' : 'Voir plus' }}
         </v-btn>
       </section>
