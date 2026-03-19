@@ -13,29 +13,17 @@
                     elevation="0"
                 >
                     <v-img
-                        :src="`https://picsum.photos/id/${imgId}/400/300`"
+                        :src="imgId"
                         cover
                         class="fill-height"
                     ></v-img>
                 </v-card>
             </v-slide-group-item>
         </v-slide-group>
-
-        <!-- Discount badge overlay (top-left) -->
-        <v-chip
-            v-if="discount"
-            color="success"
-            size="x-small"
-            variant="flat"
-            class="position-absolute font-weight-bold"
-            style="top: 12px; left: 12px; z-index: 2"
-        >
-            {{ discount }} OFF
-        </v-chip>
     </div>
 </template>
 
 <script setup lang="ts">
 // Component props for images and optional discount
-defineProps<{ images: number[]; discount?: string }>();
+defineProps<{ images: string[]; }>();
 </script>

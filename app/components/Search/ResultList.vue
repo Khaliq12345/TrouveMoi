@@ -3,9 +3,9 @@
     <!-- Infinite scroll wrapper -->
     <v-infinite-scroll :items="businesses" @load="onLoad" class="w-100">
         <!-- Result items loop -->
-        <template v-for="bussness in businesses" :key="bussness?.id">
-            <SearchResult class="mb-2 w-100" :bussness="bussness" />
-        </template>
+        
+            <SearchResult class="mb-2 w-100" :bussness="bussness" v-for="bussness in businesses" :key="bussness?.id"/>
+        
 
         <!-- Loading indicator -->
         <template v-slot:loading>

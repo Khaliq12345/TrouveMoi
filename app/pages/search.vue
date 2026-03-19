@@ -2,9 +2,7 @@
     <!-- Main layout container -->
     <v-layout class="flex-column fill-height">
         <!-- Top navigation bar -->
-        <AppBar
-            style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000"
-        />
+        <AppBar style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000" />
 
         <!-- Mobile view (map/video toggle) -->
         <SearchMobileView v-show="isMobile" />
@@ -14,16 +12,8 @@
     </v-layout>
 
     <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
-    <v-navigation-drawer
-        v-if="!isMobile"
-        v-model="drawer"
-        temporary
-        width="320"
-        location="left"
-        class="fill-height z-50"
-        elevation="10"
-        style="top: 0; height: 100vh; position: fixed"
-    >
+    <v-navigation-drawer v-if="!isMobile" v-model="drawer" temporary width="320" location="left"
+        class="fill-height z-50" elevation="10" style="top: 0; height: 100vh; position: fixed">
         <SearchFilter />
     </v-navigation-drawer>
     <!-- Le v-layout doit fermer APRÈS le drawer -->
@@ -111,21 +101,62 @@ const {
             }
         }
 
-        // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
-        return $directus.request(
+        // 1. Récupération complète des businesses (Tes champs originaux sont TOUS là)
+        const response = await $directus.request(
             $readItems("businesses", {
-                fields: ["name", "description", "phone", "slug", "categories"],
+                fields: [
+                    "id", // Obligatoire pour la jointure manuelle ensuite
+                    "name",
+                    "description",
+                    "phone",
+                    "slug",
+                    "rating",
+                    "price_range",
+                    "website",
+                    "reviews_count",
+                    "categories.categories_new_id.name",
+                    "featuredslots.featured_slots_id.feature",
+                    "is_open",
+                ],
                 filter: query.filter,
                 search: query.search,
                 limit: limit.value,
                 page: page.value,
             }),
         );
+
+        // On extrait les IDs pour la suite
+        const businessIds = response.map(b => b.id);
+
+        // 2. Requête pour les localisations (La fameuse relation inverse)
+        // Note : Vérifie bien si c'est "business_id" ou "bussness_id" (vu dans ton code)
+        const locations = await $directus.request(
+            $readItems("business_locations", {
+                filter: {
+                    bussness: {
+                        _in: businessIds
+                    }
+                },
+                fields: ["id", "city", "bussness"]
+            })
+        );
+
+        // 3. Fusion des données pour retrouver l'objet complet
+        const finalData = response.map(business => {
+            return {
+                ...business,
+                // On réinjecte les localisations dans l'objet business correspondant
+                locations: locations.filter(loc => loc.bussness === business.id)
+            };
+        });
+
+        return finalData;
     },
     {
         watch: [() => route.query],
     },
 );
+
 
 // 4. Check for errors in your template or script
 if (error.value) {
