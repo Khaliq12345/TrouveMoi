@@ -10,9 +10,6 @@
             <!-- Explore zones section -->
             <HomeExplore />
 
-            <!-- Cities section -->
-            <HomeCities />
-
             <!-- Popular search section -->
             <PopulareSearch />
 

@@ -32,7 +32,6 @@
               preload="none"
               autoplay
               loop
-              muted
               playsinline
               class="w-100 h-100"
               style="object-fit: contain;"
