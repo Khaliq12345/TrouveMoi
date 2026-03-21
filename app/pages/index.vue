@@ -29,21 +29,6 @@
 <script setup lang="ts">
 // Inject mobile state from parent
 const isMobile = inject("isMobile");
-const { $directus, $readItems } = useNuxtApp();
-
-const { data: tags } = await useAsyncData(
-    "tags",
-    () => {
-        return $directus.request($readItems("Tags"));
-    },
-    {
-        getCachedData: (key) => {
-            return (
-                useNuxtApp().payload.data[key] || useNuxtApp().static.data[key]
-            );
-        },
-    },
-);
 </script>
 
 <style scoped>

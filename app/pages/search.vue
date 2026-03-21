@@ -14,6 +14,7 @@
     </v-layout>
 
     <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
+    <!-- A navigation drawer to show filters -->
     <v-navigation-drawer
         v-if="!isMobile"
         v-model="drawer"
