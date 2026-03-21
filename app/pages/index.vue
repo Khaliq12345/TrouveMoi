@@ -4,15 +4,15 @@
     <v-layout class="flex flex-col">
         <HomeDesktopHero v-if="!isMobile"></HomeDesktopHero>
         <HomeMobileHero v-else></HomeMobileHero>
-        <v-container class="mx-auto d-flex flex-column ga-10" fluid>
+        <v-container class="mx-auto d-flex flex-column ga-4" fluid>
             <div class="d-flex justify-center">
                 <HomeCategories class="section" />
             </div>
 
             <v-divider class="border-opacity-100"></v-divider>
 
-            <!-- Explore zones section -->
-            <HomeExplore class="section" />
+            <!-- Highlight section -->
+            <HomeHighlight />
 
             <v-divider class="border-opacity-100"></v-divider>
 

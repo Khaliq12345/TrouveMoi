@@ -2,16 +2,16 @@
   <v-container class="pa-2" color="transparent" fluid>
     <v-card variant="flat" class="pa-2 rounded-lg" color="transparent">
       <header class="mb-2">
-        <h2 class="text-subtitle-1 font-weight-bold mb-0">
+        <h2 class="text-h5 font-weight-bold text-grey-darken-4 mb-0">
           Explorer les recherches au Bénin
         </h2>
-        <p class="text-caption text-grey-darken-1">
+        <p class="text-body-2 text-grey">
           Découvrez ce que les internautes recherchent par ville
         </p>
       </header>
 
       <v-chip-group v-model="selectedCityIndex" mandatory selected-class="bg-primary text-white" class="mb-2">
-        <v-chip v-for="city in cities" :key="city" size="small" variant="outlined" class="font-weight-medium">
+        <v-chip v-for="city in cities" :key="city" size="small" variant="outlined" class="font-weight-medium" :to="`/search?q=${city}`">
           {{ city }}
         </v-chip>
       </v-chip-group>

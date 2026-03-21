@@ -12,16 +12,6 @@
                     Trouvez les meilleures adresses du Bénin
                 </p>
             </div>
-            <v-spacer />
-            <!-- Desktop "View all" button -->
-            <v-btn
-                variant="text"
-                color="primary"
-                append-icon="mdi-arrow-right"
-                class="hidden-sm-and-down"
-            >
-                Voir tout
-            </v-btn>
         </v-toolbar>
 
         <!-- Responsive grid of category cards -->
