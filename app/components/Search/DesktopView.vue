@@ -1,66 +1,45 @@
 <template>
     <v-main class="fill-height">
-        <v-sheet class="pa-0 fill-height" border="md">
-            <v-row no-gutters class="fill-height">
-                <v-col cols="12" md="8" lg="9" class="fill-height">
-                    <v-row no-gutters class="fill-height">
-                        <v-col
-                            lg="3"
-                            class="d-none d-lg-flex flex-column border-e fill-height"
-                        >
-                            <SearchFilter />
-                        </v-col>
+        <v-sheet class="d-flex fill-height pa-0" border="md">
+            <!-- THis is the drawer that contains the filter, we only show on very large screen and above -->
+            <aside
+                class="d-none d-lg-flex flex-column border-e fill-height"
+                style="width: 250px; min-width: 250px"
+            >
+                <SearchFilter />
+            </aside>
 
-                        <v-col
-                            cols="12"
-                            lg="9"
-                            class="d-flex flex-column fill-height"
-                        >
-                            <div class="px-4 pt-4">
-                                <v-breadcrumbs
-                                    :items="['Foo', 'Bar']"
-                                ></v-breadcrumbs>
-                                <h1
-                                    class="text-h5 font-weight-bold d-flex align-center"
-                                >
-                                    Liste des résultats
-                                    <v-progress-circular
-                                        v-if="pending"
-                                        indeterminate
-                                        size="20"
-                                        width="2"
-                                        color="primary"
-                                        class="ms-3"
-                                    ></v-progress-circular>
-                                </h1>
+            <!-- This section contains the content of the page, the biz listings, header and filters -->
+            <section
+                class="d-flex flex-column flex-grow-1 fill-height overflow-hidden"
+            >
+                <SearchHeader></SearchHeader>
+                <!-- The biz listings -->
+                <div class="flex-grow-1 overflow-y-auto pa-4">
+                    <SearchResultList />
+                </div>
+            </section>
 
-                                <div class="d-block d-lg-none py-3">
-                                    <SearchMiniFilter
-                                        @show-drawer="$emit('open-drawer')"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="flex-grow-1 overflow-y-auto pa-4">
-                                <SearchResultList />
-                            </div>
-                        </v-col>
-                    </v-row>
-                </v-col>
-
-                <v-col
-                    md="4"
-                    lg="3"
-                    class="d-none d-md-flex bg-grey-lighten-3 border-s"
-                >
-                    <div class="pa-4">Map View</div>
-                </v-col>
-            </v-row>
+            <!-- And this is the map of the biz -->
+            <aside
+                class="d-none d-md-flex bg-grey-lighten-4 border-s fill-height"
+                style="width: 30%; min-width: 300px"
+            >
+                <div class="pa-4 w-100">
+                    <p class="text-overline font-weight-bold text-grey">
+                        Map View
+                    </p>
+                </div>
+            </aside>
         </v-sheet>
     </v-main>
 </template>
 
-<script setup lang="ts">
-const { pending } = inject("businesses-data") as any;
-defineEmits(["open-drawer"]);
-</script>
+<script setup lang="ts"></script>
+
+<style scoped>
+/* Ensures the main content doesn't push the map out of view */
+.overflow-hidden {
+    overflow: hidden !important;
+}
+</style>

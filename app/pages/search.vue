@@ -10,14 +10,13 @@
         <SearchMobileView v-show="isMobile" />
 
         <!-- Desktop view (filters + results + map) -->
-        <SearchDesktopView v-show="!isMobile" @open-drawer="drawer = true" />
+        <SearchDesktopView v-show="!isMobile" />
     </v-layout>
 
-    <!-- CORRECTION: Déplacer le drawer À L'INTÉRIEUR du v-layout -->
-    <!-- A navigation drawer to show filters -->
+    <!-- A navigation drawer to show filters only on desktop screen -->
     <v-navigation-drawer
         v-if="!isMobile"
-        v-model="drawer"
+        v-model="Showdrawer"
         temporary
         width="320"
         location="left"
@@ -35,7 +34,7 @@ const route = useRoute();
 const router = useRouter();
 
 // UI state management
-const drawer = ref(false); // Desktop filter drawer visibility
+const Showdrawer = ref(false); // Desktop filter drawer visibility
 
 // Inject mobile state from parent
 const isMobile = inject("isMobile");
@@ -56,8 +55,9 @@ provide("businesses-data", {
     page,
     limit,
 });
+provide("showDrawer", Showdrawer);
 
-// Defaults to <<cafe>> if not filter
+// Defaults to <<cafe>> before the page loads the dom if there's no filter
 onBeforeMount(() => {
     if (Object.keys(route.query).length > 0) {
         console.log("There is some query", Object.keys(route.query).length);

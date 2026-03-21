@@ -1,4 +1,3 @@
-<!-- Top navigation bar with background image, search field, and action buttons -->
 <template>
     <v-app-bar
         flat
@@ -14,28 +13,55 @@
 
         <v-spacer />
 
-        <div style="width: 100%; max-width: 500px">
+        <div
+            class="d-flex ga-2 align-center"
+            style="width: 100%; max-width: 600px"
+        >
+            <!-- Term search -->
             <v-text-field
                 v-model="searchQuery"
-                placeholder="Rechercher un lieu, une ville..."
+                placeholder="Quoi chercher ?"
                 variant="solo"
                 hide-details
                 density="compact"
-                rounded="lg"
+                rounded="s-lg"
                 prepend-inner-icon="mdi-magnify"
-                append-inner-icon="mdi-arrow-right"
-                @keyup.enter="onEnterPressed"
+                @keyup.enter="handleSearch"
             />
+
+            <!-- Location Search -->
+            <v-text-field
+                v-model="locationQuery"
+                placeholder="Où ? (Ville, Quartier...)"
+                variant="solo"
+                hide-details
+                density="compact"
+                rounded="e-lg"
+                prepend-inner-icon="mdi-map-marker"
+                @keyup.enter="handleSearch"
+            >
+                <template v-slot:append-inner>
+                    <v-btn
+                        icon="mdi-arrow-right"
+                        variant="text"
+                        size="small"
+                        color="primary"
+                        @click="handleSearch"
+                    />
+                </template>
+            </v-text-field>
         </div>
 
         <v-spacer />
 
+        <!-- Desktop actions -->
         <div class="d-flex ga-2" v-if="!isMobile">
             <v-btn icon="mdi-cog" variant="text" />
             <v-btn icon="mdi-bell" variant="text" />
             <v-btn icon="mdi-account" variant="text" />
         </div>
 
+        <!-- Mobile and Desktop Menu -->
         <template v-slot:extension>
             <div class="w-full d-flex justify-center">
                 <Menu />
@@ -53,28 +79,41 @@ const props = defineProps({
 });
 
 const { updateURL } = useFilterURL();
-
 const router = useRouter();
 const route = useRoute();
 
 const searchQuery = ref("");
+const locationQuery = ref(""); // New location ref
 const isMobile = inject("isMobile");
 
-function onEnterPressed() {
-    const value = searchQuery.value.trim();
+function handleSearch() {
+    const searchVal = searchQuery.value.trim();
+    const locationVal = locationQuery.value.trim();
 
-    const searchArray = [value];
+    // Prepare the new query parameters
+    const newQuery = {
+        ...route.query, // Keeps existing & queries automatically
+    };
+
+    if (searchVal) newQuery.search = searchVal;
+    if (locationVal) newQuery.location = locationVal;
 
     if (route.path !== "/search") {
         router.push({
             path: "/search",
-            query: {
-                ...route.query,
-                search: value,
-            },
+            query: newQuery,
         });
     } else {
-        updateURL("search", searchArray);
+        // Using your custom updateURL utility
+        if (searchVal) updateURL("search", [searchVal]);
+        if (locationVal) updateURL("location", [locationVal]);
     }
 }
 </script>
+
+<style scoped>
+/* Optional: Tighten the gap between the two inputs to make them look unified */
+.v-text-field :deep(.v-field) {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+</style>

@@ -59,7 +59,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     staticTokenPrivate: "",
     public: {
-      staticTokenPublic: "",
+      staticToken: "",
       directusUrl: "",
     },
   },

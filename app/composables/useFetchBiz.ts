@@ -42,6 +42,10 @@ export const useFetchBiz = async () => {
           query.filter.price_range = {
             _in: Array.isArray(value) ? value : [value],
           };
+        } else if (key === "rating") {
+          query.filter.rating = {
+            _gte: value[0],
+          };
         } else if (key === "is_open") {
           query.filter.is_open = { _eq: value === "open" };
         }
@@ -70,7 +74,6 @@ export const useFetchBiz = async () => {
           page: page.value,
         }),
       );
-      console.log("BIZs", response);
 
       if (!response || response.length === 0) {
         hasMore.value = false;

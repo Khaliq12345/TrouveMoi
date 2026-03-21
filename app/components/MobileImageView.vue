@@ -12,11 +12,7 @@
                     class="ma-1 rounded-lg"
                     elevation="0"
                 >
-                    <v-img
-                        :src="imgId"
-                        cover
-                        class="fill-height"
-                    ></v-img>
+                    <v-img :src="imgId" cover class="fill-height"></v-img>
                 </v-card>
             </v-slide-group-item>
         </v-slide-group>
@@ -25,5 +21,5 @@
 
 <script setup lang="ts">
 // Component props for images and optional discount
-defineProps<{ images: string[]; }>();
+defineProps<{ images: string[] }>();
 </script>
