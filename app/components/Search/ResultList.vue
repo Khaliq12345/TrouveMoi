@@ -3,9 +3,13 @@
     <!-- Infinite scroll wrapper -->
     <v-infinite-scroll :items="businesses" @load="onLoad" class="w-100">
         <!-- Result items loop -->
-        
-            <SearchResult class="mb-2 w-100" :bussness="bussness" v-for="bussness in businesses" :key="bussness?.id"/>
-        
+
+        <SearchResult
+            class="mb-2 w-100"
+            :bussness="bussness"
+            v-for="bussness in businesses"
+            :key="bussness?.id"
+        />
 
         <!-- Loading indicator -->
         <template v-slot:loading>
@@ -16,7 +20,7 @@
 
         <!-- Empty state message -->
         <template v-slot:empty>
-            <v-alert type="info" variant="tonal" class="ma-2">
+            <v-alert type="info" variant="plain" class="ma-2">
                 Plus de résultats disponibles
             </v-alert>
         </template>
@@ -30,17 +34,23 @@ const { businesses, pending, refresh, error, page, limit } = inject(
 ) as any;
 
 async function onLoad({ done }) {
-    // Increment pagination and refresh data
+    if (pending.value && page.value === 1) {
+        done("ok");
+        return;
+    }
+
+    // 2. Increment pagination
     page.value++;
+
+    // 3. Wait for the new data to fetch
     await refresh();
 
-    // Check if no more data
+    // 4. Proper check for the end of the biz
     if (
-        !businesses.value ||
-        businesses.value.length < page.value * limit.value
+        businesses.value.length === 0 ||
+        businesses.value.length % limit.value !== 0
     ) {
         done("empty");
-        return;
     } else {
         done("ok");
     }
