@@ -1,16 +1,12 @@
 <!-- Desktop image carousel with discount badge for search results -->
 <template>
     <!-- Fixed-width container for carousel -->
-    <div
-        class="position-relative flex-shrink-0 overflow-visible"
-        style="width: 280px"
-    >
+    <div class="position-relative flex-shrink-0 overflow-visible pa-5">
         <!-- Image carousel with hover arrows -->
         <v-carousel
-            height="180"
+            height="200"
             hide-delimiters
-            show-arrows="hover"
-            class="rounded-s-xl bg-grey-lighten-4"
+            class="rounded-5 bg-grey-lighten-4"
         >
             <!-- Carousel items from image IDs -->
             <v-carousel-item
@@ -25,5 +21,5 @@
 
 <script setup lang="ts">
 // Component props for images and optional discount
-defineProps<{ images: string[]; }>();
+defineProps<{ images: string[] }>();
 </script>

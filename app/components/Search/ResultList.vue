@@ -6,9 +6,9 @@
 
         <SearchResult
             class="mb-2 w-100"
-            :bussness="bussness"
-            v-for="bussness in businesses"
-            :key="bussness?.id"
+            :biz="biz"
+            v-for="biz in businesses"
+            :key="biz?.id"
         />
 
         <!-- Loading indicator -->

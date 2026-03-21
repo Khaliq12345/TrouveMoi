@@ -1,5 +1,5 @@
 <template>
-    <v-list-item>
+    <v-list-item v-if="!mini">
         <v-list-item-subtitle class="text-sm font-weight-bold">
             Sous-catégories
         </v-list-item-subtitle>
@@ -34,9 +34,32 @@
             ></show-all-button>
         </div>
     </v-list-item>
+    <v-chip-group
+        v-else
+        v-model="selectedCategories"
+        multiple
+        class="pa-0"
+        @update:model-value="updateURL('sub_categories', selectedCategories)"
+    >
+        <v-chip
+            v-for="sub in subcategories.slice(0, 4)"
+            :key="sub.slug"
+            :value="sub.slug"
+            size="small"
+            variant="outlined"
+            filter
+            class="mx-1 text-caption"
+            selected-class="bg-primary text-white"
+        >
+            {{ sub.name }}
+        </v-chip>
+    </v-chip-group>
 </template>
 
 <script setup lang="ts">
+const props = defineProps<{
+    mini?: boolean;
+}>();
 const { updateURL, getURLFilter } = useFilterURL();
 const { getSubcategories } = await useFetchSubCategory();
 

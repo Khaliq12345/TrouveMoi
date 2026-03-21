@@ -11,7 +11,7 @@
                 class="d-flex flex-column align-start pa-2 flex-shrink-0"
             >
                 <div class="d-flex align-center w-100">
-                    <span class="text-h6">Results</span>
+                    <SearchHeader></SearchHeader>
                     <v-spacer />
                     <v-btn
                         icon="mdi-close"
