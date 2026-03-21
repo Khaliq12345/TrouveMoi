@@ -56,6 +56,4 @@
 // Component props and events
 const resultsSheet = ref(false); // Mobile results sheet visibility
 const viewMode = ref("carte"); // Mobile view mode: 'carte' or 'video
-const mobileFilter = ref(false); // Mobile filter dialog visibility
-const isMobile = inject("isMobile");
 </script>
