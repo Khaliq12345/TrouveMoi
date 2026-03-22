@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-const { $directus, $readItems } = useNuxtApp();
 const props = defineProps({ biz: Object });
 defineOptions({
     inheritAttrs: false,
@@ -39,18 +38,7 @@ defineOptions({
 const isMobile = inject("isMobile");
 
 // Fetching images
-const { data: businessMedia } = await useAsyncData(
-    `media-${props.biz?.id}`,
-    async () => {
-        if (!props.biz?.id) return [];
-        return await $directus.request(
-            $readItems("buisness_media", {
-                filter: { extra_id: { _eq: props.biz.id } },
-                fields: ["id", "type", "media_id"],
-            }),
-        );
-    },
-);
+const { businessMedia } = await useFetchSingleMedia(ref(props.biz));
 
 const images = computed(
     () =>
@@ -59,27 +47,3 @@ const images = computed(
             .map((img) => imgLink(img.media_id)) || [],
 );
 </script>
-
-<style scoped>
-.search-card {
-    transition: all 0.3s ease;
-}
-
-.image-container {
-    width: 240px; /* Fixed width on desktop */
-}
-
-@media (max-width: 600px) {
-    .image-container {
-        width: 100%;
-        height: 200px;
-    }
-}
-
-.text-truncate-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-</style>
