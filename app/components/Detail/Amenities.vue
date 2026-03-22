@@ -1,49 +1,68 @@
 <template>
-  <v-container class="pa-0 py-8 px-4">
-    <!-- Section title -->
-    <h2 class="text-h5 font-weight-bold mb-6">Proposé / Sur les lieux</h2>
-
-    <!-- Amenities grid -->
-    <v-row>
-      <v-col
-        v-for="(slot, i) in slots"
-        :key="slot.id"
-        cols="12"
-        sm="6"
-        class="py-2"
-      >
-        <!-- Amenity item with text only -->
-        <div class="d-flex align-center">
-          <!-- Text content -->
-          <div>
-            <!-- Feature name -->
-            <div class="text-body-1 font-weight-medium text-grey-darken-4">
-              {{ slot.feature }}
-            </div>
-          </div>
+    <v-container class="pa-4 py-8">
+        <div class="d-flex align-center mb-6">
+            <v-icon
+                icon="mdi-star-face"
+                color="primary"
+                class="me-2"
+                size="28"
+            />
+            <h2 class="text-h5 font-weight-black text-grey-darken-4">
+                Proposé / Sur les lieux
+            </h2>
         </div>
-      </v-col>
-    </v-row>
-  </v-container>
+
+        <v-row no-gutters class="ga-3">
+            <v-col v-for="slot in featuredSlots" :key="slot.id" cols="auto">
+                <v-chip
+                    variant="tonal"
+                    color="primary"
+                    class="px-4 py-5 rounded-lg border"
+                    label
+                >
+                    <v-icon
+                        start
+                        icon="mdi-check-circle-outline"
+                        size="18"
+                        class="opacity-70"
+                    />
+                    <span class="text-body-1 font-weight-medium">
+                        {{ slot.feature }}
+                    </span>
+                </v-chip>
+            </v-col>
+        </v-row>
+
+        <div
+            v-if="!featuredSlots?.length"
+            class="text-grey-lighten-1 text-italic"
+        >
+            Aucun service spécifique n'a été renseigné.
+        </div>
+    </v-container>
 </template>
 
 <script setup lang="ts">
 import type { FeaturedSlot } from "~/types/biz";
-const props = defineProps<{
-  id: string;
-  featuredSlots: FeaturedSlot[];
+
+defineProps<{
+    id: string;
+    featuredSlots: FeaturedSlot[];
 }>();
-const slots = props.featuredSlots;
 </script>
 
 <style scoped>
-/* Primary blue color for highlighted items */
-.text-primary-dark {
-  color: #0073bb;
+/* High-end typography feel */
+h2 {
+    letter-spacing: -0.5px !important;
 }
 
-/* Button hover effect */
-.v-btn--variant-outlined:hover {
-  background-color: rgba(0, 0, 0, 0.03);
+/* Subtle border to define the tonal chips better */
+.v-chip.border {
+    border: 1px solid rgba(var(--v-theme-primary), 0.1) !important;
+}
+
+.opacity-70 {
+    opacity: 0.7;
 }
 </style>

@@ -19,6 +19,7 @@
                 elevation="0"
                 @click="toggle"
                 :prepend-icon="item.icon"
+                :to="item.id"
             >
                 {{ item.label }}
             </v-btn>
