@@ -1,14 +1,14 @@
 <template>
     <div class="d-flex flex-column align-center mt-8 mb-12">
         <v-btn
-            v-if="currentPage < totalPages"
+            v-if="hasMore"
             color="primary"
             variant="outlined"
             rounded="xl"
             size="large"
             class="text-none px-10"
             :loading="isLoading"
-            @click="currentPage++"
+            @click="loadMore"
         >
             Charger plus
             <template v-slot:append>
@@ -23,15 +23,12 @@
 </template>
 
 <script setup lang="ts">
-const { currentPage, totalCount, PER_PAGE, isLoading } = inject("supportContext") as {
-    currentPage: Ref<number>;
-    totalCount: Ref<number>;
-    PER_PAGE: number;
-    isLoading: Ref<boolean>;
-};
+import type { Ref } from 'vue';
 
-/** Nombre total de pages calculé à partir du count et de PER_PAGE */
-const totalPages = computed(() =>
-    totalCount.value > 0 ? Math.ceil(totalCount.value / PER_PAGE) : 1
-);
+// Injection des variables et fonctions depuis le composant parent
+const { isLoading, hasMore, loadMore } = inject("support") as {
+    isLoading: Ref<boolean>;
+    hasMore: Ref<boolean>;
+    loadMore: () => void;
+};
 </script>
