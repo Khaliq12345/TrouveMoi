@@ -3,7 +3,7 @@
     <v-slide-group class="w-100" center-active>
         <v-slide-group-item>
             <!-- Button container with spacing -->
-            <div class="d-flex align-center ga-3 px-4 fill-height">
+            <div class="d-flex align-center ga-3 pb-2 fill-height">
                 <!-- Primary action: Write review button -->
                 <v-btn class="text-none font-weight-bold rounded-xl">
                     <v-icon start size="20">mdi-star-outline</v-icon>
@@ -33,9 +33,7 @@
 <script setup lang="ts">
 // Secondary action buttons configuration
 const secondaryButtons = [
-    { text: "Add photo", icon: "mdi-camera-plus-outline" },
     { text: "Share", icon: "mdi-share-variant-outline" },
     { text: "Save", icon: "mdi-bookmark-outline" },
-    { text: "", icon: "mdi-dots-horizontal", iconOnly: true },
 ];
 </script>

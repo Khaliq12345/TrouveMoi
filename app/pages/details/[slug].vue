@@ -8,41 +8,39 @@
                     <!-- Left section -->
                     <v-col cols="12" md="8">
                         <DetailCustomSlideGroupButtons />
-                        <v-divider
-                            class="border-opacity-100"
-                            color="primary ma-1"
-                        ></v-divider>
+
+                        <CustomDivider></CustomDivider>
                         <DetailMiniInfo :biz="biz" />
-                        <v-divider
-                            class="border-opacity-100"
-                            color="primary ma-2"
-                        ></v-divider>
+
+                        <CustomDivider></CustomDivider>
                         <DetailActionsButtons />
-                        <v-divider
-                            class="border-opacity-100"
-                            color="primary ma-2"
-                        ></v-divider>
+
+                        <CustomDivider></CustomDivider>
                         <section id="services" class="scroll-section">
                             <DetailServiceSlide
                                 :id="biz?.id"
                                 :media="separatedMedia?.menu"
                             />
                         </section>
-                        <v-divider
-                            class="border-opacity-100"
-                            color="primary ma-1"
-                        ></v-divider>
-                        <section id="amenities" class="scroll-section">
+
+                        <CustomDivider></CustomDivider>
+                        <section id="features" class="scroll-section">
                             <DetailAmenities
                                 :id="biz?.id || ''"
                                 :featuredSlots="featuredSlots || []"
                             />
                         </section>
-                        <v-divider
-                            class="border-opacity-100"
-                            color="primary ma-1"
-                        ></v-divider>
-                        <section v-show="isMobile">
+
+                        <CustomDivider></CustomDivider>
+                        <section id="about" class="scroll-section">
+                            <DetailAbout
+                                :description="biz?.description as string"
+                                :businessName="biz?.name as string"
+                            ></DetailAbout>
+                        </section>
+
+                        <CustomDivider></CustomDivider>
+                        <section v-show="isMobile" id="contact" class="pa-5">
                             <DetailContact
                                 :website="biz?.website"
                                 :phone="biz?.phone"
@@ -50,17 +48,18 @@
                                 :locations="biz?.locations || []"
                             />
                         </section>
+
+                        <CustomDivider></CustomDivider>
                         <section id="location" class="scroll-section">
                             <DetailLocationHours :biz="biz" />
                         </section>
-                        <v-divider
-                            class="border-opacity-100"
-                            color="primary ma-1"
-                        ></v-divider>
+
+                        <CustomDivider></CustomDivider>
                         <section id="vibes" class="scroll-section">
                             <DetailVibes :media="separatedMedia" />
                         </section>
 
+                        <CustomDivider></CustomDivider>
                         <section id="reviews" class="scroll-section">
                             <DetailReviews :id="biz?.id" />
                         </section>
@@ -88,9 +87,8 @@
 
 <script setup lang="ts">
 // Si le dossier types est à la racine de ton projet
-import type { Biz, BizMedia, GroupedBizMedia, FeaturedSlot } from "~/types/biz";
+import type { Biz, GroupedBizMedia, FeaturedSlot } from "~/types/biz";
 
-const config = useRuntimeConfig();
 const isMobile = inject("isMobile");
 
 const route = useRoute();
@@ -112,7 +110,7 @@ const separatedMedia = computed<GroupedBizMedia>(() => {
 
     return businessMedia.value.reduce((acc, media) => {
         // Construction de l'URL Directus pour chaque fichier
-        const link = `${config.public.directusUrl}assets/${media.media_id}?access_token=${config.public.staticTokenPublic}`;
+        const link = imgLink(media.media_id);
 
         // On enrichit le média avec son lien
         const mediaWithLink = {
@@ -131,4 +129,7 @@ const separatedMedia = computed<GroupedBizMedia>(() => {
         return acc;
     }, {} as GroupedBizMedia);
 });
+
+//Share some data
+provide("biz", biz);
 </script>

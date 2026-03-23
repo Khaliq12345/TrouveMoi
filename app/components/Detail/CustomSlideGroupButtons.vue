@@ -23,9 +23,9 @@
 <script setup lang="ts">
 import { useElementVisibility } from "@vueuse/core";
 interface NavItem {
-  id: string;
-  label: string;
-  icon: string;
+    id: string;
+    label: string;
+    icon: string;
 }
 
 const isMobile = inject("isMobile", false);
@@ -36,9 +36,15 @@ const toggleButtonsIsVisible = useElementVisibility(toggleButtons);
 const activeTab = ref("services");
 
 const navItems: NavItem[] = [
-    { id: "services", label: "Services", icon: "mdi-hammer-wrench" },
-    { id: "amenities", label: "Infos", icon: "mdi-information-outline" },
-    { id: "location", label: "Plan", icon: "mdi-map-marker-outline" },
-    { id: "reviews", label: "Avis", icon: "mdi-star-outline" },
+    { id: "#about", label: "About", icon: "mdi-information-outline" },
+    { id: "#services", label: "Services", icon: "mdi-hammer-wrench" },
+    {
+        id: "#location",
+        label: "Location/Hours",
+        icon: "mdi-map-marker-outline",
+    },
+    { id: "#vibes", label: "Vibes", icon: "mdi-eye-settings-outline" },
+    { id: "#reviews", label: "Avis", icon: "mdi-star-outline" },
+    { id: "#features", label: "Features", icon: "mdi-box-search-outline" },
 ];
 </script>

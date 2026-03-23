@@ -12,3 +12,5 @@ export interface Event {
   link: string | null;
   image: string;
 }
+
+export const activeFilter = ref<"all" | "live" | "upcoming" | "past">("all");
