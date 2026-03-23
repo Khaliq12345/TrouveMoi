@@ -39,7 +39,4 @@ const openLink = () => {
 .border-b:last-of-type {
     border-bottom: none;
 }
-.hover-effect:hover {
-    background-color: #fcfcfc;
-}
 </style>
