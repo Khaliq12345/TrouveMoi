@@ -7,7 +7,9 @@
 
                 <SupportList />
 
+                
             </v-container>
+            <Footer />
             <SupportModal v-model="dialog" @refresh="refresh" />
         </v-main>
     </v-layout>
@@ -16,20 +18,24 @@
 <script setup lang="ts">
 const dialog = ref(false);
 
-const {
-    tickets,
-    totalCount,
-    isLoading,
-    hasMore,
-    loadMore,
-    refresh,
-} = useFetchSupportTickets();
+const { totalCount, isLoadingCount } = useSupportCount();
+const { 
+    tickets, 
+    isLoadingTickets, 
+    hasMore, 
+    loadMore, 
+    refresh 
+} = useSupportTickets(totalCount);
 
+// Fusion des etats de chargement pour l'interface utilisateur
+const isLoading = computed(() => isLoadingCount.value || isLoadingTickets.value);
+
+// Fourniture des donnees aux composants enfants
 provide('support', {
     dialog,
     tickets,
-    isLoading,
     totalCount,
+    isLoading,
     hasMore,
     loadMore,
     refresh,
