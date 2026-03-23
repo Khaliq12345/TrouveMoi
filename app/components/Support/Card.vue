@@ -70,7 +70,7 @@
               color="white"
               size="small"
               @click="dialog = false"
-              class="blur-effect"
+              style="backdrop-filter: blur(8px); background: rgba(0, 0, 0, 0.2);"
             />
           </div>
         </v-carousel>
@@ -139,11 +139,3 @@ const formatFullDate = (date: string) =>
     minute: "2-digit",
   });
 </script>
-
-<style scoped>
-/* Petit effet de flou pour le bouton au-dessus de l'image */
-.blur-effect {
-  backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.2) !important;
-}
-</style>
