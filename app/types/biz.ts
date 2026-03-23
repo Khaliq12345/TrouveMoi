@@ -110,4 +110,24 @@ export interface Biz {
   featured_slots: FeaturedSlot[];
   subcategories?: SubCategory[];
   locations?: BizLocation[];
+  reservation_available?: boolean;
+  calendar_link?: string;
+}
+
+export interface BizMetaItem {
+  id: string;
+  title: string;
+  description: string;
+  type: 'menu' | 'service' | 'portfolio' | string;
+  price?: number | string | null;
+  biz_id: string;
+  // Ajout de la propriété link qui contiendra le tableau des IDs des images
+  link: string[]; 
+}
+
+export interface GroupedBizMeta {
+  menu: BizMetaItem[];
+  service: BizMetaItem[];
+  portfolio: BizMetaItem[];
+  [key: string]: BizMetaItem[];
 }
