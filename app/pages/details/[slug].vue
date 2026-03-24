@@ -16,6 +16,11 @@
                         <DetailActionsButtons />
 
                         <CustomDivider></CustomDivider>
+                        <section id="services" class="scroll-section">
+                            <DetailServiceSlide />
+                        </section>
+
+                        <CustomDivider></CustomDivider>
                         <section id="features" class="scroll-section">
                             <DetailAmenities
                                 :id="biz?.id || ''"
