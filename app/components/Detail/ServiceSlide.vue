@@ -8,6 +8,15 @@
         >
           <div class="d-flex align-center justify-space-between mb-6 px-4">
             <h2 class="text-h5 font-weight-bold">{{ category.label }}</h2>
+            <v-btn
+              variant="text"
+              color="primary"
+              class="text-none"
+              append-icon="mdi-chevron-right"
+              @click="openModal(category)"
+            >
+              Voir tout
+            </v-btn>
           </div>
 
           <v-carousel
@@ -37,7 +46,9 @@
                       cover
                       class="d-flex align-end"
                     >
-                      <div class="blur-content ma-2 pa-4 rounded-xl w-auto text-white grey-darken-4">
+                      <div
+                        class="blur-content ma-2 pa-4 rounded-xl w-auto text-white grey-darken-4"
+                      >
                         <DetailMetaInfo :item="item" />
                       </div>
                     </v-img>
@@ -48,6 +59,12 @@
                   </v-card>
                 </v-hover>
               </div>
+              <!-- modal -->
+              <DetailMetaModal
+                v-model="isModalOpen"
+                :category-label="modalCategoryLabel"
+                :items="modalItems"
+              />
             </v-carousel-item>
           </v-carousel>
         </div>
@@ -59,6 +76,10 @@
 // Récupération des données depuis inject
 const metas = inject<any>("metas");
 
+const isModalOpen = ref(false);
+const modalCategoryLabel = ref("");
+const modalItems = ref<any[]>([]);
+
 // Définition des catégories à afficher
 const categories = [
   { key: "menu", label: "Menu" },
@@ -68,5 +89,14 @@ const categories = [
 // Fonction utilitaire pour vérifier si un élément possède une image valide
 const hasImage = (item: any): boolean => {
   return item.link && Array.isArray(item.link) && item.link.length > 0;
+};
+
+// Ouvre la modal avec les données de la catégorie cliquée
+const openModal = (category: { key: string; label: string }) => {
+  if (metas.value?.[category.key]) {
+    modalCategoryLabel.value = category.label;
+    modalItems.value = metas.value[category.key];
+    isModalOpen.value = true;
+  }
 };
 </script>
