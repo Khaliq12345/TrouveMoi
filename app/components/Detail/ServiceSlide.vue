@@ -23,11 +23,12 @@
                   <v-card
                     v-bind="props"
                     :elevation="isHovering ? 12 : 0"
-                    class="rounded-xl transition-swing"
+                    class="rounded-xl transition-swing border-0"
                     width="90%"
                     max-width="400"
                     :height="hasImage(item) ? 320 : 'auto'"
-                    :color="hasImage(item) ? 'transparent' : 'grey-darken-4'"
+                    :color="hasImage(item) ? 'transparent' : ''"
+                    flat
                   >
                     <v-img
                       v-if="hasImage(item)"
@@ -36,14 +37,14 @@
                       cover
                       class="d-flex align-end"
                     >
-                      <div class="blur-content ma-2 pa-4 rounded-xl w-auto">
+                      <div class="blur-content ma-2 pa-4 rounded-xl w-auto text-white grey-darken-4">
                         <DetailMetaInfo :item="item" />
                       </div>
                     </v-img>
 
-                    <div v-else class="pa-5 w-100">
+                    <v-card-text v-else class="pa-5 w-100 text-grey-darken-3">
                       <DetailMetaInfo :item="item" />
-                    </div>
+                    </v-card-text>
                   </v-card>
                 </v-hover>
               </div>
@@ -54,7 +55,6 @@
     </div>
   </v-sheet>
 </template>
-
 <script setup lang="ts">
 // Récupération des données depuis inject
 const metas = inject<any>("metas");
