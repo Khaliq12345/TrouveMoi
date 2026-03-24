@@ -3,6 +3,21 @@ import type { BizMetaItem, GroupedBizMedia, GroupedBizMeta } from "~/types/biz";
 export const useBusinessMeta = (bizId: string) => {
   const { $directus, $readItems } = useNuxtApp();
 
+  const grouped: GroupedBizMeta = { 
+    menu: [], 
+    service: [], 
+    portfolio: [],
+    vibes: [] 
+  };
+  
+  if (!bizId) {
+    return {
+      data: grouped,
+      pending: false,
+      error: null,
+    };
+  }
+
   return useAsyncData<GroupedBizMeta>(`meta-${bizId}`, async () => {
     
     // Requête vers la collection "meta"
@@ -14,12 +29,6 @@ export const useBusinessMeta = (bizId: string) => {
         fields: ['*', 'media.directus_files_id']
       })
     );
-
-    const grouped: GroupedBizMeta = { 
-      menu: [], 
-      service: [], 
-      portfolio: [] 
-    };
 
     items.forEach((item: any) => {
       // Transformation des données : on extrait les IDs des fichiers

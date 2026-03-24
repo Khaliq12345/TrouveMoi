@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="pa-0 py-6" color="transparent">
-    <div v-if="pending" class="d-flex justify-center py-10">
+    <div v-if="!id">
+      <v-skeleton-loader type="image"></v-skeleton-loader>
+    </div>
+
+    <div v-else-if="pending" class="d-flex justify-center py-10">
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
     </div>
 
@@ -114,7 +118,6 @@
       </template>
     </div>
   </v-sheet>
-
 </template>
 
 <script setup lang="ts">
@@ -134,6 +137,7 @@ const categories = [
   { key: "menu", label: "Menu" },
   { key: "service", label: "Services" },
   { key: "portfolio", label: "Portfolio" },
+  { key: "vibes", label: "Vibes" },
 ];
 
 // Fonction utilitaire pour vérifier si un élément possède une image valide

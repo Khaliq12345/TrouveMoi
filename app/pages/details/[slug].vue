@@ -16,14 +16,6 @@
                         <DetailActionsButtons />
 
                         <CustomDivider></CustomDivider>
-                        <section id="services" class="scroll-section">
-                            <DetailServiceSlide
-                                :id="biz?.id"
-                                :media="separatedMedia?.menu"
-                            />
-                        </section>
-
-                        <CustomDivider></CustomDivider>
                         <section id="features" class="scroll-section">
                             <DetailAmenities
                                 :id="biz?.id || ''"
@@ -130,6 +122,9 @@ const separatedMedia = computed<GroupedBizMedia>(() => {
     }, {} as GroupedBizMedia);
 });
 
+const { data: metas } = biz?.value?.id ? useBusinessMeta(biz.value.id) : { data: ref(null) };
+
 //Share some data
 provide("biz", biz);
+provide("metas", metas);
 </script>
