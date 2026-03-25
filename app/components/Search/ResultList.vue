@@ -25,6 +25,7 @@
             </v-alert>
         </template>
     </v-infinite-scroll>
+    <RelatedSearch />
 </template>
 
 <script setup lang="ts">
