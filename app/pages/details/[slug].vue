@@ -12,7 +12,6 @@
                         <CustomDivider></CustomDivider>
                         <DetailMiniInfo />
 
-                        <CustomDivider></CustomDivider>
                         <DetailActionsButtons />
 
                         <section
@@ -28,6 +27,7 @@
                             />
                         </section>
 
+                        <p>{{ metas }}</p>
                         <section
                             id="menu"
                             class="scroll-section"
