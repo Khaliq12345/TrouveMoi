@@ -1,7 +1,7 @@
 <template>
     <v-layout>
         <div class="w-100">
-            <DetailMobileBusinessHeader :biz="biz" :media="separatedMedia" />
+            <DetailMobileBusinessHeader />
 
             <v-container class="mx-auto" style="max-width: 1200px">
                 <v-row justify="center" align="start">
@@ -16,11 +16,9 @@
                         <DetailActionsButtons />
 
                         <CustomDivider></CustomDivider>
-                        <section id="services" class="scroll-section">
-                            <DetailServiceSlide
-                                :id="biz?.id"
-                                :media="separatedMedia?.menu"
-                            />
+                        <section id="metas" class="scroll-section">
+                            <DetailMetasList />
+                            <DetailMetasSlide />
                         </section>
 
                         <CustomDivider></CustomDivider>
@@ -130,6 +128,9 @@ const separatedMedia = computed<GroupedBizMedia>(() => {
     }, {} as GroupedBizMedia);
 });
 
+const { data: metas } = biz?.value?.id ? useBusinessMeta(biz.value.id) : { data: ref(null) };
+
 //Share some data
 provide("biz", biz);
+provide("metas", metas);
 </script>

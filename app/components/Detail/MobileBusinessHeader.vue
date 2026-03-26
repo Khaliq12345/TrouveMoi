@@ -38,24 +38,16 @@
 
         <!-- Hero section with image carousel (tracked for visibility) -->
         <div class="position-relative" ref="headerWithImage">
-            <DetailBuisnessCard :images="images"></DetailBuisnessCard>
+            <DetailBuisnessCard />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import type { Biz, GroupedBizMedia } from "~/types/biz";
+import type { Biz } from "~/types/biz";
 
 import { useElementVisibility } from "@vueuse/core";
 
-const props = defineProps<{
-    media: GroupedBizMedia | undefined | null;
-}>();
-
-// Créer une liste avec tous les liens de chaque tableau dans media
-const images = Object.values(props?.media || {})
-    .flat()
-    .map((item) => item.link);
 
 // Inject mobile state from parent
 const isMobile = inject("isMobile", false);
