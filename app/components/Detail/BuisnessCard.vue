@@ -8,7 +8,7 @@
         class="carousel-wrapper"
     >
         <v-carousel-item
-            v-for="(image, i) in images"
+            v-for="(image, i) in carouselImages"
             :key="i"
             :src="image"
             cover
@@ -38,15 +38,24 @@
 </template>
 
 <script setup lang="ts">
-import type { Biz } from "~/types/biz";
+import type { Biz, GroupedBizMeta } from "~/types/biz";
 import BuisnessCardDetails from "./BuisnessCardDetails.vue";
-
-const props = defineProps<{
-    images: String[];
-}>();
 
 const biz = inject<Biz>("biz");
 const isMobile = inject("isMobile");
+const metas = inject<Ref<GroupedBizMeta | null>>("metas");
+
+// Aplatit tous les BizMetaItem (tous types confondus) et construit les URLs
+const carouselImages = computed<string[]>(() => {
+    const grouped = metas?.value;
+    if (!grouped) return [];
+
+    return Object.values(grouped)
+        .flat()
+        .flatMap((item) => item.link)
+        .filter(Boolean)
+        .map((uuid) => imgLink(uuid));
+});
 </script>
 
 <style>
