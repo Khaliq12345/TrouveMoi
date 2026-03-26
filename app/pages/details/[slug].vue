@@ -10,15 +10,48 @@
                         <DetailCustomSlideGroupButtons />
 
                         <CustomDivider></CustomDivider>
-                        <DetailMiniInfo :biz="biz" />
+                        <DetailMiniInfo />
 
                         <CustomDivider></CustomDivider>
                         <DetailActionsButtons />
 
+                        <section
+                            id="services"
+                            class="scroll-section"
+                            v-if="metas?.service?.length || 0 > 0"
+                        >
+                            <CustomDivider></CustomDivider>
+                            <DetailVibesServices
+                                title="Nos Services ?"
+                                subtitle="Explorez nos services"
+                                type="service"
+                            />
+                        </section>
+
+                        <section
+                            id="menu"
+                            class="scroll-section"
+                            v-if="metas?.menu?.length || 0 > 0"
+                        >
+                            <CustomDivider></CustomDivider>
+                            <DetailVibesServices
+                                title="Menu"
+                                subtitle="Explorez nos menu"
+                                type="menu"
+                            />
+                        </section>
+
                         <CustomDivider></CustomDivider>
-                        <section id="metas" class="scroll-section">
-                            <DetailMetasList />
-                            <DetailMetasSlide />
+                        <section
+                            id="portfolio"
+                            class="scroll-section"
+                            v-if="metas?.portfolio?.length || 0 > 0"
+                        >
+                            <DetailVibesServices
+                                title="Portfolio"
+                                subtitle="Explorez nos Portfolio"
+                                type="portfolio"
+                            />
                         </section>
 
                         <CustomDivider></CustomDivider>
@@ -54,7 +87,11 @@
 
                         <CustomDivider></CustomDivider>
                         <section id="vibes" class="scroll-section">
-                            <DetailVibes :media="separatedMedia" />
+                            <DetailVibesServices
+                                title="C'est Quoi L'Ambiance ?"
+                                subtitle="Explorez l'atmosphere a travers nos galeries"
+                                type="vibes"
+                            />
                         </section>
 
                         <CustomDivider></CustomDivider>
@@ -85,7 +122,7 @@
 
 <script setup lang="ts">
 // Si le dossier types est à la racine de ton projet
-import type { Biz, GroupedBizMedia, FeaturedSlot } from "~/types/biz";
+import type { Biz, FeaturedSlot } from "~/types/biz";
 
 const isMobile = inject("isMobile");
 
@@ -100,35 +137,9 @@ const featuredSlots = computed<FeaturedSlot[]>(
     () => businessWithSlots.value?.featured_slots || [],
 );
 
-const { businessMedia } = await useFetchSingleMedia(biz);
-
-// Chaque type de media separé par leur tags, retourn { tag: [...], ... }
-const separatedMedia = computed<GroupedBizMedia>(() => {
-    if (!businessMedia.value) return {};
-
-    return businessMedia.value.reduce((acc, media) => {
-        // Construction de l'URL Directus pour chaque fichier
-        const link = imgLink(media.media_id);
-
-        // On enrichit le média avec son lien
-        const mediaWithLink = {
-            ...media,
-            link: link,
-        };
-
-        // On itère sur chaque tag du média
-        media.tags?.forEach((tag) => {
-            if (!acc[tag]) {
-                acc[tag] = [];
-            }
-            acc[tag].push(mediaWithLink);
-        });
-
-        return acc;
-    }, {} as GroupedBizMedia);
-});
-
-const { data: metas } = biz?.value?.id ? useBusinessMeta(biz.value.id) : { data: ref(null) };
+const { data: metas } = biz?.value?.id
+    ? useBusinessMeta(biz.value.id)
+    : { data: ref(null) };
 
 //Share some data
 provide("biz", biz);

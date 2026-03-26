@@ -38,7 +38,6 @@ const activeTab = ref("services");
 const navItems: NavItem[] = [
     { id: "#about", label: "About", icon: "mdi-information-outline" },
     { id: "#services", label: "Services", icon: "mdi-hammer-wrench" },
-    { id: "#metas", label: "Metas", icon: "mdi-card-plus-outline" },
     {
         id: "#location",
         label: "Location/Hours",
