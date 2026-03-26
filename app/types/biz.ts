@@ -121,6 +121,8 @@ export interface BizMetaItem {
   type: 'menu' | 'service' | 'portfolio' | 'vibes' | string;
   price?: number | string | null;
   biz_id: string;
+  biz_name?: string;
+  biz_slug?: string;
   media_type: 'image' | 'video' | string;
   // Ajout de la propriété link qui contiendra le tableau des IDs des images
   link: string[]; 

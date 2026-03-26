@@ -10,7 +10,7 @@
             elevation="0"
         >
             <v-carousel
-                v-if="mediaItems && mediaItems.length"
+                v-if="flatMediaList && flatMediaList.length"
                 v-model="currentIndex"
                 direction="vertical"
                 :cycle="true"
@@ -19,13 +19,13 @@
                 hide-delimiters
                 :show-arrows="false"
             >
-                <v-carousel-item v-for="(item, i) in mediaItems" :key="item.id">
+                <v-carousel-item v-for="(item, i) in flatMediaList" :key="item.id">
                     <div class="w-100 h-100 d-flex justify-center align-center">
+                        
                         <video
-                            :key="'fg-' + item.media_id"
-                            :src="
-                                shouldLoadVideo(i) ? imgLink(item.media_id) : ''
-                            "
+                            v-if="item.isVideo"
+                            :key="'video-' + item.media_id"
+                            :src="shouldLoadMedia(i) ? imgLink(item.media_id) : ''"
                             preload="none"
                             autoplay
                             loop
@@ -35,6 +35,16 @@
                             style="object-fit: contain"
                             @loadeddata="$event.target.play()"
                         ></video>
+
+                        <img
+                            v-else
+                            :key="'img-' + item.media_id"
+                            :src="shouldLoadMedia(i) ? imgLink(item.media_id) : ''"
+                            class="w-100 h-100"
+                            style="object-fit: contain"
+                            alt="Media du business"
+                        />
+
                     </div>
                 </v-carousel-item>
 
@@ -57,7 +67,7 @@
                             <v-list-item
                                 prepend-icon="mdi-map-marker-radius"
                                 :title="currentItem?.business_name"
-                                subtitle="À découvrir"
+                                subtitle="A decouvrir"
                             ></v-list-item>
                         </v-sheet>
                     </v-scroll-x-transition>
@@ -68,76 +78,78 @@
 </template>
 
 <script setup lang="ts">
-// (Script inchangé, je l'inclus pour que le code soit fonctionnel)
-const { $directus, $readItems } = useNuxtApp();
-const isMobile = inject("isMobile");
+// Import du composable et des types (a ajuster selon ton arborescence)
+import { useBusinessMeta } from '~/composables/useBusinessMeta';
+import type { BizMetaItem } from '~/types/biz';
 
+const isMobile = inject("isMobile");
 const currentIndex = ref(0);
 const backgroundImage = defineModel();
 
-const { data: mediaItems, error } = await useAsyncData(
-    "home_media",
-    async () => {
-        try {
-            const media = await $directus.request(
-                $readItems("buisness_media", {
-                    filter: {
-                        show_in_homepage: { _eq: true },
-                        extra_type: { _eq: "buisness" },
-                        type: { _eq: "video" },
-                    },
-                    fields: ["id", "media_id", "extra_id"],
-                }),
-            );
+// Appel du composable pour recuperer toutes les donnees (aucun ID passe)
+const { data: groupedMeta } = await useBusinessMeta();
 
-            if (!media || media.length === 0) return [];
+// Creation d'une liste a une dimension contenant chaque media individuellement
+const flatMediaList = computed(() => {
+    // Retour de securite si les donnees ne sont pas pretes
+    if (!groupedMeta.value) return [];
 
-            const businessIds = [...new Set(media.map((m) => m.extra_id))];
-            const businesses = await $directus.request(
-                $readItems("businesses", {
-                    filter: { id: { _in: businessIds } },
-                    fields: ["id", "name"],
-                }),
-            );
+    const list: any[] = [];
 
-            return media.map((m) => ({
-                ...m,
-                business_name:
-                    businesses.find((b) => b.id === m.extra_id)?.name ||
-                    "Nom inconnu",
-            }));
-        } catch (err) {
-            console.error("Erreur Directus :", err);
-            return [];
-        }
-    },
-);
+    // Parcours de chaque cle du dictionnaire (menu, service, portfolio, vibes)
+    Object.values(groupedMeta.value).forEach((group: BizMetaItem[]) => {
+        // Parcours des elements de chaque categorie
+        group.forEach((metaItem) => {
+            // Verification que l'element possede bien des liens medias
+            if (metaItem.link && metaItem.link.length > 0) {
+                // Creation d'une entree independante pour chaque UUID de fichier
+                metaItem.link.forEach((mediaId, index) => {
+                    list.push({
+                        // Generation d'un ID unique pour la boucle v-for
+                        id: `${metaItem.id}-${index}`, 
+                        media_id: mediaId,
+                        business_name: metaItem.biz_name || "Nom inconnu",
+                        business_slug: metaItem.biz_slug,
+                        // Utilisation de ton type pour flagger les videos
+                        isVideo: metaItem.media_type === 'video' 
+                    });
+                });
+            }
+        });
+    });
 
-const currentItem = computed(() => mediaItems.value?.[currentIndex.value]);
+    return list;
+});
 
-const shouldLoadVideo = (index: number) => {
-    if (!mediaItems.value) return false;
+// Suivi de l'element actuellement affiche par le carousel
+const currentItem = computed(() => flatMediaList.value?.[currentIndex.value]);
 
-    const total = mediaItems.value.length;
+// Fonction d'optimisation (lazy loading) pour ne charger que les medias proches
+const shouldLoadMedia = (index: number) => {
+    if (!flatMediaList.value) return false;
+
+    const total = flatMediaList.value.length;
     const current = currentIndex.value;
 
+    // Si tres peu de medias, on charge tout
     if (total <= 2) return true;
 
+    // Calcul des index precedent et suivant pour un effet boucle sans erreur
     const prev = (current - 1 + total) % total;
     const next = (current + 1) % total;
 
     return index === current || index === prev || index === next;
 };
 
+// Ecouteur sur l'index pour mettre a jour l'image d'arriere-plan
 watch(currentIndex, (val) => {
-    const item = mediaItems.value?.[val];
+    const item = flatMediaList.value?.[val];
     if (item) backgroundImage.value = imgLink(item.media_id);
 });
 </script>
 
 <style scoped>
-/* Il ne reste plus que la gestion des barres de défilement (si nécessaire).
-   Le style inline h-100 sur le container parent permet de prendre la hauteur de son propre parent. */
+/* Classes utilitaires pour masquer la scrollbar native */
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
