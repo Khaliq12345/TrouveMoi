@@ -12,6 +12,7 @@
         <!-- Desktop view (filters + results + map) -->
         <SearchDesktopView v-show="!isMobile" />
     </v-layout>
+    <Footer></Footer>
 
     <!-- A navigation drawer to show filters only on desktop screen -->
     <v-navigation-drawer
