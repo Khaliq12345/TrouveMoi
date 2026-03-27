@@ -9,13 +9,16 @@
 
                 
             </v-container>
-            <Footer />
             <SupportModal v-model="dialog" @refresh="refresh" />
         </v-main>
+        <BottomNav v-if="isMobile" />
+        <Footer v-else></Footer>
     </v-layout>
 </template>
 
 <script setup lang="ts">
+const isMobile = inject("isMobile");
+
 const dialog = ref(false);
 
 const { totalCount, isLoadingCount } = useSupportCount();

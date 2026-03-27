@@ -6,20 +6,15 @@
             grow
             class="!shadow-none h-16 glass-primary"
         >
-            <v-btn value="settings" class="flex-col gap-1">
-                <v-icon size="24">mdi-cog</v-icon>
-                <span class="text-xs">Paramètres</span>
-            </v-btn>
+        <v-btn value="event" class="flex-col gap-1" to="/event">
+            <v-icon size="24">mdi-calendar</v-icon>
+            <span class="text-xs">Événements</span>
+        </v-btn>
 
-            <v-btn value="notifications" class="flex-col gap-1">
-                <v-icon size="24">mdi-bell</v-icon>
-                <span class="text-xs">Alertes</span>
-            </v-btn>
-
-            <v-btn value="profile" class="flex-col gap-1">
-                <v-icon size="24">mdi-account</v-icon>
-                <span class="text-xs">Profil</span>
-            </v-btn>
+        <v-btn value="support" class="flex-col gap-1" to="/support">
+            <v-icon size="24">mdi-headphones</v-icon>
+            <span class="text-xs">Support</span>
+        </v-btn>
         </v-bottom-navigation>
     </div>
 </template>

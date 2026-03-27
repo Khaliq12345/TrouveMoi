@@ -52,9 +52,8 @@
         <v-spacer />
 
         <div class="d-flex ga-2" v-if="!isMobile">
-            <v-btn icon="mdi-cog" variant="text" />
-            <v-btn icon="mdi-bell" variant="text" />
-            <v-btn icon="mdi-account" variant="text" />
+            <v-btn icon="mdi-calendar" variant="text" to="/event" />
+            <v-btn icon="mdi-headphones" variant="text" to="/support" />
         </div>
 
         <template v-slot:extension>

@@ -59,11 +59,15 @@
           <v-pagination :length="5" class="pt-5"></v-pagination>
         </v-container>
       </v-main>
+      <BottomNav v-if="isMobile" />
+      <Footer v-else></Footer>
     </v-layout>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
+const isMobile = inject("isMobile");
+
 // Active tab state (default: user's favorites)
 const tab = ref("self");
 </script>
