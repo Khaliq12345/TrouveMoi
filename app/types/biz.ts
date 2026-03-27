@@ -118,7 +118,7 @@ export interface BizMetaItem {
   id: string;
   title: string;
   description: string;
-  type: 'menu' | 'service' | 'portfolio' | 'vibes' | string;
+  type: 'menu' | 'service' | 'portfolio' | 'vibes' | 'video' | string;
   price?: number | string | null;
   biz_id: string;
   biz_name?: string;
@@ -132,5 +132,7 @@ export interface GroupedBizMeta {
   menu: BizMetaItem[];
   service: BizMetaItem[];
   portfolio: BizMetaItem[];
+  vibes: BizMetaItem[];
+  video: BizMetaItem[];
   [key: string]: BizMetaItem[];
 }
