@@ -53,3 +53,15 @@
     rgba(0, 0, 0, 0.1) 100%
   );
 }
+
+/* Classe personnalisée pour l'effet Glassmorphism basé sur la couleur primaire.
+  L'utilisation de !important garantit que Vuetify n'écrase pas ces règles.
+*/
+.glass-primary {
+  /* Récupération de la variable Vuetify avec 40% d'opacité */
+  background-color: rgba(var(--v-theme-primary), 0.5) !important;
+  
+  /* Application d'un flou important (24px correspond environ à backdrop-blur-xl) */
+  backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(24px) !important; /* Pour la compatibilité avec Safari */
+}
