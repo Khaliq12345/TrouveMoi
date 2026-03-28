@@ -1,5 +1,5 @@
 <template>
-    <v-layout>
+    <v-layout class="d-flex flex-column">
         <AppBar />
         <v-main>
             <v-container class="mx-auto" style="max-width: 1200px">
