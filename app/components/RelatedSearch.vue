@@ -18,6 +18,7 @@
           class="text-none justify-start px-0 text-body-2 font-weight-regular text-grey-darken-2 custom-wrap-btn"
           block
           :ripple="false"
+          @click="goToSearch(item)"
         >
           {{ item }}
         </v-btn>
@@ -40,7 +41,9 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   cityName: {
@@ -51,6 +54,31 @@ const props = defineProps({
 
 const { mobile: isMobile } = useDisplay()
 const showAll = ref(false)
+const router = useRouter()
+
+// Fonction appelée au clic pour rediriger vers la page de recherche avec les bons paramètres
+const goToSearch = (item) => {
+  // Amélioration de la Regex : 
+  // \s* cible les espaces avant
+  // (?:à|de|d'|au)? cible optionnellement les prépositions fréquentes en français
+  // \s* cible les espaces après la préposition
+  // ${props.cityName} cible le nom de la ville de façon dynamique
+  // \b s'assure qu'on s'arrête à la fin du mot
+  // 'i' rend la recherche insensible à la casse
+  const cityRegex = new RegExp(`\\s*(?:à|de|d'|au)?\\s*${props.cityName}\\b`, 'i');
+  
+  // Suppression de la ville et de sa préposition, puis nettoyage des espaces résiduels
+  const cleanSearchTerm = item.replace(cityRegex, '').trim();
+
+  // Navigation vers la page de recherche avec le terme parfaitement nettoyé
+  router.push({
+    path: '/search',
+    query: {
+      location: props.cityName,
+      search: cleanSearchTerm
+    }
+  })
+}
 
 // Récupération des données via l'utilitaire
 const allItems = computed(() => getCityRelatedSearches(props.cityName))
@@ -65,15 +93,15 @@ const displayedItems = computed(() => {
 <style scoped>
 /* Configuration pour le retour à la ligne forcé sans points de suspension */
 .custom-wrap-btn {
-  height: auto !important; /* Permet au bouton de s'agrandir en hauteur */
+  height: auto !important; 
   min-height: 32px;
 }
 
 .custom-wrap-btn :deep(.v-btn__content) {
-  white-space: normal !important; /* Autorise le retour à la ligne */
+  white-space: normal !important; 
   text-align: left;
   line-height: 1.4;
-  word-break: break-word; /* Casse les mots trop longs si nécessaire */
+  word-break: break-word; 
   padding: 4px 0;
 }
 
