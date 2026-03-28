@@ -9,7 +9,7 @@
         hide-details
         density="comfortable"
         rounded="xl"
-        class="flex-grow-1 flex-sm-grow-0"
+        class="flex-grow-1 flex-md-grow-0 w-100 w-md-auto"
         style="min-width: 200px;"
         prepend-inner-icon="mdi-filter-variant"
         chips
@@ -26,7 +26,7 @@
         hide-details
         density="comfortable"
         rounded="xl"
-        class="flex-grow-1 flex-sm-grow-0"
+        class="flex-grow-1 flex-md-grow-0 w-100 w-md-auto"
         style="min-width: 200px;"
     ></v-text-field>
 </template>

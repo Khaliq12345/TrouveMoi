@@ -5,11 +5,11 @@
     >
         <SupportSearchTitle />
 
-        <div
-            class="d-flex flex-column flex-sm-row ga-3 align-center w-100 w-md-auto justify-end"
-        >
-            <SupportSearchFilters />
-            <SupportSearchAction />
-        </div>
+   <div
+    class="d-flex flex-column flex-md-row ga-3 align-center w-100 w-md-auto justify-end"
+>
+    <SupportSearchFilters />
+    <SupportSearchAction />
+</div>
     </v-sheet>
 </template>
