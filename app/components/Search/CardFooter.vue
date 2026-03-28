@@ -22,7 +22,7 @@
             append-icon="mdi-arrow-right"
             :href="business.website"
         >
-            Détails
+            Voir le site
         </v-btn>
     </div>
 </template>

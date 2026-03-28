@@ -165,7 +165,7 @@ const getVisibleItems = (key) => {
 // Fonction pour générer la route de recherche en fonction de la section et de l'élément cliqué
 const getSearchRoute = (key, item) => {
     const queryParams = {
-        q: item, // Le terme de recherche principal
+        search: item, // Le terme de recherche principal
     };
 
     // Si on est dans la section "Top recherches", on ajoute la ville sélectionnée à la requête
