@@ -17,6 +17,7 @@ export interface Category {
   description?: string;
   important?: boolean;
   features?: any;
+  icon?: string;
   user_created?: string;
   date_created?: string;
   user_updated?: string;

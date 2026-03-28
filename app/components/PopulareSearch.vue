@@ -22,7 +22,7 @@
                     size="small"
                     variant="outlined"
                     class="font-weight-medium"
-                    :to="`/search?q=${city}`"
+                    :to="{ path: '/search', query: { location: city } }"
                 >
                     {{ city }}
                 </v-chip>
@@ -30,7 +30,6 @@
 
             <v-divider class="mb-3"></v-divider>
 
-            <!-- Boucle sur les sections -->
             <section
                 v-for="(section, key) in sections"
                 :key="key"
@@ -51,12 +50,12 @@
                         md="3"
                         class="py-1 py-md-2"
                     >
-                        <a
-                            href="#"
+                        <NuxtLink
+                            :to="getSearchRoute(key, item)"
                             class="text-decoration-none text-grey-darken-3 text-caption text-md-body-2 d-block text-truncate"
                         >
                             {{ item }}
-                        </a>
+                        </NuxtLink>
                     </v-col>
                 </v-row>
 
@@ -79,6 +78,8 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 const selectedCityIndex = ref(0);
 const showAll = ref({
     top: false,
@@ -135,7 +136,7 @@ const trendingSearches = [
     "Amazon de Cotonou",
 ];
 
-// Configuration des sections (données conservées)
+// Configuration des sections
 const sections = {
     top: {
         data: topSearches,
@@ -160,9 +161,28 @@ const getVisibleItems = (key) => {
     const items = sections[key].data;
     return showAll.value[key] ? items : items.slice(0, 8);
 };
+
+// Fonction pour générer la route de recherche en fonction de la section et de l'élément cliqué
+const getSearchRoute = (key, item) => {
+    const queryParams = {
+        q: item, // Le terme de recherche principal
+    };
+
+    // Si on est dans la section "Top recherches", on ajoute la ville sélectionnée à la requête
+    if (key === 'top') {
+        queryParams.location = cities[selectedCityIndex.value];
+    }
+
+    // Retourne l'objet route pour NuxtLink
+    return {
+        path: '/search',
+        query: queryParams
+    };
+};
 </script>
 
 <style scoped>
+/* Conserve l'effet de survol sur les liens NuxtLink (qui sont rendus comme des balises a) */
 a:hover {
     color: #1867c0 !important;
 }
