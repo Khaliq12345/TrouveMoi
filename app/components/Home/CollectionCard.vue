@@ -1,7 +1,7 @@
 <template>
   <v-hover v-slot="{ isHovering, props }">
     <v-card v-bind="props" :elevation="isHovering ? 4 : 0" class="d-flex flex-column pa-5 rounded-xl transition-swing"
-      border height="100%" color="white">
+      border height="100%" color="">
       <div v-if="headerTitle" class="d-flex align-center mb-4">
         <v-icon v-if="headerIcon" :icon="headerIcon" color="orange-darken-3" size="x-large" class="mr-3 mt-1"></v-icon>
         <h3 class="text-h8 font-weight-bold text-grey-darken-4">

@@ -6,45 +6,27 @@
             open-on-hover
             location="bottom"
             :close-delay="100"
+            :disabled="!menu.hasSub"
         >
             <template v-slot:activator="{ props }">
                 <v-btn
-                    v-bind="props"
+                    v-bind="menu.hasSub ? props : {}"
                     :variant="isMobile ? 'tonal' : 'text'"
                     :size="isMobile ? 'small' : 'default'"
                     class="text-none font-weight-medium menu-btn rounded-pill"
+                    @click="handleMenuClick(menu)"
                 >
                     {{ menu.label }}
-                    <v-icon end size="small">mdi-chevron-down</v-icon>
+                    <v-icon v-if="menu.hasSub" end size="small">mdi-chevron-down</v-icon>
                 </v-btn>
             </template>
 
-            <v-list :class="{ 'category-grid': menu.type === 'more' }">
+            <v-list v-if="menu.hasSub" :class="{ 'category-grid': menu.type === 'more' }">
                 <v-list-item
                     v-for="item in menu.items"
                     :key="item.slug"
                     :title="item.name"
-                    @click="
-                        () => {
-                            if (menu.type === 'more') {
-                                router.push({
-                                    query: {
-                                        ...route.query,
-                                        sub_categories: '',
-                                        categories: item.slug,
-                                    },
-                                });
-                            } else {
-                                router.push({
-                                    query: {
-                                        ...route.query,
-                                        sub_categories: item.slug,
-                                        categories: menu.slug,
-                                    },
-                                });
-                            }
-                        }
-                    "
+                    @click="handleListItemClick(menu, item)"
                 >
                     <template v-slot:prepend>
                         <v-icon icon="mdi-clock" />
@@ -58,9 +40,8 @@
 <script setup lang="ts">
 import { computed, inject, Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-// Assure-toi que ces composables sont bien importés ou auto-importés (ex: Nuxt)
-// const { updateURL } = useFilterURL();
-// const { getSubcategories } = await useFetchSubCategory();
+// Importation de vos types depuis le nouveau fichier
+import type { GroupedCategory, SubCategory } from '~/types/category';
 
 const route = useRoute();
 const router = useRouter();
@@ -68,57 +49,98 @@ const router = useRouter();
 // Injection de la variable globale isMobile
 const isMobile = inject<Ref<boolean>>('isMobile');
 
-// Liste complète des catégories
-const categories = [
-    { name: "Commerce de Détail", slug: "commerce-detail" },
-    { name: "Santé & Bien-être", slug: "sante-bien-etre" },
-    { name: "Tourisme & Loisirs", slug: "tourisme-loisirs" },
-    { name: "Banques & Assurances", slug: "banques-assurances" },
-    { name: "Hébergement & Hôtels", slug: "hebergement-hotels" },
-    { name: "Art & Divertissement", slug: "art-divertissement" },
-    { name: "Mode & Beauté", slug: "mode-beaute" },
-    { name: "Services Juridiques", slug: "services-juridiques" },
-    { name: "Restauration & Gastronomie", slug: "restauration-gastronomie" },
-    { name: "Transport & Logistique", slug: "transport-logistique" },
-    { name: "Éducation & Formation", slug: "education-formation" },
-    { name: "Café", slug: "cafe" },
-    { name: "Automobile & Garage", slug: "automobile-garage" },
-    { name: "Bistro", slug: "bistro" },
-    { name: "Immobilier & BTP", slug: "immobilier-btp" },
-    { name: "Services Informatiques", slug: "services-informatiques" },
-    { name: "Agriculture & Élevage", slug: "agriculture-elevage" },
-];
+// Récupération dynamique des catégories groupées depuis l'API
+const { data: categoriesGrouped, pending, error } = await useFetchCategory();
 
-// Structure réactive qui s'adapte à la taille de l'écran
+if(error.value) {
+    console.error("Error fetching categories", error.value);
+}
+
+// Structure réactive qui s'adapte à la taille de l'écran et aux données réelles
 const menuStructure = computed(() => {
-    // 3 éléments sur mobile, 5 sur desktop
+    // Sécurité : fallback sur un tableau vide si les données ne sont pas encore là
+    const categoriesList = categoriesGrouped.value || [];
+    
+    // Définition de la limite d'affichage (3 éléments sur mobile, 5 sur desktop)
     const limit = isMobile?.value ? 3 : 5;
 
-    // 1. Catégories principales
-    const primary = categories.slice(0, limit).map((cat) => ({
-        type: "primary",
-        label: cat.name,
-        icon: "mdi-flag",
-        iconSize: "default",
-        slug: cat.slug,
-        // Remplace le tableau vide par ton appel réel : getSubcategories(cat.slug)
-        items: [], 
-    }));
+    // 1. Préparation des catégories principales pour la barre de menu
+    const primary = categoriesList.slice(0, limit).map((cat: GroupedCategory) => {
+        const subs = cat.sub_categories || [];
+        return {
+            type: "primary",
+            label: cat.name,
+            icon: "mdi-flag",
+            iconSize: "default",
+            slug: cat.slug,
+            items: subs, 
+            hasSub: subs.length > 0 // Flag boolean pour savoir si on active le menu déroulant
+        };
+    });
 
-    // 2. Menu "Plus" avec le reste des catégories
-    const more = {
-        type: "more",
-        label: "Plus",
-        icon: "mdi-flag",
-        iconSize: "small",
-        slug: "",
-        items: categories.slice(limit),
-    };
+    // 2. Gestion du menu "Plus" avec le reste des catégories non affichées
+    const moreCategories = categoriesList.slice(limit);
+    
+    // Ajoute le menu "Plus" uniquement s'il reste des catégories à afficher
+    if (moreCategories.length > 0) {
+        const more = {
+            type: "more",
+            label: "Plus",
+            icon: "mdi-flag",
+            iconSize: "small",
+            slug: "",
+            items: moreCategories, // Ici les items sont des catégories, pas des sous-catégories
+            hasSub: true // Le menu "Plus" a toujours un déroulant
+        };
+        return [...primary, more];
+    }
 
-    return [...primary, more];
+    return primary;
 });
-</script>
 
+// Fonction pour gérer le clic direct sur un bouton du menu (sans sous-catégories)
+const handleMenuClick = (menu: any) => {
+    // Vérifie si c'est une catégorie principale sans sous-catégories
+    if (menu.type === 'primary') {
+        // Redirige vers la page de recherche en conservant les requêtes existantes
+        // On place 'categories' avant 'sub_categories' dans l'objet
+        router.push({
+            path: '/search',
+            query: {
+                ...route.query,
+                categories: menu.slug,
+                sub_categories: '',
+            },
+        });
+    }
+};
+
+// Fonction pour gérer le clic sur un élément dans les listes déroulantes
+const handleListItemClick = (menu: any, item: any) => {
+    // Redirection vers la page de recherche avec les paramètres
+    if (menu.type === 'more') {
+        // Dans le menu "Plus", l'item cliqué est une catégorie principale
+        router.push({
+            path: '/search',
+            query: {
+                ...route.query,
+                categories: item.slug,
+                sub_categories: '',
+            },
+        });
+    } else {
+        // Dans un menu standard, l'item cliqué est une sous-catégorie
+        router.push({
+            path: '/search',
+            query: {
+                ...route.query,
+                categories: menu.slug,
+                sub_categories: item.slug,
+            },
+        });
+    }
+};
+</script>
 <style scoped>
 /* Conteneur principal avec scroll horizontal */
 .menu-scroll-container {

@@ -4,62 +4,66 @@
         color="transparent"
         height="70"
         extension-height="50"
-        class="glass-primary px-4 text-white !shadow-none"
+        class="glass-primary text-white"
     >
-        <h1 class="font-weight-bold text-h5 flex-grow-0" v-if="!isMobile">
-            Trouve-moi
-        </h1>
+        <v-container class="d-flex align-center fill-height px-4">
+            <NuxtLink class="font-weight-bold text-h5 flex-grow-0" v-if="!isMobile" to="/">
+                Trouve-moi
+            </NuxtLink>
 
-        <v-spacer />
+            <v-spacer />
 
-        <div
-            class="d-flex ga-2 align-center"
-            style="width: 100%; max-width: 600px"
-        >
-            <v-text-field
-                v-model="searchQuery"
-                placeholder="Quoi chercher ?"
-                variant="solo"
-                hide-details
-                density="compact"
-                rounded="s-lg"
-                prepend-inner-icon="mdi-magnify"
-                @keyup.enter="handleSearch"
-            />
-
-            <v-text-field
-                v-model="locationQuery"
-                placeholder="Où ? (Ville, Quartier...)"
-                variant="solo"
-                hide-details
-                density="compact"
-                rounded="e-lg"
-                prepend-inner-icon="mdi-map-marker"
-                @keyup.enter="handleSearch"
+            <v-sheet
+                color="transparent"
+                class="d-flex ga-2 align-center mx-auto"
+                width="100%"
+                max-width="600"
             >
-                <template v-slot:append-inner>
-                    <v-btn
-                        icon="mdi-arrow-right"
-                        variant="text"
-                        size="small"
-                        color="primary"
-                        @click="handleSearch"
-                    />
-                </template>
-            </v-text-field>
-        </div>
+                <v-text-field
+                    v-model="searchQuery"
+                    placeholder="Quoi chercher ?"
+                    variant="solo"
+                    hide-details
+                    density="compact"
+                    rounded="s-lg"
+                    prepend-inner-icon="mdi-magnify"
+                    @keyup.enter="handleSearch"
+                />
 
-        <v-spacer />
+                <v-text-field
+                    v-model="locationQuery"
+                    placeholder="Où ? (Ville, Quartier...)"
+                    variant="solo"
+                    hide-details
+                    density="compact"
+                    rounded="e-lg"
+                    prepend-inner-icon="mdi-map-marker"
+                    @keyup.enter="handleSearch"
+                >
+                    <template v-slot:append-inner>
+                        <v-btn
+                            icon="mdi-arrow-right"
+                            variant="text"
+                            size="small"
+                            color="primary"
+                            @click="handleSearch"
+                        />
+                    </template>
+                </v-text-field>
+            </v-sheet>
 
-        <div class="d-flex ga-2" v-if="!isMobile">
-            <v-btn icon="mdi-calendar" variant="text" to="/event" />
-            <v-btn icon="mdi-headphones" variant="text" to="/support" />
-        </div>
+            <v-spacer />
+
+            <div class="d-flex ga-2" v-if="!isMobile">
+                <v-btn icon="mdi-calendar" variant="text" to="/event" />
+                <v-btn icon="mdi-headphones" variant="text" to="/support" />
+            </div>
+        </v-container>
 
         <template v-slot:extension>
-            <div class="w-full d-flex justify-center">
+            <v-container class="d-flex justify-center py-0">
                 <Menu />
-            </div>
+            </v-container>
         </template>
     </v-app-bar>
 </template>
