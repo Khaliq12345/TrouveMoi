@@ -1,9 +1,9 @@
 <template>
     <v-layout class="flex flex-col">
         <AppBar />
-        <v-main>
+        <v-main class="">
             <v-container
-                class="pa-0 bg-background mx-auto"
+                class="pa-2 bg-background mx-auto"
                 style="max-width: 1200px"
             >
                 <EventHeader></EventHeader>
