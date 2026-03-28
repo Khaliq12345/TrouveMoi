@@ -23,7 +23,6 @@
                     <div class="w-100 h-100 d-flex justify-center align-center">
                         
                         <video
-                            v-if="item.isVideo"
                             :key="'video-' + item.media_id"
                             :src="shouldLoadMedia(i) ? imgLink(item.media_id) : ''"
                             preload="none"
@@ -35,15 +34,6 @@
                             style="object-fit: contain"
                             @loadeddata="$event.target.play()"
                         ></video>
-
-                        <img
-                            v-else
-                            :key="'img-' + item.media_id"
-                            :src="shouldLoadMedia(i) ? imgLink(item.media_id) : ''"
-                            class="w-100 h-100"
-                            style="object-fit: contain"
-                            alt="Media du business"
-                        />
 
                     </div>
                 </v-carousel-item>
@@ -78,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-// Import du composable et des types (a ajuster selon ton arborescence)
+// Import du composable et des types
 import { useBusinessMeta } from '~/composables/useBusinessMeta';
 import type { BizMetaItem } from '~/types/biz';
 
@@ -86,23 +76,26 @@ const isMobile = inject("isMobile");
 const currentIndex = ref(0);
 const backgroundImage = defineModel();
 
-// Appel du composable pour recuperer toutes les donnees (aucun ID passe)
+// Appel du composable pour recuperer toutes les donnees
 const { data: groupedMeta } = await useBusinessMeta();
 
-// Creation d'une liste a une dimension contenant chaque media individuellement
+// Creation d'une liste a une dimension contenant uniquement les videos
 const flatMediaList = computed(() => {
     // Retour de securite si les donnees ne sont pas pretes
     if (!groupedMeta.value) return [];
 
     const list: any[] = [];
 
-    // Parcours de chaque cle du dictionnaire (menu, service, portfolio, vibes)
+    // Parcours de chaque cle du dictionnaire (menu, service, portfolio, vibes, video)
     Object.values(groupedMeta.value).forEach((group: BizMetaItem[]) => {
         // Parcours des elements de chaque categorie
         group.forEach((metaItem) => {
-            // Verification que l'element possede bien des liens medias
-            if (metaItem.link && metaItem.link.length > 0) {
-                // Creation d'une entree independante pour chaque UUID de fichier
+            // Identification stricte des videos en verifiant soit la cle type, soit media_type
+            const isVideoItem = metaItem.type === 'video' || metaItem.media_type === 'video';
+
+            // On ne continue que si l'element est une video ET possede des liens medias
+            if (isVideoItem && metaItem.link && metaItem.link.length > 0) {
+                // Creation d'une entree independante pour chaque UUID de fichier video
                 metaItem.link.forEach((mediaId, index) => {
                     list.push({
                         // Generation d'un ID unique pour la boucle v-for
@@ -110,8 +103,8 @@ const flatMediaList = computed(() => {
                         media_id: mediaId,
                         business_name: metaItem.biz_name || "Nom inconnu",
                         business_slug: metaItem.biz_slug,
-                        // Utilisation de ton type pour flagger les videos
-                        isVideo: metaItem.media_type === 'video' 
+                        // Indique explicitement que c'est une video (optionnel maintenant)
+                        isVideo: true 
                     });
                 });
             }
@@ -131,25 +124,26 @@ const shouldLoadMedia = (index: number) => {
     const total = flatMediaList.value.length;
     const current = currentIndex.value;
 
-    // Si tres peu de medias, on charge tout
+    // Si tres peu de medias, on charge tout pour eviter des erreurs de calcul
     if (total <= 2) return true;
 
-    // Calcul des index precedent et suivant pour un effet boucle sans erreur
+    // Calcul des index precedent et suivant pour un effet boucle sans erreur de chargement
     const prev = (current - 1 + total) % total;
     const next = (current + 1) % total;
 
     return index === current || index === prev || index === next;
 };
 
-// Ecouteur sur l'index pour mettre a jour l'image d'arriere-plan
+// Ecouteur sur l'index pour mettre a jour l'image d'arriere-plan en temps reel
 watch(currentIndex, (val) => {
     const item = flatMediaList.value?.[val];
+    // Mise a jour du fond uniquement si l'element existe
     if (item) backgroundImage.value = imgLink(item.media_id);
 });
 </script>
 
 <style scoped>
-/* Classes utilitaires pour masquer la scrollbar native */
+/* Classes utilitaires pour masquer la scrollbar native sur differents navigateurs */
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }

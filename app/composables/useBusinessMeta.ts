@@ -9,6 +9,7 @@ export const useBusinessMeta = (bizId?: string) => {
     service: [],
     portfolio: [],
     vibes: [],
+    video: [], // <-- Ajout de la clé 'video' ici pour stocker les résultats
   };
 
   // Création d'une clé de cache unique selon la présence ou non de bizId
@@ -16,7 +17,6 @@ export const useBusinessMeta = (bizId?: string) => {
 
   return useAsyncData<GroupedBizMeta>(cacheKey, async () => {
     // Préparation des options de la requête de base
-    // On inclut toujours les champs nécessaires pour la relation
     const queryOptions: Record<string, any> = {
       fields: [
         "*",
@@ -28,7 +28,6 @@ export const useBusinessMeta = (bizId?: string) => {
     };
 
     // Ajout conditionnel du filtre si bizId est fourni
-    // Si bizId est absent, Directus renverra tous les éléments
     if (bizId) {
       queryOptions.filter = { biz_id: { _eq: bizId } };
     }
@@ -50,11 +49,10 @@ export const useBusinessMeta = (bizId?: string) => {
         id: item.id,
         title: item.title,
         description: item.description,
-        type: item.type,
+        // <-- MODIFICATION ICI : Si item.type est vide/null/undefined, on force "video"
+        type: item.type || "video", 
         price: item.price,
-        // On récupère l'ID en gérant le cas où biz_id est un objet
         biz_id: item.biz_id?.id || item.biz_id,
-        // Assignation des nouvelles propriétés du business
         biz_name: item.biz_id?.name,
         biz_slug: item.biz_id?.slug,
         link: extractedLinks,

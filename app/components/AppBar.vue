@@ -4,8 +4,7 @@
         color="transparent"
         height="70"
         extension-height="50"
-        style="backdrop-filter: blur(4px)"
-        :class="`px-4 blue-content text-${color}`"
+        class="glass-primary px-4 text-white !shadow-none"
     >
         <h1 class="font-weight-bold text-h5 flex-grow-0" v-if="!isMobile">
             Trouve-moi
@@ -17,7 +16,6 @@
             class="d-flex ga-2 align-center"
             style="width: 100%; max-width: 600px"
         >
-            <!-- Term search -->
             <v-text-field
                 v-model="searchQuery"
                 placeholder="Quoi chercher ?"
@@ -29,7 +27,6 @@
                 @keyup.enter="handleSearch"
             />
 
-            <!-- Location Search -->
             <v-text-field
                 v-model="locationQuery"
                 placeholder="Où ? (Ville, Quartier...)"
@@ -54,14 +51,11 @@
 
         <v-spacer />
 
-        <!-- Desktop actions -->
         <div class="d-flex ga-2" v-if="!isMobile">
-            <v-btn icon="mdi-cog" variant="text" />
-            <v-btn icon="mdi-bell" variant="text" />
-            <v-btn icon="mdi-account" variant="text" />
+            <v-btn icon="mdi-calendar" variant="text" to="/event" />
+            <v-btn icon="mdi-headphones" variant="text" to="/support" />
         </div>
 
-        <!-- Mobile and Desktop Menu -->
         <template v-slot:extension>
             <div class="w-full d-flex justify-center">
                 <Menu />
@@ -110,10 +104,25 @@ function handleSearch() {
     }
 }
 </script>
-
 <style scoped>
-/* Optional: Tighten the gap between the two inputs to make them look unified */
-.v-text-field :deep(.v-field) {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+/* Assure que tous les boutons et icônes dans la barre sont blancs.
+   On utilise :deep() car ce sont des sous-composants Vuetify.
+*/
+:deep(.v-btn) {
+  color: white !important;
+}
+/* Le texte à l'intérieur des inputs doit rester sombre pour être lisible 
+   sur le fond blanc des champs de recherche (variant="solo").
+*/
+:deep(.v-field__input) {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+/* On s'assure que l'extension de la barre hérite bien de la transparence 
+   pour que le flou soit continu sur toute la hauteur (120px).
+*/
+:deep(.v-toolbar__content),
+:deep(.v-toolbar__extension) {
+  background-color: transparent !important;
 }
 </style>

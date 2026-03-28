@@ -20,11 +20,14 @@
                 <EventPagination />
             </v-container>
         </v-main>
-        <Footer></Footer>
+        <BottomNav v-if="isMobile" />
+        <Footer v-else></Footer>
     </v-layout>
 </template>
 
 <script setup lang="ts">
+const isMobile = inject("isMobile");
+
 // Initialise events counts data
 const { countPending, filteredCount } = await useFetchEventsCount();
 

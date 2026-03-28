@@ -14,17 +14,6 @@
             <p class="text-body-2 opacity-70 mb-4">
               {{ aboutText }}
             </p>
-            <div class="d-flex ga-2">
-              <v-chip
-                v-for="tag in aboutTags"
-                :key="tag"
-                size="x-small"
-                variant="outlined"
-                class="text-caption border-opacity-25"
-              >
-                {{ tag }}
-              </v-chip>
-            </div>
           </v-col>
 
           <!-- Navigation -->
