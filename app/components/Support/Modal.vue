@@ -81,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, reactive } from "vue";
 import type { CreateSupportTicketPayload, SupportModalSubmitPayload } from "~/types/support";
 import { createItem, uploadFiles } from "@directus/sdk";
 
@@ -91,10 +92,12 @@ const props = defineProps({
 
 const { $directus } = useNuxtApp();
 
-
 const emit = defineEmits(["update:modelValue", "refresh"]);
 
-// Vérouille le formulaire
+// Référence vers le v-form du template
+const form = ref<any>(null);
+
+// Verrouille le formulaire pendant l'envoi
 const valid = ref(false);
 
 const issue = reactive({
@@ -109,11 +112,21 @@ const close = () => {
   issue.title = "";
   issue.description = "";
   issue.photo = [];
+  // On reset aussi les erreurs visuelles du formulaire
+  if (form.value) form.value.resetValidation();
 };
 
-
 async function addIssue() {
-    valid.value = true
+    // 1. On lance la validation du formulaire
+    if (!form.value) return;
+    const { valid: isFormValid } = await form.value.validate();
+
+    // 2. Si le titre ou la description est vide, on bloque l'exécution ici
+    if (!isFormValid) return;
+
+    // 3. Les données sont bonnes, on verrouille le formulaire pour le chargement
+    valid.value = true;
+    
     try {
         const itemData: CreateSupportTicketPayload = {
             title: issue.title,
@@ -122,22 +135,20 @@ async function addIssue() {
             image_id: [],
         };
 
+        let uploadedUuids: string[] = [];
+
         if (issue.photo && Array.isArray(issue.photo) && issue.photo.length > 0) {
-            const uploadedUuids: string[] = [];
-            
             for (const file of issue.photo) {
                 const formData = new FormData();
                 formData.append("title", file?.name || "");
                 formData.append("file", file);
                 
                 // ENVOI DANS LE DOSSIER "supports"
-                // Remplacez 'votre-uuid-de-dossier' par l'ID réel du dossier dans Directus
                 formData.append("folder", "votre-uuid-de-dossier"); 
 
                 try {
                     const uploadResult = await $directus.request(uploadFiles(formData));
                     
-                    // On récupère l'UUID (id) du fichier uploadé
                     const fileId = Array.isArray(uploadResult) ? uploadResult[0]?.id : uploadResult?.id;
                     
                     if (fileId) {
@@ -147,10 +158,10 @@ async function addIssue() {
                     console.error("Erreur upload fichier:", file.name, uploadErr);
                 }
             }
-            
-            // On injecte directement le tableau d'UUIDs dans le champ JSON
-            itemData.image_id = uploadedUuids;
         }
+        
+        // On injecte le tableau d'UUIDs (même vide s'il n'y a pas de photo)
+        itemData.image_id = uploadedUuids;
 
         // Création de l'item dans la collection 'supports'
         await $directus.request(createItem("supports", itemData));
@@ -160,8 +171,9 @@ async function addIssue() {
         emit("refresh");
     } catch (err) {
         console.error("Erreur lors de la création du ticket:", err);
+    } finally {
+        // On déverrouille le formulaire quoiqu'il arrive (succès ou erreur)
+        valid.value = false;
     }
-    valid.value = false;
 }
-
 </script>
