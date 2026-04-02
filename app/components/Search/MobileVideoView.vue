@@ -59,9 +59,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, inject } from 'vue';
 import { useBusinessMeta } from '~/composables/useBusinessMeta';
 import type { BizMetaItem } from '~/types/biz';
+
+// Récupération des entreprises trouvées dans la recherche (si contexte disponible)
+const businessesData = inject("businesses-data", null) as any;
+const businesses = businessesData?.businesses;
 
 // Récupération des métadonnées des entreprises
 const { data: groupedMeta, pending } = await useBusinessMeta();
@@ -108,6 +112,8 @@ const handleVideoSelect = (videoId: string, toggle: () => void, isSelected: bool
 const flatVideoList = computed(() => {
     if (!groupedMeta.value) return [];
 
+    const validSlugs = businesses?.value?.map((b: any) => b.slug) || [];
+
     const list: Array<{
         id: string;
         media_id: string;
@@ -119,6 +125,11 @@ const flatVideoList = computed(() => {
     // Parcours de toutes les catégories
     Object.values(groupedMeta.value).forEach((group: BizMetaItem[]) => {
         group.forEach((metaItem) => {
+            // Filtrer par les entreprises trouvées s'il y a un contexte de recherche
+            if (businesses !== undefined) {
+                if (!validSlugs.includes(metaItem.biz_slug)) return;
+            }
+
             // Vérification si l'élément est une vidéo
             const isVideoItem = metaItem.type === 'video' || metaItem.media_type === 'video';
 
