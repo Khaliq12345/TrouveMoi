@@ -52,18 +52,16 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  reviews: any[]
-}>();
+import type { Biz } from "~/types/biz";
 
-const totalReviews = computed(() => props.reviews?.length || 0);
+// Inject biz
+const biz = inject<Ref<Biz | null>>("biz");
+
+const totalReviews = computed(() => biz?.value?.reviews_count || 0);
 
 const averageRating = computed(() => {
-  if (!props.reviews || props.reviews.length === 0) return "0.0";
-  const sum = props.reviews.reduce((acc, review) => {
-    return acc + (Number(review.rating) || 0);
-  }, 0);
-  return (sum / props.reviews.length).toFixed(1);
+  if (!biz?.value?.rating) return "0.0";
+  return Number(biz.value.rating).toFixed(1);
 });
 
 // Calcul dynamique des statistiques pour les barres de progression
@@ -77,24 +75,24 @@ const ratingStats = computed(() => {
     { stars: 1, color: '#F0D458', count: 0, percentage: 0 }
   ];
 
-  if (!props.reviews || totalReviews.value === 0) {
+  // Si on n'a pas les détails des notes, on retourne les stats à 0
+  if (!biz?.value?.rating_details) {
     return stats;
   }
 
-  // 1. Compter le nombre d'avis pour chaque note
-  props.reviews.forEach((review: any) => {
-    // On arrondit au cas où il y aurait des décimales
-    const rating = Math.round(Number(review.rating) || 0); 
-    const statItem = stats.find(s => s.stars === rating);
-    
-    if (statItem) {
-      statItem.count += 1;
-    }
+  const details = biz.value.rating_details as Record<string, number>;
+
+  // 1. Récupérer le nombre d'avis pour chaque note
+  stats.forEach(stat => {
+    stat.count = Number(details[stat.stars.toString()]) || 0;
   });
 
-  // 2. Calculer le pourcentage pour chaque barre
+  // 2. Calculer le total réel des avis présents dans rating_details
+  const actualTotal = stats.reduce((sum, stat) => sum + stat.count, 0);
+
+  // 3. Calculer le pourcentage pour chaque barre
   stats.forEach(stat => {
-    stat.percentage = (stat.count / totalReviews.value) * 100;
+    stat.percentage = actualTotal > 0 ? (stat.count / actualTotal) * 100 : 0;
   });
 
   return stats;

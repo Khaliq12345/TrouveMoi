@@ -5,7 +5,7 @@
     <h2 class="text-h5 font-weight-bold mb-6">Avis & Évaluations</h2>
 
     <!-- Statistics Block -->
-    <DetailReviewStats :reviews="results || []" />
+    <DetailReviewStats />
 
     <!-- Reviews loop -->
     <div v-for="(review, i) in results" :key="review.id" class="mb-10">
@@ -47,41 +47,8 @@
       </div>
 
       <!-- Review text -->
-      <div class="text-body-1 text-grey-darken-4 mb-4 lh-relaxed">
-        <span
-          v-if="
-            review.Comment &&
-            review.Comment.length > 150 &&
-            !expandedReviews[review.id]
-          "
-        >
-          {{ review.Comment.substring(0, 150) }}...
-        </span>
-        <span v-else>
-          {{ review.Comment }}
-        </span>
+      <DetailReviewText v-if="review.Comment" :text="review.Comment" />
 
-        <div v-if="review.Comment && review.Comment.length > 150" class="mt-1">
-          <v-btn
-            variant="text"
-            density="compact"
-            color="red-darken-1"
-            class="px-0 text-none font-weight-bold"
-            @click="expandedReviews[review.id] = !expandedReviews[review.id]"
-          >
-            {{
-              expandedReviews[review.id] ? "Afficher moins" : "Afficher tout"
-            }}
-          </v-btn>
-        </div>
-      </div>
-
-      <!-- Aucune image dans les données → section supprimée -->
-
-      <!-- Reaction buttons (avec comptes à 0 ou omis si non requis) -->
-      <!-- ⚠️ Si vous ne stockez pas les réactions, mieux vaut les retirer entièrement -->
-      <!-- Sinon, gardez-les avec des valeurs statiques (ex: 0) ou via computed -->
-      <!-- Ici, on les garde mais en mode minimal (sans comptes si non fournis) -->
       <div class="d-flex flex-wrap align-center gap-4 mt-4">
         <v-btn
           variant="outlined"
@@ -110,9 +77,6 @@
 
 <script setup lang="ts">
 const props = defineProps({ id: String });
-const { $directus, $readItems } = useNuxtApp();
-
-const expandedReviews = ref<Record<string | number, boolean>>({});
 
 const formatDate = (isoString: string) => {
   const date = new Date(isoString);
@@ -123,28 +87,7 @@ const formatDate = (isoString: string) => {
   });
 };
 
-const { data: results } = await useAsyncData(
-  "reviews",
-  async () => {
-    return $directus.request(
-      $readItems("reviews", {
-        filter: {
-          businesses: {
-            id: {
-              _eq: props.id,
-            },
-          },
-        },
-      }),
-    );
-  },
-  {
-    getCachedData: (key) => {
-      const nuxtApp = useNuxtApp();
-      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-    },
-  },
-);
+const { results } = await useFetchReviews(props.id);
 </script>
 <style scoped>
 /* Relaxed line height for readability */
