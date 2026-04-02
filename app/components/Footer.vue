@@ -158,7 +158,6 @@ const languages: Language[] = [
 
 const selectedLang = ref("fr");
 </script>
-
 <style scoped>
 .footer-modern {
   position: relative;
@@ -166,6 +165,11 @@ const selectedLang = ref("fr");
 .footer-content {
   position: relative;
   z-index: 1;
+}
+
+.footer-link {
+  /* Assure-toi d'avoir une transition globale sur le lien si la classe Vuetify ne suffit pas */
+  transition: all 0.3s ease; 
 }
 
 .footer-link .arrow-icon {
@@ -176,7 +180,8 @@ const selectedLang = ref("fr");
 
 .footer-link:hover {
   opacity: 1 !important;
-  padding-left: 6px;
+  /* On remplace le padding par un transform */
+  transform: translateX(6px); 
 }
 
 .footer-link:hover .arrow-icon {
@@ -193,8 +198,9 @@ const selectedLang = ref("fr");
 }
 
 .hover-pl:hover {
-  padding-left: 8px;
   opacity: 1 !important;
+  /* On applique la même logique ici pour les villes du Bénin */
+  transform: translateX(8px); 
 }
 
 .hover-translate:hover {

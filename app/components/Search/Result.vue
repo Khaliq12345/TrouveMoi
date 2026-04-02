@@ -7,22 +7,21 @@
         class="mt-4 rounded-xl overflow-hidden"
         border
       >
-        <NuxtLink
-          :to="`/details/${biz?.slug}`"
-          target="_blank"
-          class="text-decoration-none"
-        >
-          <div :class="['d-flex w-100', isMobile ? 'flex-column' : 'flex-row']">
-            <SearchCardMedia :media-list="flatMediaList" />
-
+        <div :class="['d-flex w-100', isMobile ? 'flex-column' : 'flex-row']">
+          <SearchCardMedia :media-list="flatMediaList" />
+          <NuxtLink
+            :to="`/details/${biz?.slug}`"
+            target="_blank"
+            class="text-decoration-none"
+          >
             <v-card-text class="d-flex flex-column flex-grow-1 pa-4">
               <SearchCardHeader :business="biz" />
               <SearchCardDetails :business="biz" />
               <v-spacer />
               <SearchCardFooter :business="biz" />
             </v-card-text>
-          </div>
-        </NuxtLink>
+          </NuxtLink>
+        </div>
       </v-card>
     </v-hover>
   </div>
