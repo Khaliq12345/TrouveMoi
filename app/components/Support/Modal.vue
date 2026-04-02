@@ -79,101 +79,80 @@
     </v-card>
   </v-dialog>
 </template>
-
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import type { CreateSupportTicketPayload, SupportModalSubmitPayload } from "~/types/support";
-import { createItem, uploadFiles } from "@directus/sdk";
+import type { CreateSupportTicketPayload } from "~/types/support";
 
 const props = defineProps({
   modelValue: Boolean,
-  loading: Boolean, // Ajout d'une prop loading pour bloquer le bouton
+  loading: Boolean,
 });
-
-const { $directus } = useNuxtApp();
 
 const emit = defineEmits(["update:modelValue", "refresh"]);
 
-// Référence vers le v-form du template
 const form = ref<any>(null);
-
-// Verrouille le formulaire pendant l'envoi
 const valid = ref(false);
 
 const issue = reactive({
   title: "",
   description: "",
-  photo: [],
+  photo: [] as File[],
 });
+
+const { uploadSupportImage, createTicket } = useSupport();
 
 const close = () => {
   emit("update:modelValue", false);
-  // Reset complet après la fermeture de l'animation
   issue.title = "";
   issue.description = "";
   issue.photo = [];
-  // On reset aussi les erreurs visuelles du formulaire
   if (form.value) form.value.resetValidation();
 };
 
 async function addIssue() {
-    // 1. On lance la validation du formulaire
-    if (!form.value) return;
-    const { valid: isFormValid } = await form.value.validate();
+  if (!form.value) return;
+  const { valid: isFormValid } = await form.value.validate();
+  if (!isFormValid) return;
 
-    // 2. Si le titre ou la description est vide, on bloque l'exécution ici
-    if (!isFormValid) return;
+  valid.value = true;
+  
+  try {
+    const uploadedUuids: string[] = [];
 
-    // 3. Les données sont bonnes, on verrouille le formulaire pour le chargement
-    valid.value = true;
-    
-    try {
-        const itemData: CreateSupportTicketPayload = {
-            title: issue.title,
-            description: issue.description,
-            resolved: false,
-            image_id: [],
-        };
-
-        let uploadedUuids: string[] = [];
-
-        if (issue.photo && Array.isArray(issue.photo) && issue.photo.length > 0) {
-            for (const file of issue.photo) {
-                const formData = new FormData();
-                formData.append("title", file?.name || "");
-                formData.append("file", file);
-                
-                // ENVOI DANS LE DOSSIER "supports"
-                formData.append("folder", "votre-uuid-de-dossier"); 
-
-                try {
-                    const uploadResult = await $directus.request(uploadFiles(formData));
-                    
-                    const fileId = Array.isArray(uploadResult) ? uploadResult[0]?.id : uploadResult?.id;
-                    
-                    if (fileId) {
-                        uploadedUuids.push(fileId);
-                    }
-                } catch (uploadErr) {
-                    console.error("Erreur upload fichier:", file.name, uploadErr);
-                }
-            }
+    // 1. GESTION DES IMAGES
+    if (issue.photo && Array.isArray(issue.photo) && issue.photo.length > 0) {
+      for (const file of issue.photo) {
+        // Sécurité : On s'assure que c'est bien une image
+        if (!file.type.startsWith('image/')) {
+          console.warn(`Le fichier ${file.name} ignoré (ce n'est pas une image).`);
+          continue; 
         }
-        
-        // On injecte le tableau d'UUIDs (même vide s'il n'y a pas de photo)
-        itemData.image_id = uploadedUuids;
 
-        // Création de l'item dans la collection 'supports'
-        await $directus.request(createItem("supports", itemData));
-
-        // Fermeture + signal au parent pour rafraîchir la liste
-        close();
-        emit("refresh");
-    } catch (err) {
-        console.error("Erreur lors de la création du ticket:", err);
-    } finally {
-        // On déverrouille le formulaire quoiqu'il arrive (succès ou erreur)
-        valid.value = false;
+        try {
+          // On upload l'image et on récupère l'ID généré par Directus
+          const fileId = await uploadSupportImage(file);
+          if (fileId) uploadedUuids.push(fileId);
+        } catch (uploadErr) {
+          console.error("Erreur upload fichier:", file.name, uploadErr);
+        }
+      }
     }
+    
+    // 2. CRÉATION DU TICKET
+    const itemData: CreateSupportTicketPayload = {
+      title: issue.title,
+      description: issue.description,
+      resolved: false,
+      images: uploadedUuids.map(id => ({ directus_files_id: id })),
+    };
+
+    await createTicket(itemData);
+
+    close();
+    emit("refresh");
+  } catch (err) {
+    console.error("Erreur lors de la création du ticket:", err);
+  } finally {
+    valid.value = false;
+  }
 }
 </script>
