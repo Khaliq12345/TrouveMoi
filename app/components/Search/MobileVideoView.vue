@@ -59,7 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue';
 import { useBusinessMeta } from '~/composables/useBusinessMeta';
 import type { BizMetaItem } from '~/types/biz';
 
