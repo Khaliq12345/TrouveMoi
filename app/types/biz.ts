@@ -112,20 +112,27 @@ export interface Biz {
   locations?: BizLocation[];
   reservation_available?: boolean;
   calendar_link?: string;
+  rating_details: {
+    "1": number;
+    "2": number;
+    "3": number;
+    "4": number;
+    "5": number;
+  };
 }
 
 export interface BizMetaItem {
   id: string;
   title: string;
   description: string;
-  type: 'menu' | 'service' | 'portfolio' | 'vibes' | 'video' | string;
+  type: "menu" | "service" | "portfolio" | "vibes" | "video" | string;
   price?: number | string | null;
   biz_id: string;
   biz_name?: string;
   biz_slug?: string;
-  media_type: 'image' | 'video' | string;
+  media_type: "image" | "video" | string;
   // Ajout de la propriété link qui contiendra le tableau des IDs des images
-  link: string[]; 
+  link: string[];
 }
 
 export interface GroupedBizMeta {

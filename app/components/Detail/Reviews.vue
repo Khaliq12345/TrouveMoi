@@ -2,21 +2,26 @@
 <template>
   <v-container class="pa-0 py-8 px-4">
     <!-- Section title -->
-    <h2 class="text-h5 font-weight-bold mb-6">Recommended Reviews</h2>
+    <h2 class="text-h5 font-weight-bold mb-6">Avis & Évaluations</h2>
+
+    <!-- Statistics Block -->
+    <DetailReviewStats />
 
     <!-- Reviews loop -->
     <div v-for="(review, i) in results" :key="review.id" class="mb-10">
       <!-- User info header -->
       <div class="d-flex align-center mb-4">
-        <!-- User avatar (placeholder only — pas de champ dans les données) -->
-        <v-avatar size="64" class="mr-4" color="grey-lighten-2">
-          <v-icon icon="mdi-account" size="32" color="grey-darken-1"></v-icon>
+        <!-- User avatar -->
+        <v-avatar size="48" class="mr-4" color="grey-darken-3">
+          <span class="text-h6 text-white">{{
+            review.author ? review.author.charAt(0).toUpperCase() : "A"
+          }}</span>
         </v-avatar>
 
         <!-- User details -->
         <div>
           <div class="text-subtitle-1 font-weight-bold">
-            {{ review.author }}
+            {{ review.author || "Anonyme" }}
           </div>
           <!-- Pas de localisation dans les données → omis -->
         </div>
@@ -42,16 +47,8 @@
       </div>
 
       <!-- Review text -->
-      <p class="text-body-1 text-grey-darken-4 mb-4 lh-relaxed">
-        {{ review.Comment }}
-      </p>
+      <DetailReviewText v-if="review.Comment" :text="review.Comment" />
 
-      <!-- Aucune image dans les données → section supprimée -->
-
-      <!-- Reaction buttons (avec comptes à 0 ou omis si non requis) -->
-      <!-- ⚠️ Si vous ne stockez pas les réactions, mieux vaut les retirer entièrement -->
-      <!-- Sinon, gardez-les avec des valeurs statiques (ex: 0) ou via computed -->
-      <!-- Ici, on les garde mais en mode minimal (sans comptes si non fournis) -->
       <div class="d-flex flex-wrap align-center gap-4 mt-4">
         <v-btn
           variant="outlined"
@@ -80,9 +77,8 @@
 
 <script setup lang="ts">
 const props = defineProps({ id: String });
-const { $directus, $readItems } = useNuxtApp();
 
-const formatDate = (isoString) => {
+const formatDate = (isoString: string) => {
   const date = new Date(isoString);
   return date.toLocaleDateString("fr-FR", {
     year: "numeric",
@@ -91,32 +87,8 @@ const formatDate = (isoString) => {
   });
 };
 
-const { data: results } = await useAsyncData(
-  "reviews",
-  async () => {
-    // On envoie l'objet query qui contient maintenant 'filter' ET potentiellement 'search'
-    return $directus.request(
-      $readItems("reviews", {
-        filter: {
-          businesses: {
-            // Ou 'business' selon ton renommage
-            id: {
-              _eq: props.id,
-            },
-          },
-        },
-      }),
-    );
-  },
-  {
-    getCachedData: (key) => {
-      const nuxtApp = useNuxtApp();
-      return nuxtApp.payload.data[key] || nuxtApp.static.data[key];
-    },
-  },
-);
+const { results } = await useFetchReviews(props.id);
 </script>
-
 <style scoped>
 /* Relaxed line height for readability */
 .lh-relaxed {
