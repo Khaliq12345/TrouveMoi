@@ -27,7 +27,6 @@
                             />
                         </section>
 
-                        <p>{{ metas }}</p>
                         <section
                             id="menu"
                             class="scroll-section"
