@@ -23,7 +23,7 @@ export interface SupportTicket {
    * Legacy field – array of Directus file IDs (integers) stored via
    * the many-to-many `images` relation. Kept for backwards compatibility.
    */
-  images: number[];
+  images: string[];
 }
 
 /**
@@ -35,6 +35,8 @@ export interface CreateSupportTicketPayload {
   resolved?: boolean;
   /** Array of Directus file UUIDs uploaded before the ticket is created */
   image_id?: string[];
+  /** Array of Directus file IDs (strings) stored via the many-to-many `images` relation. Kept for backwards compatibility. */
+  images?: { directus_files_id: string }[];
 }
 
 /**

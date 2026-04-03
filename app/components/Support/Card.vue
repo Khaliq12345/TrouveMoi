@@ -41,8 +41,6 @@
       </div>
     </v-card-text>
 
-    <!-- Dialog readonly -->
-
     <v-dialog
       v-model="dialog"
       max-width="450"
@@ -54,13 +52,13 @@
           v-if="hasImages"
           height="250"
           hide-delimiters
-          :show-arrows="ticket.image_id.length > 1 ? 'hover' : false"
+          :show-arrows="ticket.images.length > 1 ? 'hover' : false"
           class="bg-grey-lighten-4"
         >
-        <v-carousel-item
-            v-for="(image, i) in ticket.image_id"
+          <v-carousel-item
+            v-for="(imageId, i) in ticket.images"
             :key="i"
-            :src="imgLink(image ?? '')"
+            :src="imgLink(imageId)"
             cover
           />
           <div class="position-absolute top-0 right-0 pa-4" style="z-index: 2">
@@ -81,9 +79,7 @@
               <h2 class="text-h6 font-weight-bold line-height-tight mb-1">
                 {{ ticket.title }}
               </h2>
-              <div
-                class="d-flex align-center text-caption text-medium-emphasis"
-              >
+              <div class="d-flex align-center text-caption text-medium-emphasis">
                 <v-icon icon="mdi-calendar-range" size="14" class="mr-1" />
                 {{ formatFullDate(ticket.date_created) }}
               </div>
@@ -114,15 +110,17 @@
     </v-dialog>
   </v-card>
 </template>
+
 <script setup lang="ts">
 import type { SupportTicket } from "~/types/support";
+
 const dialog = ref(false);
 
 const props = defineProps<{
   ticket: SupportTicket;
 }>();
 
-const hasImages = computed(() => props.ticket.image_id?.length > 0);
+const hasImages = computed(() => props.ticket.images?.length > 0);
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("fr-FR", {
@@ -130,6 +128,7 @@ const formatDate = (date: string) =>
     month: "short",
     year: "numeric",
   });
+
 const formatFullDate = (date: string) =>
   new Date(date).toLocaleString("fr-FR", {
     day: "numeric",
