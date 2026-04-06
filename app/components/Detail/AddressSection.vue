@@ -6,18 +6,6 @@
 const props = defineProps<{ locations?: any[] }>();
 
 const addressItems = computed(() => {
-    return (
-        props.locations?.map((loc) => ({
-            title: loc.address,
-            subtitle: loc.city,
-            prependIcon: "mdi-map-marker",
-            props: {
-                titleClass: "font-weight-bold text-primary",
-                href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.address)}`,
-                target: "_blank",
-                class: "border-b",
-            },
-        })) || []
-    );
+    return [];
 });
 </script>

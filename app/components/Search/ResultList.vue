@@ -1,56 +1,62 @@
 <!-- Infinite scroll container for search results with loading and empty states -->
 <template>
-    <!-- Infinite scroll wrapper -->
-    <v-infinite-scroll :items="businesses" @load="onLoad" class="w-100">
-        <!-- Result items loop -->
+    <ClientOnly>
+        <v-infinite-scroll
+            :key="JSON.stringify(route.query)"
+            :items="businesses"
+            @load="onLoad"
+            class="w-100"
+            :style="!isMobile ? 'max-height: 900px; overflow-y: auto;' : ''"
+        >
+            <!-- Result items loop -->
 
-        <SearchResult
-            class="mb-2 w-100"
-            :biz="biz"
-            v-for="biz in businesses"
-            :key="biz?.id"
-        />
+            <SearchResult
+                class="mb-2 w-100"
+                :biz="biz"
+                v-for="biz in businesses"
+                :key="biz?.id"
+            />
 
-        <!-- Loading indicator -->
-        <template v-slot:loading>
-            <div class="d-flex justify-center pa-4">
-                <v-progress-circular indeterminate color="primary" />
-            </div>
-        </template>
+            <!-- Loading indicator -->
+            <template v-slot:loading>
+                <div class="d-flex justify-center pa-4">
+                    <v-progress-circular indeterminate color="primary" />
+                </div>
+            </template>
 
-        <!-- Empty state message -->
-        <template v-slot:empty>
-            <v-alert type="info" variant="plain" class="ma-2">
-                Plus de résultats disponibles
-            </v-alert>
-        </template>
-    </v-infinite-scroll>
-    <RelatedSearch />
+            <RelatedSearch />
+        </v-infinite-scroll>
+    </ClientOnly>
 </template>
 
 <script setup lang="ts">
-// Component props and events
-const { businesses, pending, refresh, error, page, limit } = inject(
+const route = useRoute();
+// 1. Destructure hasMore from your injected data
+const { businesses, pending, refresh, page, hasMore } = inject(
     "businesses-data",
 ) as any;
 
+const isMobile = inject("isMobile");
+
 async function onLoad({ done }) {
-    if (pending.value && page.value === 1) {
-        done("ok");
+    // 1. Guard: If we are already fetching or there's no more data, stop.
+    if (pending.value || !hasMore.value) {
+        done(hasMore.value ? "ok" : "empty");
         return;
     }
 
-    // 2. Increment pagination
+    // 2. Increment the page
+    // Because 'page' is watched in useAsyncData, this triggers the fetch automatically
     page.value++;
 
-    // 3. Wait for the new data to fetch
-    await refresh();
+    // 3. Wait for the fetch to actually complete
+    // useAsyncData's refresh returns the new data or a promise
+    await nextTick();
+    await until(pending).toBe(false);
+    await nextTick();
 
-    // 4. Proper check for the end of the biz
-    if (
-        businesses.value.length === 0 ||
-        businesses.value.length % limit.value !== 0
-    ) {
+    // 4. Use the reactive 'hasMore' from the composable to tell Vuetify when to stop
+    if (!hasMore.value) {
         done("empty");
     } else {
         done("ok");

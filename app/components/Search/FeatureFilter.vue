@@ -38,13 +38,6 @@
     </v-list-item>
 </template>
 
-<!-- <script setup lang="ts">
-const { updateURL, getURLFilter } = useFilterURL();
-
-const selectedFeatures = ref<string[]>(getURLFilter("featured_slots") as string[]);
-const numberToDisplay = ref(6);
-</script> -->
-
 <script setup lang="ts">
 const { updateURL, getURLFilter } = useFilterURL();
 const { getFeatures } = await useFetchFeatures();

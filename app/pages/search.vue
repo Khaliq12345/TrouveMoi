@@ -11,6 +11,9 @@
 
         <!-- Desktop view (filters + results + map) -->
         <SearchDesktopView v-show="!isMobile" />
+
+        <BottomNav v-if="isMobile" />
+        <Footer v-show="!isMobile"></Footer>
     </v-layout>
     <!-- A navigation drawer to show filters only on desktop screen -->
     <v-navigation-drawer
@@ -32,13 +35,14 @@
 const route = useRoute();
 const router = useRouter();
 
-// UI state management
-const Showdrawer = ref(false); // Desktop filter drawer visibility
-
+//Do not show drawer on desktop by default
+const Showdrawer = ref(false);
+const biz = ref(); //to store the individual biz info
 // Inject mobile state from parent
 const isMobile = inject("isMobile");
 
-const { businesses, page, limit, error, pending, refresh } =
+// Fetch the businesses data
+const { businesses, page, limit, hasMore, error, pending, refresh } =
     await useFetchBiz();
 
 // 4. Check for errors in your template or script
@@ -53,8 +57,11 @@ provide("businesses-data", {
     refresh,
     page,
     limit,
+    hasMore,
 });
 provide("showDrawer", Showdrawer);
+biz.value = businesses.value[0];
+provide("biz", biz);
 
 // Defaults to <<cafe>> before the page loads the dom if there's no filter
 onBeforeMount(() => {
@@ -64,7 +71,7 @@ onBeforeMount(() => {
         console.log("No query");
         router.push({
             query: {
-                categories: "cafe",
+                categories: "restaurants",
             },
         });
     }

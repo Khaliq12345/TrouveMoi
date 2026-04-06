@@ -31,9 +31,8 @@
             v-for="loc in locations"
             :key="loc.id"
             label="Get Directions"
-            :value="`${loc.address}, ${loc.city}`"
+            :value="loc"
             icon="mdi-directions-outline"
-            :href="googleMapsUrl(loc)"
         />
     </v-sheet>
 </template>
@@ -48,9 +47,6 @@ const props = defineProps<{
 
 const cleanUrl = (url: string) =>
     url.replace(/^https?:\/\//, "").replace(/\/$/, "");
-
-const googleMapsUrl = (loc: any) =>
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${loc.address}, ${loc.city}`)}`;
 </script>
 
 <style scoped>

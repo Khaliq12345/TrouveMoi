@@ -17,8 +17,6 @@ export const useFetchSingleBiz = async (slug: string) => {
               "*",
               "featuredslots.featured_slots_id.*",
               "sub_categories.sub_categories_id.*",
-              // Récupère les locations liées via la relation inverse
-              "locations.*", // ou "business_locations.*" selon ton schéma
             ],
           }),
         );
@@ -43,30 +41,10 @@ export const useFetchSingleBiz = async (slug: string) => {
             (junction: any) => junction.sub_categories_id,
           ) || [];
 
-        // 2. Récupère les locations si pas incluses dans la requête principale
-        // (si relation inverse non configurée, on fait une requête séparée)
-        let locations: BizLocation[] = [];
-
-        if (!business.locations && business.id) {
-          const locResponse = await $directus.request(
-            $readItems("business_locations", {
-              filter: {
-                bussness: {
-                  id: { _eq: business.id },
-                },
-              },
-            }),
-          );
-          locations = (locResponse as BizLocation[]) || [];
-        } else {
-          locations = business.locations || [];
-        }
-
         return {
           ...business,
           featured_slots: featuredSlots,
           subcategories: subCategories,
-          locations, // Ajoute les locations
         };
       },
       {

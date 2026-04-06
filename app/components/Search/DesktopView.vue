@@ -1,10 +1,10 @@
 <template>
-    <v-main class="fill-height">
-        <v-sheet class="d-flex fill-height pa-0" border="md">
+    <v-main>
+        <v-sheet class="d-flex fill-height pa-0 result-container" border="md">
             <!-- THis is the drawer that contains the filter, we only show on very large screen and above -->
             <aside
                 class="d-none d-lg-flex flex-column border-e fill-height"
-                style="width: 250px; min-width: 250px"
+                style="width: 450px"
             >
                 <SearchFilter />
             </aside>
@@ -23,19 +23,22 @@
             <!-- And this is the map of the biz -->
             <aside
                 class="d-none d-md-flex bg-grey-lighten-4 border-s fill-height"
-                style="width: 30%; min-width: 300px"
+                style="width: 50%; min-width: 300px"
             >
                 <div class="pa-4 w-100">
-                    <p class="text-overline font-weight-bold text-grey">
-                        Map View
-                    </p>
+                    <Direction
+                        :textDirections="biz?.text_directions"
+                        :audioDirection="biz?.audio_direction"
+                    ></Direction>
                 </div>
             </aside>
         </v-sheet>
     </v-main>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const biz = inject<any>("biz");
+</script>
 
 <style scoped>
 /* Ensures the main content doesn't push the map out of view */

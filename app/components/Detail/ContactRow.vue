@@ -1,7 +1,7 @@
 <template>
     <div
         class="d-flex align-center justify-space-between py-3 border-b cursor-pointer hover-effect"
-        @click="openLink"
+        @click="href ? openLink : undefined"
     >
         <div class="pe-4 overflow-hidden">
             <div
@@ -10,7 +10,7 @@
             >
                 {{ label }}
             </div>
-            <div class="text-body-1 text-grey-darken-3 text-truncate">
+            <div class="text-body-1 text-grey-darken-3 text-wrap">
                 {{ value }}
             </div>
         </div>
@@ -24,7 +24,7 @@ const props = defineProps<{
     label?: string;
     value: string;
     icon: string;
-    href: string;
+    href?: string;
 }>();
 
 const openLink = () => {

@@ -12,7 +12,7 @@
                         <CustomDivider></CustomDivider>
                         <DetailMiniInfo />
 
-                        <DetailActionsButtons />
+                        <!-- <DetailActionsButtons /> -->
 
                         <section
                             id="services"
@@ -75,7 +75,7 @@
                                 :website="biz?.website"
                                 :phone="biz?.phone"
                                 :whatsapp="biz?.whatsapp"
-                                :locations="biz?.locations || []"
+                                :locations="biz?.locations?.split('/n')"
                             />
                         </section>
 
@@ -105,7 +105,7 @@
                             :website="biz?.website"
                             :phone="biz?.phone"
                             :whatsapp="biz?.whatsapp"
-                            :locations="biz?.locations || []"
+                            :locations="biz?.locations?.split('/n') || []"
                         />
                     </v-col>
                 </v-row>

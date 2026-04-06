@@ -2,14 +2,10 @@
     <v-container class="pa-0 py-8 px-4">
         <v-row>
             <v-col cols="12" md="7">
-                <v-card
-                    variant="outlined"
-                    class="rounded-xl overflow-hidden border-subtle"
-                >
-                    <DetailLocationSection :locations="biz?.locations" />
-                    <v-divider />
-                    <DetailAddressSection :locations="biz?.locations" />
-                </v-card>
+                <Direction
+                    :audioDirection="biz?.audio_direction"
+                    :textDirections="biz?.text_directions"
+                ></Direction>
             </v-col>
 
             <v-col cols="12" md="5">
@@ -21,5 +17,6 @@
 
 <script setup lang="ts">
 import type { Biz } from "~/types/biz";
-defineProps<{ biz: Biz | null }>();
+
+const biz = inject<Biz>("biz");
 </script>

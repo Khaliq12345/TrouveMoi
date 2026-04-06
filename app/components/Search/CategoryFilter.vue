@@ -34,11 +34,13 @@
             ></show-all-button>
         </div>
     </v-list-item>
+
+    <!-- Only show if desktop screen -->
     <v-chip-group
         v-else
         v-model="selectedCategories"
         multiple
-        class="pa-0"
+        class="pa-3"
         @update:model-value="updateURL('sub_categories', selectedCategories)"
     >
         <v-chip

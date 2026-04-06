@@ -85,6 +85,11 @@ export interface BizMedia {
   description: string | null;
 }
 
+interface TextDirection {
+  step: number;
+  description: string;
+}
+
 export interface Biz {
   id: string;
   sort: number | null;
@@ -109,7 +114,7 @@ export interface Biz {
   sub_categories: number[];
   featured_slots: FeaturedSlot[];
   subcategories?: SubCategory[];
-  locations?: BizLocation[];
+  locations?: string;
   reservation_available?: boolean;
   calendar_link?: string;
   rating_details: {
@@ -119,6 +124,8 @@ export interface Biz {
     "4": number;
     "5": number;
   };
+  audio_direction?: string;
+  text_directions?: TextDirection[];
 }
 
 export interface BizMetaItem {

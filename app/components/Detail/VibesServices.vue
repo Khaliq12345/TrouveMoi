@@ -3,7 +3,9 @@
         <!-- Title of the section -->
         <div class="d-flex align-center justify-space-between mb-6 px-4">
             <div>
-                <h2 class="text-h4 font-weight-bold mb-1">{{ title }}</h2>
+                <h2 class="text-h6 text-md-h4 font-weight-bold mb-1">
+                    {{ title }}
+                </h2>
                 <p class="text-body-2 text-grey-darken-1">
                     {{ subtitle }}
                 </p>

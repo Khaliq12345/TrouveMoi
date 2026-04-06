@@ -1,6 +1,5 @@
 <template>
     <v-sheet class="px-2" color="transparent">
-        <h3 class="text-h6 font-weight-black mb-4">Opening Hours</h3>
         <div class="rounded-xl pa-2">
             <v-list density="compact" class="bg-transparent">
                 <v-list-item
