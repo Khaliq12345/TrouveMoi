@@ -18,8 +18,8 @@
             </v-btn>
         </template>
 
-        <v-card class="bg-grey-lighten-4">
-            <v-toolbar color="white" flat border>
+        <v-card>
+            <v-toolbar color="transparent" flat border>
                 <v-btn icon="mdi-close" @click="showDirections = false"></v-btn>
                 <v-toolbar-title class="text-subtitle-1 font-weight-bold">
                     Comment s'y rendre

@@ -1,7 +1,7 @@
 <template>
     <v-container class="py-8">
         <h2 class="text-h9 md:text-h6 font-weight-bold mb-6 text-grey-darken-4">
-            Recherches associées à {{ route.query.location }}
+            Recherches associées à {{ route.query.location || "Cotonou" }}
         </h2>
 
         <v-row no-gutters>
@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const isMobile = inject("isMobile");
+const isMobile = inject<Ref<Boolean>>("isMobile");
 const showAll = ref(false);
 const router = useRouter();
 
@@ -67,11 +67,13 @@ const goToSearch = (item) => {
 };
 
 // Récupération des données via l'utilitaire
-const allItems = computed(() => getCityRelatedSearches(route.query.location));
+const allItems = computed(() =>
+    getCityRelatedSearches(route.query.location || "Cotonou"),
+);
 
 // Logique : Desktop = Tout / Mobile = 5 puis Tout
 const displayedItems = computed(() => {
-    if (!isMobile.value) return allItems.value;
+    if (!isMobile?.value) return allItems.value;
     return showAll.value ? allItems.value : allItems.value.slice(0, 5);
 });
 </script>

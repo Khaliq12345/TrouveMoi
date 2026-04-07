@@ -42,7 +42,9 @@
             </span>
         </div>
 
-        <SearchDirectionMobileDialog></SearchDirectionMobileDialog>
+        <SearchDirectionMobileDialog
+            v-if="isMobile"
+        ></SearchDirectionMobileDialog>
     </div>
 </template>
 
@@ -50,6 +52,7 @@
 import { computed } from "vue";
 
 const props = defineProps(["business"]);
+const isMobile = inject("isMobile");
 
 // Split the string by newlines and clean up extra spaces
 const allLocations = computed(() => {

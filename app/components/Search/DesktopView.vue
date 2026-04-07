@@ -22,7 +22,7 @@
 
             <!-- And this is the map of the biz -->
             <aside
-                class="d-none d-md-flex bg-grey-lighten-4 border-s fill-height"
+                class="d-none d-md-flex border-s fill-height"
                 style="width: 50%; min-width: 300px"
             >
                 <div class="pa-4 w-100">
