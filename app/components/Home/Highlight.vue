@@ -23,8 +23,8 @@
           header-icon="mdi-star"
           header-title="Annonces Vérifiées près de Cotonou"
           footer-title="Annonces Vérifiées près de Cotonou"
-          footer-subtitle="Consultez les meilleures annonces vérifiées sur notre plateforme pour une expérience sécurisée."
-          :search-query="{ filter: 'verified', location: 'Cotonou' }"
+          footer-subtitle="Consultez les meilleures annonces pour découvrir des lieux exceptionnels."
+          :search-query="{ location: 'Cotonou' }"
         >
           <div class="d-flex align-center mb-4">
             <v-icon
@@ -38,13 +38,17 @@
             >
           </div>
           <v-row dense>
-            <v-col cols="4" v-for="n in 3" :key="n">
-              <v-img
-                :src="`https://picsum.photos/100/100?random=${n}`"
-                cover
-                aspect-ratio="1"
-                class="rounded-lg"
-              ></v-img>
+            <!-- images link from origineterre.com -->
+            <v-col
+              cols="4"
+              v-for="n in [
+                'https://i0.wp.com/origineterre.com/wp-content/uploads/2020/09/savon-cacao-papaye-origine-terre.jpeg?resize=650%2C740&ssl=1',
+                'https://i0.wp.com/origineterre.com/wp-content/uploads/2018/07/mangue-cannelle.jpeg?w=536&ssl=1',
+                'https://i0.wp.com/origineterre.com/wp-content/uploads/2019/03/tchayo-basilic-savon-antibacterien-rafraichissant-1000px.jpg?fit=1000%2C1000&ssl=1',
+              ]"
+              :key="n"
+            >
+              <v-img :src="n" cover aspect-ratio="1" class="rounded-lg"></v-img>
             </v-col>
           </v-row>
         </HomeCollectionCard>
@@ -53,13 +57,13 @@
       <v-col cols="12" md="4">
         <HomeCollectionCard
           header-icon="mdi-thumb-up"
-          header-title="Les Mieux Notés à Grand-Popo"
-          footer-title="Les Mieux Notés à Grand-Popo"
-          footer-subtitle="Découvrez les expériences et les lieux les mieux notés autour de Grand-Popo."
-          :search-query="{ filter: 'top_rated', location: 'Grand-Popo' }"
+          header-title="Restaurants Les Mieux Notés à Cotonou"
+          footer-title="Restaurants Les Mieux Notés à Cotonou"
+          footer-subtitle="Découvrez les expériences sur les restaurants les mieux notés à Cotonou."
+          :search-query="{ categories: 'restaurants', location: 'Cotonou' }"
         >
           <p class="text-caption text-grey-darken-1 mb-6">
-            Basé sur la distance, les notes et les avis de vrais utilisateurs.
+            Basé sur les notes et les avis de vrais utilisateurs.
           </p>
           <div
             class="d-flex justify-center bg-white rounded-xl pa-4 elevation-1"
@@ -77,13 +81,13 @@
 
       <v-col cols="12" md="4">
         <HomeCollectionCard
-          footer-title="Mise en Avant Locale de la Semaine"
-          footer-subtitle="Notre destination hautement recommandée pour cette semaine. Ne manquez pas ces favoris locaux."
-          :search-query="{ filter: 'spotlight' }"
+          footer-title="Top des hôtels actuellement ouverts"
+          footer-subtitle="Découvrez les hôtels qui ne ferment jamais pour vous offrir un séjour mémorable."
+          :search-query="{ categories: 'hotellerie-et-tourisme' }"
         >
           <v-card class="rounded-lg overflow-hidden" elevation="0">
             <v-img
-              src="https://picsum.photos/400/250?random=10"
+              src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               cover
               height="180"
               class="align-end"
@@ -93,7 +97,7 @@
                 class="text-white text-subtitle-2 d-flex justify-space-between align-center"
               >
                 <div>
-                  <div>Restaurant Awash</div>
+                  <div>Hôtels ouverts</div>
                   <div
                     class="text-caption text-grey-lighten-1 d-flex align-center mt-1"
                   >
