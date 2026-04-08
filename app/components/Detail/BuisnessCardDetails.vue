@@ -11,7 +11,7 @@
     />
     <!-- The review -->
     <span class="ms-2 text-subtitle-2 font-weight-bold shadow-text">
-      {{ biz?.rating }} ({{ biz?.reviews_count }} Reviews)
+      {{ biz?.rating }} ({{ biz?.reviews_count }} avis)
     </span>
   </div>
 

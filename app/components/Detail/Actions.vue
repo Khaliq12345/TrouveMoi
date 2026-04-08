@@ -7,7 +7,7 @@
                 <!-- Primary action: Write review button -->
                 <v-btn class="text-none font-weight-bold rounded-xl">
                     <v-icon start size="20">mdi-star-outline</v-icon>
-                    Write a Review
+                    Écrire un avis
                 </v-btn>
 
                 <!-- Secondary action buttons loop -->
@@ -33,7 +33,7 @@
 <script setup lang="ts">
 // Secondary action buttons configuration
 const secondaryButtons = [
-    { text: "Share", icon: "mdi-share-variant-outline" },
-    { text: "Save", icon: "mdi-bookmark-outline" },
+    { text: "Partager", icon: "mdi-share-variant-outline" },
+    { text: "Enregistrer", icon: "mdi-bookmark-outline" },
 ];
 </script>

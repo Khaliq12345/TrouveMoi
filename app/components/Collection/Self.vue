@@ -13,9 +13,9 @@
 const collections = [
     {
         id: 1,
-        title: "SF's Sought-after Seats",
+        title: "Les restaurants prisés de SF",
         description:
-            "The most reserved restaurants in San Francisco this week.",
+            "Les restaurants les plus réservés à San Francisco cette semaine.",
         images: [
             "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
             "https://images.unsplash.com/photo-1553621042-f6e147245754",
@@ -27,8 +27,8 @@ const collections = [
     },
     {
         id: 2,
-        title: "Hidden Rooftops",
-        description: "Secret rooftops with great views and cocktails.",
+        title: "Terrasses cachées",
+        description: "Des terrasses secrètes avec une belle vue et des cocktails.",
         images: [
             "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
             "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4",
@@ -40,8 +40,8 @@ const collections = [
     },
     {
         id: 3,
-        title: "Art Deco Architecture",
-        description: "Iconic art-deco buildings around the historic district.",
+        title: "Architecture Art Déco",
+        description: "Des bâtiments art déco emblématiques dans le quartier historique.",
         images: [
             "https://images.unsplash.com/photo-1493246507139-91e8bef99c1a",
             "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
@@ -53,8 +53,8 @@ const collections = [
     },
     {
         id: 4,
-        title: "Cozy Coding Cafes",
-        description: "Cafes ideal for developers: Wi-Fi, outlets and silence.",
+        title: "Cafés de codage confortables",
+        description: "Des cafés idéaux pour les développeurs : Wi-Fi, prises et silence.",
         images: [
             "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
             "https://images.unsplash.com/photo-1501339817302-38a9143182eb",
@@ -66,8 +66,8 @@ const collections = [
     },
     {
         id: 5,
-        title: "Retro Vinyl Shops",
-        description: "Where collectors hunt rare vinyl records.",
+        title: "Boutiques de vinyles rétro",
+        description: "Où les collectionneurs chassent les disques vinyles rares.",
         images: [
             "https://images.unsplash.com/photo-1603048588665-791ca8aea617",
             "https://images.unsplash.com/photo-1461360226052-6e301506bb40",
@@ -79,8 +79,8 @@ const collections = [
     },
     {
         id: 6,
-        title: "Green Weekend Escapes",
-        description: "Urban parks and botanical gardens perfect for a break.",
+        title: "Escapades vertes en week-end",
+        description: "Des parcs urbains et jardins botaniques parfaits pour une pause.",
         images: [
             "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
             "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae",
@@ -92,8 +92,8 @@ const collections = [
     },
     {
         id: 7,
-        title: "Late Night Ramen",
-        description: "Ramen spots open late for night owls.",
+        title: "Ramen tard le soir",
+        description: "Des spots de ramen ouverts tard pour les nocturnes.",
         images: [
             "https://images.unsplash.com/photo-1569718212165-3a8278d5f624",
             "https://images.unsplash.com/photo-1552611052-33e04de081de",
@@ -105,8 +105,8 @@ const collections = [
     },
     {
         id: 8,
-        title: "Street Art Tour",
-        description: "Murals and graffiti worth discovering.",
+        title: "Tour d'art urbain",
+        description: "Des fresques et graffitis qui valent la peine d'être découverts.",
         images: [
             "https://images.unsplash.com/photo-1541450805268-4822a3a774ca",
             "https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8",
@@ -118,8 +118,8 @@ const collections = [
     },
     {
         id: 9,
-        title: "Minimalist Staycations",
-        description: "Minimalist boutique hotels for a quiet stay.",
+        title: "Séjours minimalistes",
+        description: "Des hôtels boutique minimalistes pour un séjour tranquille.",
         images: [
             "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
             "https://images.unsplash.com/photo-1566073771259-6a8506099945",
@@ -131,9 +131,9 @@ const collections = [
     },
     {
         id: 10,
-        title: "Best Coffee Roasters",
+        title: "Meilleurs torréfacteurs de café",
         description:
-            "Independent coffee roasters serving exceptional espresso.",
+            "Des torréfacteurs indépendants servant un espresso exceptionnel.",
         images: [
             "https://images.unsplash.com/photo-1498804103079-a6351b050096",
             "https://images.unsplash.com/photo-1442512595331-e89e73853f31",
@@ -146,8 +146,8 @@ const collections = [
 
     {
         id: 11,
-        title: "Historic Libraries",
-        description: "Libraries known for architecture and rare collections.",
+        title: "Bibliothèques historiques",
+        description: "Des bibliothèques connues pour leur architecture et leurs collections rares.",
         images: [
             "https://images.unsplash.com/photo-1521587760476-6c12a4b040da",
             "https://images.unsplash.com/photo-1519681393784-d120267933ba",
@@ -160,8 +160,8 @@ const collections = [
 
     {
         id: 12,
-        title: "Ocean View Walks",
-        description: "Scenic coastal walking routes.",
+        title: "Promenades avec vue sur l'océan",
+        description: "Des sentiers côtiers pittoresques.",
         images: [
             "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
             "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
@@ -174,8 +174,8 @@ const collections = [
 
     {
         id: 13,
-        title: "Creative Coworking Spaces",
-        description: "Modern coworking spaces for freelancers.",
+        title: "Espaces de coworking créatifs",
+        description: "Des espaces de coworking modernes pour les freelances.",
         images: [
             "https://images.unsplash.com/photo-1497366216548-37526070297c",
             "https://images.unsplash.com/photo-1556761175-b413da4baf72",
@@ -188,8 +188,8 @@ const collections = [
 
     {
         id: 14,
-        title: "Weekend Farmers Markets",
-        description: "Fresh produce and artisan food markets.",
+        title: "Marchés fermiers du week-end",
+        description: "Des marchés de produits frais et d'aliments artisanaux.",
         images: [
             "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0",
             "https://images.unsplash.com/photo-1542838132-92c53300491e",
@@ -202,8 +202,8 @@ const collections = [
 
     {
         id: 15,
-        title: "Modern Art Galleries",
-        description: "Contemporary art spaces and exhibitions.",
+        title: "Galeries d'art moderne",
+        description: "Des espaces d'art contemporain et des expositions.",
         images: [
             "https://images.unsplash.com/photo-1500534623283-312aade485b7",
             "https://images.unsplash.com/photo-1504198458649-3128b932f49b",
@@ -216,8 +216,8 @@ const collections = [
 
     {
         id: 16,
-        title: "Hidden Bookstores",
-        description: "Independent bookstores loved by locals.",
+        title: "Librairies cachées",
+        description: "Des librairies indépendantes appréciées des locaux.",
         images: [
             "https://images.unsplash.com/photo-1512820790803-83ca734da794",
             "https://images.unsplash.com/photo-1496104679561-38b3b4d81c65",
@@ -230,8 +230,8 @@ const collections = [
 
     {
         id: 17,
-        title: "Night Photography Spots",
-        description: "City locations perfect for night photography.",
+        title: "Spots de photographie nocturne",
+        description: "Des lieux urbains parfaits pour la photographie nocturne.",
         images: [
             "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
             "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
@@ -244,8 +244,8 @@ const collections = [
 
     {
         id: 18,
-        title: "Urban Cycling Routes",
-        description: "Safe and scenic bike routes.",
+        title: "Itinéraires cyclables urbains",
+        description: "Des pistes cyclables sûres et pittoresques.",
         images: [
             "https://images.unsplash.com/photo-1508973378895-527d8a02b43d",
             "https://images.unsplash.com/photo-1485965120184-e220f721d03e",
@@ -258,8 +258,8 @@ const collections = [
 
     {
         id: 19,
-        title: "Luxury Hotel Bars",
-        description: "Hotel bars known for creative cocktails.",
+        title: "Bars d'hôtels de luxe",
+        description: "Des bars d'hôtels connus pour leurs cocktails créatifs.",
         images: [
             "https://images.unsplash.com/photo-1470337458703-46ad1756a187",
             "https://images.unsplash.com/photo-1470337458703-46ad1756a187",
@@ -272,8 +272,8 @@ const collections = [
 
     {
         id: 20,
-        title: "City Skyline Views",
-        description: "Best places to watch the skyline at sunset.",
+        title: "Vues sur la skyline de la ville",
+        description: "Les meilleurs endroits pour admirer la skyline au coucher du soleil.",
         images: [
             "https://images.unsplash.com/photo-1494526585095-c41746248156",
             "https://images.unsplash.com/photo-1467269204594-9661b134dd2b",
@@ -286,8 +286,8 @@ const collections = [
 
     {
         id: 21,
-        title: "Underground Music Venues",
-        description: "Small venues hosting emerging artists.",
+        title: "Salles de musique underground",
+        description: "De petites salles accueillant des artistes émergents.",
         images: [
             "https://images.unsplash.com/photo-1501386761578-eac5c94b800a",
             "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3",
@@ -300,8 +300,8 @@ const collections = [
 
     {
         id: 22,
-        title: "Vintage Fashion Boutiques",
-        description: "Shops specializing in vintage clothing.",
+        title: "Boutiques de mode vintage",
+        description: "Des boutiques spécialisées dans les vêtements vintage.",
         images: [
             "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f",
             "https://images.unsplash.com/photo-1521335629791-ce4aec67dd53",
@@ -314,8 +314,8 @@ const collections = [
 
     {
         id: 23,
-        title: "Urban Picnic Spots",
-        description: "Green spaces ideal for picnics.",
+        title: "Spots de pique-nique urbains",
+        description: "Des espaces verts idéaux pour les pique-niques.",
         images: [
             "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
             "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
@@ -328,8 +328,8 @@ const collections = [
 
     {
         id: 24,
-        title: "Tech Startup Offices",
-        description: "Innovative office designs from tech startups.",
+        title: "Bureaux de startups tech",
+        description: "Des bureaux aux designs innovants de startups tech.",
         images: [
             "https://images.unsplash.com/photo-1492724441997-5dc865305da7",
             "https://images.unsplash.com/photo-1497366216548-37526070297c",
@@ -342,8 +342,8 @@ const collections = [
 
     {
         id: 25,
-        title: "Craft Breweries",
-        description: "Local breweries producing craft beer.",
+        title: "Brasseries artisanales",
+        description: "Des brasseries locales produisant de la bière artisanale.",
         images: [
             "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff",
             "https://images.unsplash.com/photo-1541542684-4a5c9d71b68e",
@@ -356,8 +356,8 @@ const collections = [
 
     {
         id: 26,
-        title: "Historic Bridges",
-        description: "Bridges famous for engineering and views.",
+        title: "Ponts historiques",
+        description: "Des ponts célèbres pour leur ingénierie et leurs vues.",
         images: [
             "https://images.unsplash.com/photo-1505761671935-60b3a7427bad",
             "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
@@ -370,8 +370,8 @@ const collections = [
 
     {
         id: 27,
-        title: "Mountain Day Trips",
-        description: "Short mountain trips near the city.",
+        title: "Excursions en montagne",
+        description: "De courtes excursions en montagne près de la ville.",
         images: [
             "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
             "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
@@ -384,8 +384,8 @@ const collections = [
 
     {
         id: 28,
-        title: "Street Food Corners",
-        description: "Popular street food locations.",
+        title: "Coins de street food",
+        description: "Des lieux populaires de street food.",
         images: [
             "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0",
             "https://images.unsplash.com/photo-1543353071-087092ec393a",
@@ -398,8 +398,8 @@ const collections = [
 
     {
         id: 29,
-        title: "Urban Photography Walk",
-        description: "Photography walk routes for creatives.",
+        title: "Marche photographique urbaine",
+        description: "Des itinéraires de marche photographique pour les créatifs.",
         images: [
             "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
             "https://images.unsplash.com/photo-1467269204594-9661b134dd2b",
@@ -412,8 +412,8 @@ const collections = [
 
     {
         id: 30,
-        title: "City Sunrise Spots",
-        description: "Places where sunrise views are spectacular.",
+        title: "Spots de lever de soleil en ville",
+        description: "Des endroits où les vues au lever du soleil sont spectaculaires.",
         images: [
             "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
             "https://images.unsplash.com/photo-1492724441997-5dc865305da7",

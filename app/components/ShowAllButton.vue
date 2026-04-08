@@ -28,5 +28,5 @@ const props = defineProps<{
 }>();
 
 const numberToDisplay = defineModel<number>();
-const name = ref("Show All");
+const name = ref("Tout afficher");
 </script>

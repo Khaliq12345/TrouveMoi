@@ -10,8 +10,8 @@
           <v-sheet color="transparent">
             <!-- Tab navigation for switching between views -->
             <v-tabs v-model="tab" color="primary">
-              <v-tab value="self">My Favorites</v-tab>
-              <v-tab value="rated">Top Rated</v-tab>
+              <v-tab value="self">Mes favoris</v-tab>
+              <v-tab value="rated">Les mieux notés</v-tab>
             </v-tabs>
 
             <v-divider></v-divider>
@@ -25,13 +25,13 @@
               >
                 <!-- Current search location display -->
                 <p class="text-body-1 mb-4 mb-sm-0">
-                  <strong class="text-grey-darken-4">Search in</strong>
+                  <strong class="text-grey-darken-4">Rechercher à</strong>
                   <span class="text-grey-darken-1 ml-2">San Francisco, CA</span>
                 </p>
 
                 <!-- Location search input -->
                 <v-text-field
-                  placeholder="San Francisco, CA"
+                  placeholder="Ex: Cotonou, Bénin"
                   variant="solo"
                   density="compact"
                   hide-details
