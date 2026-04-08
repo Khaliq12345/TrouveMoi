@@ -2,17 +2,17 @@
     <v-list-item v-if="!mini" class="pa-4 bg-transparent">
         <v-list-item-subtitle>Ouvert maintenant</v-list-item-subtitle>
         <v-switch
-            v-model="isOpenNow"
+            :model-value="isOpenNow"
             hide-details
             density="compact"
             color="primary"
             inset
-            @update:model-value="toggleOpenNow"
+            @update:model-value="onSwitchToggle"
         />
     </v-list-item>
     <v-chip
         v-else
-        @click="toggleOpenNow"
+        @click="onChipToggle"
         size="small"
         variant="outlined"
         class="mx-1 text-caption"
@@ -28,18 +28,16 @@ const props = defineProps<{
 }>();
 const { updateURL, getURLFilter } = useFilterURL();
 
-const isOpenNow = ref(getURLFilter("is_open").includes("open"));
+// Computed pour rester synchronisé avec l'URL
+const isOpenNow = computed(() => getURLFilter("is_open").includes("open"));
 
-const toggleOpenNow = () => {
-    // Inversion de l'état local
-    isOpenNow.value = !isOpenNow.value;
+// Le switch passe directement la nouvelle valeur booléenne
+const onSwitchToggle = (newVal: boolean) => {
+    updateURL("is_open", newVal ? ["open"] : ["false"]);
+};
 
-    if (isOpenNow.value) {
-        // Si on veut filtrer les établissements ouverts
-        updateURL("is_open", ["open"]);
-    } else {
-        // Si on veut filtrer les établissements fermés (ou simplement retirer le filtre)
-        updateURL("is_open", [""]);
-    }
+// Le chip inverse manuellement l'état courant
+const onChipToggle = () => {
+    updateURL("is_open", isOpenNow.value ? ["false"] : ["open"]);
 };
 </script>
