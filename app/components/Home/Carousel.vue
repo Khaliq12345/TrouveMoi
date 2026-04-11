@@ -57,7 +57,7 @@
                             <v-list-item
                                 prepend-icon="mdi-map-marker-radius"
                                 :title="currentItem?.business_name"
-                                subtitle="A decouvrir"
+                                subtitle="À découvrir"
                             ></v-list-item>
                         </v-sheet>
                     </v-scroll-x-transition>

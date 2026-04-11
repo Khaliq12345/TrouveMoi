@@ -13,7 +13,7 @@
 
         <DetailContactRow
             v-if="phone"
-            label="Direct Call"
+            label="Appel direct"
             :value="phone"
             icon="mdi-phone-outline"
             :href="`tel:${phone}`"
@@ -21,7 +21,7 @@
 
         <DetailContactRow
             v-if="whatsapp"
-            label="Chat on WhatsApp"
+            label="Discuter sur WhatsApp"
             :value="whatsapp"
             icon="mdi-whatsapp"
             :href="`https://wa.me/${whatsapp.replace(/\D/g, '')}`"
@@ -30,7 +30,7 @@
         <DetailContactRow
             v-for="loc in locations"
             :key="loc.id"
-            label="Get Directions"
+            label="Itinéraire"
             :value="loc"
             icon="mdi-directions-outline"
         />

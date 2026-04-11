@@ -9,7 +9,7 @@
 
     <v-card-text class="position-relative pa-6">
       <div class="d-flex justify-space-between align-start mb-3">
-        <h3 class="text-h6 font-weight-bold text-truncate">
+        <h3 class="text-h7 text-md-h6 font-weight-bold text-truncate">
           {{ ticket.title }}
         </h3>
         <v-chip

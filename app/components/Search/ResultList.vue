@@ -7,6 +7,7 @@
             @load="onLoad"
             class="w-100"
             :style="!isMobile ? 'max-height: 900px; overflow-y: auto;' : ''"
+            empty-text="Plus d'autres résultats"
         >
             <!-- Result items loop -->
 
