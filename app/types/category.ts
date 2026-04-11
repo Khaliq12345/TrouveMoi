@@ -28,3 +28,11 @@ export interface Category {
 export interface GroupedCategory extends Category {
   sub_categories: SubCategory[];
 }
+
+export interface CategoryWithColor extends Category {
+  color: string;
+  bgLight: string;
+  bgDark: string;
+  count: number;
+  route: string;
+}

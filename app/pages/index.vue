@@ -1,29 +1,27 @@
 <!-- Home page with app bar, carousel, categories, explore section, and footer -->
 <template>
-    <!-- Main layout container -->
-    <v-layout class="flex flex-col">
-        <HomeDesktopHero v-if="!isMobile"></HomeDesktopHero>
-        <HomeMobileHero v-else></HomeMobileHero>
-        <v-container class="mx-auto d-flex flex-column ga-4" fluid>
-            <div class="d-flex justify-center">
-                <HomeCategories class="section" />
-            </div>
+  <!-- Main layout container -->
+  <v-layout class="flex flex-col">
+    <HomeDesktopHero v-if="!isMobile"></HomeDesktopHero>
+    <HomeMobileHero v-else></HomeMobileHero>
+    <v-container class="mx-auto d-flex flex-column ga-4" fluid>
+      <HomeCategories class="section" />
 
-            <v-divider class="border-opacity-100"></v-divider>
+      <v-divider class="border-opacity-100"></v-divider>
 
-            <!-- Highlight section -->
-            <HomeHighlight />
+      <!-- Highlight section -->
+      <HomeHighlight />
 
-            <v-divider class="border-opacity-100"></v-divider>
+      <v-divider class="border-opacity-100"></v-divider>
 
-            <!-- Popular search section -->
-            <PopulareSearch class="section" />
-        </v-container>
-        <!-- Mobile bottom navigation -->
-        <BottomNav v-if="isMobile" />
-        <!-- Desktop footer -->
-        <Footer v-if="!isMobile"></Footer>
-    </v-layout>
+      <!-- Popular search section -->
+      <PopulareSearch class="section" />
+    </v-container>
+    <!-- Mobile bottom navigation -->
+    <BottomNav v-if="isMobile" />
+    <!-- Desktop footer -->
+    <Footer v-if="!isMobile"></Footer>
+  </v-layout>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +31,6 @@ const isMobile = inject("isMobile");
 
 <style scoped>
 .section {
-    max-width: 1200px;
+  max-width: 1200px;
 }
 </style>
