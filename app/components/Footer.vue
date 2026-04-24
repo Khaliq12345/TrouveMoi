@@ -1,10 +1,10 @@
 <template>
-  <v-footer :app="app" class="footer-modern pa-0 overflow-hidden text-black">
+  <v-footer  class="footer-modern pa-0 overflow-hidden text-black">
     <div class="gradient-bg" />
 
     <v-sheet color="transparent" class="w-100 py-12">
       <v-container>
-        <v-row>
+        <v-row class="justify-center">
           <!-- About -->
           <v-col cols="12" sm="6" md="3">
             <div class="d-flex align-center mb-6 opacity-90">
@@ -43,7 +43,9 @@
           <v-col cols="12" sm="6" md="3">
             <div class="d-flex align-center mb-6 opacity-90">
               <v-icon icon="mdi-map-marker-radius" class="me-2" size="20" />
-              <span class="text-h6 font-weight-bold">Villes du Bénin</span>
+              <span class="text-h6 font-weight-bold">
+                Lieux populaire à Cotonou
+              </span>
             </div>
             <div class="d-flex flex-column ga-1">
               <p
@@ -53,36 +55,6 @@
               >
                 {{ city }}
               </p>
-            </div>
-          </v-col>
-
-          <!-- Language -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="d-flex align-center mb-6 opacity-90">
-              <v-icon icon="mdi-translate" class="me-2" size="20" />
-              <span class="text-h6 font-weight-bold">Langue</span>
-            </div>
-            <div class="d-flex ga-3">
-              <v-btn
-                v-for="lang in languages"
-                :key="lang.code"
-                :variant="selectedLang === lang.code ? 'flat' : 'outlined'"
-                color="white"
-                :class="[
-                  'rounded-lg border-opacity-25',
-                  {
-                    'bg-opacity-20': selectedLang === lang.code,
-                  },
-                ]"
-                @click="selectedLang = lang.code"
-              >
-                <template v-slot:prepend>
-                  <span class="text-h6 me-n1">{{ lang.flag }}</span>
-                </template>
-                <span class="text-caption font-weight-bold">{{
-                  lang.label
-                }}</span>
-              </v-btn>
             </div>
           </v-col>
         </v-row>
@@ -115,48 +87,25 @@ interface NavLink {
   to: string;
 }
 
-interface Language {
-  code: LanguageCode;
-  label: string;
-  flag: string; // URL de l'image ou emoji
-}
-
 const props = defineProps({
   app: { type: Boolean, default: false },
 });
 
 const links: NavLink[] = [
   { title: "Accueil", to: "/" },
-  { title: "Collections", to: "/collections" },
   { title: "Événements", to: "/event" },
   { title: "Support", to: "/support" },
 ];
 
 const aboutText =
   "Votre plateforme de référence pour découvrir les trésors du Bénin. Nous connectons les passionnés aux artisans locaux.";
-const aboutTags: string[] = ["Artisanat", "Culture", "Tourisme"];
 
 const cities: string[] = [
-  "Cotonou",
-  "Porto-Novo",
-  "Parakou",
-  "Abomey",
-  "Djougou",
-  "Bohicon",
-  "Kandi",
-  "Lokossa",
-  "Ouidah",
-  "Natitingou",
-  "Savalou",
-  "Malanville",
+  "Sofitel Hôtel & Spa",
+  "EL Fueguo",
+  "Chawarma House",
+  "Golden Tulip Le Diplomate",
 ];
-
-const languages: Language[] = [
-  { code: "fr", label: "FRANÇAIS", flag: "" },
-  { code: "en", label: "ENGLISH", flag: "" },
-];
-
-const selectedLang = ref("fr");
 </script>
 <style scoped>
 .footer-modern {
@@ -169,7 +118,7 @@ const selectedLang = ref("fr");
 
 .footer-link {
   /* Assure-toi d'avoir une transition globale sur le lien si la classe Vuetify ne suffit pas */
-  transition: all 0.3s ease; 
+  transition: all 0.3s ease;
 }
 
 .footer-link .arrow-icon {
@@ -181,7 +130,7 @@ const selectedLang = ref("fr");
 .footer-link:hover {
   opacity: 1 !important;
   /* On remplace le padding par un transform */
-  transform: translateX(6px); 
+  transform: translateX(6px);
 }
 
 .footer-link:hover .arrow-icon {
@@ -200,7 +149,7 @@ const selectedLang = ref("fr");
 .hover-pl:hover {
   opacity: 1 !important;
   /* On applique la même logique ici pour les villes du Bénin */
-  transform: translateX(8px); 
+  transform: translateX(8px);
 }
 
 .hover-translate:hover {
