@@ -21,7 +21,7 @@
                 >
                     <!-- this show the name of the buisness -->
                     <h1
-                        class="text-h4 text-md-h2 font-weight-black mb-2 title-text"
+                        class="text-h5 text-md-h2 font-weight-black mb-2 title-text"
                     >
                         {{ biz?.name }}
                     </h1>
