@@ -5,8 +5,7 @@
       <v-container class="pa-2 bg-background mx-auto" style="max-width: 1200px">
         <EventHeader></EventHeader>
         <v-divider class="mb-6"></v-divider> <EventStats />
-        <EventSearch></EventSearch>
-        <EventPagination />
+        <EventSearch class="px-4"></EventSearch>
         <div v-if="status !== 'pending'">
           <EventData></EventData>
         </div>

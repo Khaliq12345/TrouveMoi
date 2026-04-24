@@ -42,7 +42,6 @@ export const useFetchBiz = async () => {
         }),
       );
 
-      console.log(response);
       if (!response || response.length === 0) {
         hasMore.value = false;
         return [];

@@ -36,5 +36,4 @@
 <script setup lang="ts">
 // Component props and events
 const resultsSheet = ref(false); // Mobile results sheet visibility
-const viewMode = ref("carte"); // Mobile view mode: 'carte' or 'video
 </script>

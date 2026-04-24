@@ -24,8 +24,8 @@
                 </p>
 
                 <!-- Business description -->
-                <p class="text-body-2 text-grey-darken-3">
-                    {{ biz?.description }}
+                <p class="text-body-2 text-grey-darken-3" v-if="biz?.short_description">
+                    {{ biz?.short_description }}
                 </p>
             </v-col>
         </v-row>

@@ -74,8 +74,6 @@ const getCategoryIcon = (key: string) => {
 // Récupération des données via le composable
 const metas = inject<any>("metas");
 
-console.log(metas.value);
-
 // Gestion de l'ouverture des liens externes
 const openLink = (url: string) => {
   window.open(url, "_blank");
