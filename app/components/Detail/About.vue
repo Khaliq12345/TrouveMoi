@@ -1,7 +1,7 @@
 <template>
     <v-container class="pa-0 py-6">
-        <h2 class="text-h5 font-weight-black mb-3 text-grey-darken-4">
-            About the Business
+        <h2 class="text-h6 text-md-h5 font-weight-black mb-3 text-grey-darken-4">
+            À propos de cette entreprise
         </h2>
 
         <div class="text-body-1 text-grey-darken-2 mb-4 line-clamp-3">
