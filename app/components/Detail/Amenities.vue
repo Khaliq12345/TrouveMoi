@@ -7,7 +7,7 @@
                 class="me-2"
                 size="28"
             />
-            <h2 class="text-h7 text-md-h5 font-weight-black text-grey-darken-4">
+            <h2 class="text-h6 text-md-h5 font-weight-black text-grey-darken-4">
                 Proposé / Sur les lieux
             </h2>
         </div>
