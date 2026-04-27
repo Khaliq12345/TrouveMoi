@@ -2,7 +2,7 @@
 <template>
   <v-container class="pa-0 py-8 px-4">
     <!-- Section title -->
-    <h2 class="text-h5 font-weight-bold mb-6">Avis & Évaluations</h2>
+    <h2 class="text-h6 text-md-h5 font-weight-bold mb-6">Avis & Évaluations</h2>
 
     <!-- Statistics Block -->
     <DetailReviewStats />
