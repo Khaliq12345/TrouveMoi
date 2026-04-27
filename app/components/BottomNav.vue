@@ -1,5 +1,5 @@
 <template>
-  <div class="md:hidden fixed bottom-0 left-0 right-0 z-50">
+  <div class="fixed bottom-0 left-0 right-0 z-50">
     <v-bottom-navigation
       v-model="value"
       color="black"
