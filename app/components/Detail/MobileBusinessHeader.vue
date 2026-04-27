@@ -16,7 +16,7 @@
       </v-app-bar-title>
 
       <!-- Action icons -->
-      <v-btn icon to="/search">
+      <v-btn icon @click="openSearch = true">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </v-app-bar>
@@ -26,6 +26,8 @@
       <DetailBuisnessCard />
     </div>
   </div>
+
+  <SearchDialog v-model="openSearch" title="Que voulez chercher ?" />
 </template>
 
 <script setup lang="ts">
@@ -42,4 +44,6 @@ const headerWithImage = useTemplateRef("headerWithImage");
 
 // Track if hero section is visible
 const headerWithImageIsVisible = useElementVisibility(headerWithImage);
+
+const openSearch = ref(false);
 </script>

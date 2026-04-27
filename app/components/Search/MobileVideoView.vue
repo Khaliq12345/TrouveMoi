@@ -12,7 +12,11 @@
         v-else-if="flatVideoList.length === 0"
         class="d-flex justify-center align-center fill-height"
       >
-        <v-alert type="info" text="Aucune vidéo disponible" variant="tonal" />
+        <v-empty-state
+          icon="mdi-movie-open-outline"
+          title="Aucune vidéo trouvée"
+          class="py-12"
+        />
       </div>
 
       <div v-else class="pa-2">

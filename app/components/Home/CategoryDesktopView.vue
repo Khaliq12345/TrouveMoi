@@ -1,5 +1,10 @@
 <template>
-  <v-sheet class="mx-auto" color="transparent" max-width="800">
+    <v-container
+    color="transparent"
+    class="pa-6 pa-md-10 rounded-xl"
+    style="max-width: 1200px"
+  >
+  <v-sheet class="mx-auto" color="transparent" style="max-width: 1200px">
     <h2 class="text-h5 font-weight-bold text-grey-darken-3 mb-4">
       Explorer par catégorie
     </h2>
@@ -17,48 +22,43 @@
             v-bind="props"
             :to="category.route"
             flat
-            class="rounded-xl pa-3 transition-swing d-flex flex-column w-100"
+            height="160" 
+            class="rounded-xl pa-3 transition-swing d-flex flex-column align-center justify-center text-center w-100"
             :elevation="isHovering ? 8 : 1"
             :style="{
               background: `linear-gradient(135deg, ${category.bgLight}, ${category.bgDark})`,
               transform: isHovering ? 'translateY(-8px)' : 'none',
             }"
           >
-            <div class="d-flex justify-space-between align-start mb-2">
-              <v-avatar
-                :color="category.color"
-                size="40"
-                class="elevation-2 transition-swing"
-                :style="{
-                  transform: isHovering ? 'rotate(10deg) scale(1.1)' : 'none',
-                }"
-              >
-                <v-icon :icon="category.icon" color="white" size="small" />
-              </v-avatar>
-            </div>
-
-            <div
-              class="text-subtitle-1 font-weight-bold text-grey-darken-3 line-clamp-2 mt-1"
+            <v-avatar
+              :color="category.color"
+              size="48"
+              class="elevation-2 transition-swing mb-3"
+              :style="{
+                transform: isHovering ? 'rotate(10deg) scale(1.1)' : 'none',
+              }"
             >
+              <v-icon :icon="category.icon" color="white" size="24" />
+            </v-avatar>
+
+            <div class="text-subtitle-1 font-weight-bold text-grey-darken-3 line-clamp-2 mb-2">
               {{ category.name }}
             </div>
 
-            <div class="mt-1">
-              <v-icon
-                icon="mdi-arrow-right"
-                :color="category.color"
-                size="small"
-                class="transition-swing"
-                :class="isHovering ? 'translate-x-2' : ''"
-              />
-            </div>
+            <v-icon
+              icon="mdi-arrow-right"
+              :color="category.color"
+              size="small"
+              class="transition-swing"
+              :class="isHovering ? 'translate-x-2' : ''"
+            />
           </v-card>
         </v-hover>
       </v-col>
     </v-row>
   </v-sheet>
+  </v-container>
 </template>
-
 <script setup lang="ts">
 import type { CategoryWithColor } from "@/types/category";
 

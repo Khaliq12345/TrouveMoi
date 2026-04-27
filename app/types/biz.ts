@@ -98,6 +98,7 @@ export interface Biz {
   user_updated: string;
   date_updated: string;
   name: string;
+  short_description: string;
   description: string;
   phone: string;
   whatsapp: string;

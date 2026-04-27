@@ -4,7 +4,7 @@
   <v-layout class="flex flex-col">
     <HomeDesktopHero v-if="!isMobile"></HomeDesktopHero>
     <HomeMobileHero v-else></HomeMobileHero>
-    <v-container class="mx-auto d-flex flex-column ga-4" fluid>
+    <v-container class="mx-auto d-flex flex-column ga-4 pb-12" fluid>
       <HomeCategories class="section" />
 
       <v-divider class="border-opacity-100"></v-divider>

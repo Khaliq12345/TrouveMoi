@@ -1,4 +1,7 @@
 <template>
+  <h2 class="text-h5 font-weight-bold text-grey-darken-3 mb-4">
+    Explorer par catégorie
+  </h2>
   <v-sheet class="mx-auto" color="transparent" max-width="800">
     <v-slide-group class="pb-2" mobile-breakpoint="sm">
       <v-slide-group-item v-for="category in categories" :key="category.id">
@@ -20,10 +23,7 @@
             <v-icon :icon="category.icon" color="white" size="small" />
           </v-avatar>
 
-          <div
-            class="text-caption line-clamp-2"
-            style="line-height: 1.2"
-          >
+          <div class="text-caption line-clamp-2" style="line-height: 1.2">
             {{ category.name }}
           </div>
         </v-card>

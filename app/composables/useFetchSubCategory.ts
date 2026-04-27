@@ -18,7 +18,7 @@ export const useFetchSubCategory = async () => {
   );
 
   if (error.value) {
-    console.log("AsyncData Subcategory Error details:", error.value);
+    console.error("AsyncData Subcategory Error details:", error.value);
   }
 
   // Extract subcategory from category slug

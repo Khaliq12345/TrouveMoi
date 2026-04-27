@@ -12,8 +12,6 @@
                         <CustomDivider></CustomDivider>
                         <DetailMiniInfo />
 
-                        <!-- <DetailActionsButtons /> -->
-
                         <section
                             id="services"
                             class="scroll-section"
