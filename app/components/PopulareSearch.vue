@@ -2,7 +2,7 @@
     <v-container class="pa-2" color="transparent" fluid>
         <v-card variant="flat" class="pa-2 rounded-lg" color="transparent">
             <header class="mb-2">
-                <h2 class="text-h5 font-weight-bold text-grey-darken-4 mb-0">
+                <h2 class="text-h6 text-md-h5 font-weight-bold text-grey-darken-4 mb-0">
                     Explorer les recherches au Bénin
                 </h2>
                 <p class="text-body-2 text-grey">

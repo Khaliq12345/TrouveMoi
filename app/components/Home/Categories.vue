@@ -1,8 +1,9 @@
 <template>
-  <HomeCategoryMobileView
-    v-if="isMobile"
-    :categories="formattedCategories as CategoryWithColor[]"
-  />
+  <div v-if="isMobile">
+    <HomeCategoryMobileView
+      :categories="formattedCategories as CategoryWithColor[]"
+    />
+  </div>
 
   <HomeCategoryDesktopView
     v-else
@@ -12,8 +13,8 @@
 
 <script setup lang="ts">
 defineOptions({
-  inheritAttrs: false
-})
+  inheritAttrs: false,
+});
 import type { CategoryWithColor } from "~/types/category";
 
 const isMobile = inject("isMobile");
