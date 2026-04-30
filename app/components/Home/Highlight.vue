@@ -8,7 +8,7 @@
       class="d-flex flex-column flex-sm-row justify-space-between align-sm-end mb-8"
     >
       <div>
-        <h2 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
+        <h2 class="text-h6 text-md-h5 font-weight-bold text-grey-darken-4 mb-1">
           Collections Sélectionnées & Incontournables Locaux
         </h2>
         <p class="text-body-2 text-grey-darken-1">

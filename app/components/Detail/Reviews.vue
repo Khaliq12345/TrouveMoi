@@ -19,17 +19,10 @@
         </v-avatar>
 
         <!-- User details -->
-        <div>
-          <div class="text-subtitle-1 font-weight-bold">
-            {{ review.author || "Anonyme" }}
-          </div>
-          <!-- Pas de localisation dans les données → omis -->
+        <div class="text-subtitle-1 font-weight-bold">
+          {{ review.author || "Anonyme" }}
         </div>
-
-        <v-spacer></v-spacer>
-
-        <!-- More options button -->
-        <v-btn icon="mdi-dots-horizontal" variant="text" color="grey"></v-btn>
+        <!-- Pas de localisation dans les données → omis -->
       </div>
 
       <!-- Rating and date -->
@@ -47,28 +40,7 @@
       </div>
 
       <!-- Review text -->
-      <DetailReviewText v-if="review.Comment" :text="review.Comment" />
-
-      <div class="d-flex flex-wrap align-center gap-4 mt-4">
-        <v-btn
-          variant="outlined"
-          rounded="pill"
-          size="small"
-          class="text-none grey-border"
-          prepend-icon="mdi-lightbulb-outline"
-        >
-          Helpful
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          rounded="pill"
-          size="small"
-          class="text-none grey-border"
-          prepend-icon="mdi-hand-okay"
-        >
-          Thanks
-        </v-btn>
-      </div>
+      <DetailReviewText v-if="review.comment" :text="review.comment" />
 
       <v-divider class="mt-8"></v-divider>
     </div>

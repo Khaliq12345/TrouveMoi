@@ -1,5 +1,5 @@
 <template>
-  <v-footer  class="footer-modern pa-0 overflow-hidden text-black">
+  <v-footer class="footer-modern pa-0 overflow-hidden text-black">
     <div class="gradient-bg" />
 
     <v-sheet color="transparent" class="w-100 py-12">
@@ -48,13 +48,15 @@
               </span>
             </div>
             <div class="d-flex flex-column ga-1">
-              <p
+              <NuxtLink
                 v-for="city in cities"
-                :key="city"
+                :key="city.slug"
+                :to="`/details/${city.slug}`"
+                target="_blank"
                 class="city-item text-body-2 opacity-70 py-1 px-2 rounded transition-swing cursor-pointer hover-opacity-100 hover-pl"
               >
-                {{ city }}
-              </p>
+                {{ city.name }}
+              </NuxtLink>
             </div>
           </v-col>
         </v-row>
@@ -100,11 +102,23 @@ const links: NavLink[] = [
 const aboutText =
   "Votre plateforme de référence pour découvrir les trésors du Bénin. Nous connectons les passionnés aux artisans locaux.";
 
-const cities: string[] = [
-  "Sofitel Hôtel & Spa",
-  "EL Fueguo",
-  "Chawarma House",
-  "Golden Tulip Le Diplomate",
+const cities: { name: string; slug: string }[] = [
+  {
+    name: "Sofitel Cotonou Marina Hotel & Spa",
+    slug: "sofitel-cotonou-marina-hotel-spa",
+  },
+  {
+    name: "Le Livingstone Cotonou",
+    slug: "le-livingstone-cotonou-restaurant",
+  },
+  {
+    name: "Super U Aéroport",
+    slug: "super-u-aeroport",
+  },
+  {
+    name: "CFAO Mobility Bénin",
+    slug: "cfao-mobility-benin",
+  },
 ];
 </script>
 <style scoped>

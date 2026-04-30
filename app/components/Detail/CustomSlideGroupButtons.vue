@@ -36,15 +36,15 @@ const toggleButtonsIsVisible = useElementVisibility(toggleButtons);
 const activeTab = ref("services");
 
 const navItems: NavItem[] = [
-    { id: "#about", label: "About", icon: "mdi-information-outline" },
+    { id: "#about", label: "À propos", icon: "mdi-information-outline" },
     { id: "#services", label: "Services", icon: "mdi-hammer-wrench" },
     {
         id: "#location",
-        label: "Location/Hours",
+        label: "Indications",
         icon: "mdi-map-marker-outline",
     },
     { id: "#vibes", label: "Vibes", icon: "mdi-eye-settings-outline" },
     { id: "#reviews", label: "Avis", icon: "mdi-star-outline" },
-    { id: "#features", label: "Features", icon: "mdi-box-search-outline" },
+    { id: "#features", label: "Fonctionnalités", icon: "mdi-apps" },
 ];
 </script>

@@ -45,6 +45,5 @@
 const { businesses } = inject("businesses-data") as any;
 const isMobile = inject("isMobile");
 const resultsSheet = defineModel("resultsSheet"); // Mobile results sheet visibility
-const viewMode = ref("carte"); // Mobile view mode: 'carte' or 'video'
 const mobileFilter = ref(false); // Mobile filter dialog visibility
 </script>
