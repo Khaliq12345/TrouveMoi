@@ -57,7 +57,7 @@ const modalItems = ref<any[]>([]);
 // Définition des catégories avec leurs labels
 const categories = [
   { key: "menu", label: "Menu" },
-  { key: "service", label: "Services" },
+  { key: "service", label: "Services/Produits" },
   { key: "portfolio", label: "Portfolio" },
 ];
 

@@ -42,27 +42,6 @@
       <!-- Review text -->
       <DetailReviewText v-if="review.comment" :text="review.comment" />
 
-      <div class="d-flex flex-wrap align-center gap-4 mt-4">
-        <v-btn
-          variant="outlined"
-          rounded="pill"
-          size="small"
-          class="text-none grey-border"
-          prepend-icon="mdi-lightbulb-outline"
-        >
-          Helpful
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          rounded="pill"
-          size="small"
-          class="text-none grey-border"
-          prepend-icon="mdi-hand-okay"
-        >
-          Thanks
-        </v-btn>
-      </div>
-
       <v-divider class="mt-8"></v-divider>
     </div>
   </v-container>

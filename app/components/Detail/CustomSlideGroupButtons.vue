@@ -45,6 +45,6 @@ const navItems: NavItem[] = [
     },
     { id: "#vibes", label: "Vibes", icon: "mdi-eye-settings-outline" },
     { id: "#reviews", label: "Avis", icon: "mdi-star-outline" },
-    { id: "#features", label: "Features", icon: "mdi-box-search-outline" },
+    { id: "#features", label: "Fonctionnalités", icon: "mdi-apps" },
 ];
 </script>
